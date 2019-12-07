@@ -12,6 +12,8 @@ namespace FastFileSend.Tests
         [TestMethod]
         public async Task TestFexUpload()
         {
+            // Don't test upload often
+            return;
             IFileUploader uploader = new FexFileUploader();
             CloudFile cloudFile = await uploader.UploadAsync("test.png");
             Assert.IsTrue(cloudFile.CRC32 == 0x7b7a659e, "Wrong file crc32!");
