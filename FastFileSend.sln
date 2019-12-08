@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend", "FastFileSen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.WPF", "FastFileSend.WPF\FastFileSend.WPF.csproj", "{11603D6B-5F41-45AF-A853-5DE8D595C88A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.GTK", "FastFileSend.GTK\FastFileSend.GTK.csproj", "{2B60E563-C2AD-47E4-BC93-152A5C648616}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,10 +47,6 @@ Global
 		{11603D6B-5F41-45AF-A853-5DE8D595C88A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11603D6B-5F41-45AF-A853-5DE8D595C88A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11603D6B-5F41-45AF-A853-5DE8D595C88A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2B60E563-C2AD-47E4-BC93-152A5C648616}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2B60E563-C2AD-47E4-BC93-152A5C648616}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2B60E563-C2AD-47E4-BC93-152A5C648616}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2B60E563-C2AD-47E4-BC93-152A5C648616}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
