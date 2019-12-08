@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Tests", "FastF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Web", "FastFileSend.Web\FastFileSend.Web.csproj", "{BB7AA224-8986-492F-A4F0-8C7BD3F48B47}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Xamarin", "FastFileSend.Xamarin\FastFileSend.Xamarin.csproj", "{EC2D7202-5FB1-42EB-8A41-F60BCE2161EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,12 @@ Global
 		{BB7AA224-8986-492F-A4F0-8C7BD3F48B47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB7AA224-8986-492F-A4F0-8C7BD3F48B47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB7AA224-8986-492F-A4F0-8C7BD3F48B47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC2D7202-5FB1-42EB-8A41-F60BCE2161EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC2D7202-5FB1-42EB-8A41-F60BCE2161EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC2D7202-5FB1-42EB-8A41-F60BCE2161EF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{EC2D7202-5FB1-42EB-8A41-F60BCE2161EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC2D7202-5FB1-42EB-8A41-F60BCE2161EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC2D7202-5FB1-42EB-8A41-F60BCE2161EF}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
