@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.WPF", "FastFileSend.WPF\FastFileSend.WPF.csproj", "{CA020899-5699-4DA7-8E3B-E24A26A67B85}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastFileSend.Main", "FastFileSend.Main\FastFileSend.Main.csproj", "{43C92482-7A7B-41AB-9414-E950D814ECDD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Tests", "FastFileSend.Tests\FastFileSend.Tests.csproj", "{16A4B409-6CD6-4214-91AA-92B96741931F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Web", "FastFileSend.Web\FastFileSend.Web.csproj", "{BB7AA224-8986-492F-A4F0-8C7BD3F48B47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Xamarin.Android", "FastFileSend.Xamarin\FastFileSend.Xamarin.Android\FastFileSend.Xamarin.Android.csproj", "{8570BCCA-297A-4DCB-92FA-E3C9DFF0130B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Android", "FastFileSend\FastFileSend.Android\FastFileSend.Android.csproj", "{53B65876-83C2-4DC6-91B4-C12C02DE7DDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Xamarin", "FastFileSend.Xamarin\FastFileSend.Xamarin\FastFileSend.Xamarin.csproj", "{E083F863-422F-43B0-BCA6-CFCAAA0EB2FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend", "FastFileSend\FastFileSend\FastFileSend.csproj", "{4C5E4367-C486-4727-87FD-F52FE8E5A0CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.WPF", "FastFileSend.WPF\FastFileSend.WPF.csproj", "{11603D6B-5F41-45AF-A853-5DE8D595C88A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +21,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CA020899-5699-4DA7-8E3B-E24A26A67B85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA020899-5699-4DA7-8E3B-E24A26A67B85}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA020899-5699-4DA7-8E3B-E24A26A67B85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA020899-5699-4DA7-8E3B-E24A26A67B85}.Release|Any CPU.Build.0 = Release|Any CPU
 		{43C92482-7A7B-41AB-9414-E950D814ECDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{43C92482-7A7B-41AB-9414-E950D814ECDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43C92482-7A7B-41AB-9414-E950D814ECDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -37,16 +33,20 @@ Global
 		{BB7AA224-8986-492F-A4F0-8C7BD3F48B47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB7AA224-8986-492F-A4F0-8C7BD3F48B47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB7AA224-8986-492F-A4F0-8C7BD3F48B47}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8570BCCA-297A-4DCB-92FA-E3C9DFF0130B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8570BCCA-297A-4DCB-92FA-E3C9DFF0130B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8570BCCA-297A-4DCB-92FA-E3C9DFF0130B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{8570BCCA-297A-4DCB-92FA-E3C9DFF0130B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8570BCCA-297A-4DCB-92FA-E3C9DFF0130B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8570BCCA-297A-4DCB-92FA-E3C9DFF0130B}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{E083F863-422F-43B0-BCA6-CFCAAA0EB2FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E083F863-422F-43B0-BCA6-CFCAAA0EB2FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E083F863-422F-43B0-BCA6-CFCAAA0EB2FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E083F863-422F-43B0-BCA6-CFCAAA0EB2FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53B65876-83C2-4DC6-91B4-C12C02DE7DDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53B65876-83C2-4DC6-91B4-C12C02DE7DDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53B65876-83C2-4DC6-91B4-C12C02DE7DDE}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{53B65876-83C2-4DC6-91B4-C12C02DE7DDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53B65876-83C2-4DC6-91B4-C12C02DE7DDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53B65876-83C2-4DC6-91B4-C12C02DE7DDE}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{4C5E4367-C486-4727-87FD-F52FE8E5A0CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C5E4367-C486-4727-87FD-F52FE8E5A0CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C5E4367-C486-4727-87FD-F52FE8E5A0CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C5E4367-C486-4727-87FD-F52FE8E5A0CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11603D6B-5F41-45AF-A853-5DE8D595C88A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11603D6B-5F41-45AF-A853-5DE8D595C88A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11603D6B-5F41-45AF-A853-5DE8D595C88A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11603D6B-5F41-45AF-A853-5DE8D595C88A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
