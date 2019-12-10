@@ -11,15 +11,15 @@
     <StackPanel>
         <TabControl Margin="10">
             <TabItem Header="Downloads">
-                <ListView x:Name="ListViewHistory" HorizontalContentAlignment="Stretch">
+                <ListView x:Name="ListViewHistory" HorizontalContentAlignment="Stretch" ItemsSource="{Binding DownloadList}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <DockPanel LastChildFill="True">
-                                <Label Content="999 999 999"></Label>
-                                <Label Content="2020 GB"></Label>
-                                <Label Content="Awaiting download"></Label>
-                                <Label Content="12 min"></Label>
-                                <ProgressBar Value="50" Margin="5"></ProgressBar>
+                                <Label Content="{Binding Id}"></Label>
+                                <Label Content="{Binding Size}"></Label>
+                                <Label Content="{Binding Status}"></Label>
+                                <Label Content="{Binding ETA}"></Label>
+                                <ProgressBar Value="{Binding Progress}" Margin="5"></ProgressBar>
                             </DockPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -29,5 +29,6 @@
                 <Grid Background="#FFE5E5E5"/>
             </TabItem>
         </TabControl>
+        <Button x:Name="ButtonFakeDownload" Content="Button" Click="ButtonFakeDownload_Click"/>
     </StackPanel>
 </Controls:MetroWindow>

@@ -13,7 +13,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.WPF", "FastFil
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Android", "FastFileSend\FastFileSend.Android\FastFileSend.Android.csproj", "{86A87AA5-A1DC-4D49-9B44-6B546879778A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend", "FastFileSend\FastFileSend\FastFileSend.csproj", "{35E5E809-8EC8-4539-9F6B-ED2642848792}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastFileSend", "FastFileSend\FastFileSend\FastFileSend.csproj", "{35E5E809-8EC8-4539-9F6B-ED2642848792}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.UI", "FastFileSend.UI\FastFileSend.UI.csproj", "{5B98AE55-AB52-41B5-B773-85726721B8B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{35E5E809-8EC8-4539-9F6B-ED2642848792}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35E5E809-8EC8-4539-9F6B-ED2642848792}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35E5E809-8EC8-4539-9F6B-ED2642848792}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B98AE55-AB52-41B5-B773-85726721B8B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B98AE55-AB52-41B5-B773-85726721B8B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B98AE55-AB52-41B5-B773-85726721B8B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B98AE55-AB52-41B5-B773-85726721B8B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

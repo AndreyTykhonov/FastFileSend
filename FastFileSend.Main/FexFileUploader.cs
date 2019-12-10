@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -11,15 +12,22 @@ using System.Threading.Tasks;
 namespace FastFileSend.Main
 {
 
-    public class FexFileUploader : IFileUploader
+    public class FexFileUploader : IFileUploader, IProgress<long>
     {
         HttpClient HttpClient { get; set; }
+        Stopwatch SpeedWatch { get; set; }
+
+        long FileSize { get; set; }
+        string FileName { get; set; }
+
+        public event Action<double, double> OnProgress = delegate { };
+        public event Action OnEnd = delegate { };
 
         async Task<string> GetUploadTokenAsync()
         {
             Uri fexGetUploadTokenUri = new Uri("https://api.fex.net/api/v1/anonymous/upload-token");
-            HttpClient httpClient = new HttpClient();
-            string json = await httpClient.GetStringAsync(fexGetUploadTokenUri);
+            HttpClient = new HttpClient();
+            string json = await HttpClient.GetStringAsync(fexGetUploadTokenUri);
             return (string) JObject.Parse(json)["token"];
         }
 
@@ -36,22 +44,34 @@ namespace FastFileSend.Main
 
         public async Task<CloudFile> UploadAsync(string path)
         {
-            string filename = Path.GetFileName(path);
-            long size = new FileInfo(path).Length;
+            try
+            {
+                FileName = Path.GetFileName(path);
+                FileSize = new FileInfo(path).Length;
 
-            await PrepareAuthorizedHttpClient(filename, size);
+                await PrepareAuthorizedHttpClient(FileName, FileSize);
 
-            JObject json_payload = GenerateJsonPayload(filename, size);
-            UploadDataInfo uploadDataInfo = await GetUploadDataInfoAsync(json_payload);
+                JObject json_payload = GenerateJsonPayload(FileName, FileSize);
+                UploadDataInfo uploadDataInfo = await GetUploadDataInfoAsync(json_payload);
 
-            Uri uploadUri = new Uri(uploadDataInfo.location);
-            await PrepareUploadLink(uploadUri);
+                Uri uploadUri = new Uri(uploadDataInfo.location);
+                await PrepareUploadLink(uploadUri);
 
-            JObject uploadedFileInfo = await StartUploadAsync(path, uploadUri);
+                SpeedWatch = Stopwatch.StartNew();
 
-            CloudFile uploadedFile = UploadedInfoToCloudFile(uploadedFileInfo);
+                JObject uploadedFileInfo = await StartUploadAsync(path, uploadUri);
 
-            return uploadedFile;
+                SpeedWatch.Stop();
+
+                CloudFile uploadedFile = UploadedInfoToCloudFile(uploadedFileInfo);
+
+                return uploadedFile;
+
+            }
+            finally 
+            {
+                OnEnd();
+            }
         }
 
         private static CloudFile UploadedInfoToCloudFile(JObject uploadedFileInfo)
@@ -71,10 +91,13 @@ namespace FastFileSend.Main
             StreamContent streamContent = new StreamContent(fs);
             streamContent.Headers.Add("Content-Type", "application/octet-stream");
 
-            HttpResponseMessage response = await HttpClient.PatchAsync(uploadUri, streamContent);
+
+            ProgressableStreamContent progressableStreamContent = new ProgressableStreamContent(fs, this);
+            progressableStreamContent.Headers.Add("Content-Type", "application/octet-stream");
+
+            HttpResponseMessage response = await HttpClient.PatchAsync(uploadUri, progressableStreamContent);
 
             string response_str = await response.Content.ReadAsStringAsync();
-
 
             JObject uploadedFileInfo = JObject.Parse(response_str);
             return uploadedFileInfo;
@@ -88,9 +111,8 @@ namespace FastFileSend.Main
 
         private async Task PrepareAuthorizedHttpClient(string filename, long size)
         {
-            string token = await GetUploadTokenAsync();
-
             HttpClient = new HttpClient();
+            string token = await GetUploadTokenAsync();
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             HttpClient.DefaultRequestHeaders.Add("fsp-filename", filename);
@@ -105,6 +127,13 @@ namespace FastFileSend.Main
             json_payload.Add("size", size);
             json_payload.Add("name", filename);
             return json_payload;
+        }
+
+        public void Report(long value)
+        {
+            long bytesDownloaded = value;
+            double speedMb = bytesDownloaded  / 1048576.0 / SpeedWatch.Elapsed.TotalSeconds;
+            OnProgress((double)bytesDownloaded / FileSize * 100, speedMb);
         }
     }
 }

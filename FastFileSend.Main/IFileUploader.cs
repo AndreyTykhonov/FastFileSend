@@ -8,5 +8,7 @@ namespace FastFileSend.Main
     public interface IFileUploader
     {
         Task<CloudFile> UploadAsync(string path);
+        event Action<double, double> OnProgress;
+        event Action OnEnd;
     }
 }

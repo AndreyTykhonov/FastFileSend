@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using FastFileSend.UI;
+using FastFileSend.Main;
 
 namespace FastFileSend.WPF
 {
@@ -22,11 +24,45 @@ namespace FastFileSend.WPF
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
+        DownloadViewModel DownloadViewModel { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
 
-            ListViewHistory.ItemsSource = new List<string> { "1", "2", "3", "4", "5" };
+            DownloadViewModel = new DownloadViewModel();
+            ListViewHistory.DataContext = DownloadViewModel;
+        }
+
+        private async void ButtonFakeDownload_Click(object sender, RoutedEventArgs e)
+        {
+            DownloadModel downloadModel = new DownloadModel
+            {
+                Name = "FirstTest",
+                Status = "Time to get serious",
+                ETA = "beskonechnost",
+                Id = 1337
+            };
+
+            DownloadViewModel.DownloadList.Add(downloadModel);
+
+            IFileUploader fileUploader = new FexFileUploader();
+            fileUploader.OnProgress += (double progress, double speed) =>
+            {
+                downloadModel.Progress = progress;
+                downloadModel.ETA = speed.ToString("0.00 MB/s");
+
+            };
+
+            fileUploader.OnEnd += () =>
+            {
+                downloadModel.Progress = 100;
+                downloadModel.Status = "FINISHED";
+                
+            };
+
+            CloudFile cloudFile = await fileUploader.UploadAsync(@"C:\Users\KoBRa\Downloads\MahApps.Metro.Demo-v1.6.5-rc0001.zip");
+            Clipboard.SetText(cloudFile.Url);
         }
     }
 }
