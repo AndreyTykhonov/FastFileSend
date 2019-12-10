@@ -4,15 +4,19 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Results;
+using System.Web.Mvc;
 
 namespace FastFileSend.Web.Controllers
 {
     public class ValuesController : ApiController
     {
         // GET api/values
-        public IEnumerable<string> Get()
+        public JsonResult<string[]> Get()
         {
-            return new string[] { "value1", "value2" };
+            return Json(new string[] { "value1", "value2" });
+
+            //return new string[] { "value1", "value2" };
         }
 
         // GET api/values/5
