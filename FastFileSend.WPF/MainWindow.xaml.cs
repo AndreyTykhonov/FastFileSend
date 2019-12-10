@@ -46,12 +46,11 @@ namespace FastFileSend.WPF
 
             DownloadViewModel.DownloadList.Add(downloadModel);
 
-            IFileUploader fileUploader = new FexFileUploader();
+            IFileUploader fileUploader = new DummyFileUploader();
             fileUploader.OnProgress += (double progress, double speed) =>
             {
                 downloadModel.Progress = progress;
                 downloadModel.ETA = speed.ToString("0.00 MB/s");
-
             };
 
             fileUploader.OnEnd += () =>
