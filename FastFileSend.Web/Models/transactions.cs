@@ -23,5 +23,7 @@ namespace FastFileSend.Web.Models
         public virtual files files { get; set; }
         public virtual users users { get; set; }
         public virtual users users1 { get; set; }
+        public virtual files files1 { get; set; }
+        public virtual users users11 { get; set; }
     }
 }

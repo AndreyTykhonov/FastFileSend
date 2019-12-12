@@ -5,13 +5,15 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="1efaf6ed1d214922b6f5ec7b8f4a4bde" Name="Diagram1">
-        <EntityTypeShape EntityType="fastfilesendModel.files" Width="1.5" PointX="0.75" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="fastfilesendModel.files" Width="1.5" PointX="7.5" PointY="2.375" IsExpanded="true" />
         <EntityTypeShape EntityType="fastfilesendModel.sysdiagrams" Width="1.5" PointX="2.75" PointY="4.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="fastfilesendModel.transactions" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="fastfilesendModel.transactions" Width="1.5" PointX="3.375" PointY="1.125" IsExpanded="true" />
         <EntityTypeShape EntityType="fastfilesendModel.users" Width="1.5" PointX="0.75" PointY="1.125" IsExpanded="true" />
         <AssociationConnector Association="fastfilesendModel.FK_transactions_files" ManuallyRouted="false" />
         <AssociationConnector Association="fastfilesendModel.FK_transactions_transactions_receiver" ManuallyRouted="false" />
         <AssociationConnector Association="fastfilesendModel.FK_transactions_users_sender" ManuallyRouted="false" />
+        <AssociationConnector Association="fastfilesendModel.FK_transactions_files1" />
+        <AssociationConnector Association="fastfilesendModel.FK_transactions_users_sender1" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

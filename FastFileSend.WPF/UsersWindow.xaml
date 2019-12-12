@@ -1,4 +1,5 @@
-﻿<Window x:Class="FastFileSend.WPF.UsersWindow"
+﻿<Controls:MetroWindow
+    xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls" x:Class="FastFileSend.WPF.UsersWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,26 +7,27 @@
         xmlns:local="clr-namespace:FastFileSend.WPF"
         xmlns:ui="clr-namespace:FastFileSend.UI;assembly=FastFileSend.UI"
         mc:Ignorable="d"
-        Title="Choose user to send" Height="450" Width="800" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="Choose user to send" Height="381.466" Width="498.707" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
 
     <Window.Resources>
         <ui:UserOnlineImageConverter x:Key="myStatusConverter" />
     </Window.Resources>
     <DockPanel LastChildFill="True" Margin="10">
         <StackPanel Orientation="Vertical" Margin="10">
-            <Button Content="Add" Margin="0,0,0,10" Style="{StaticResource MetroFlatButton}"></Button>
-            <Button Content="Remove" Margin="0,0,0,10" Style="{StaticResource MetroFlatButton}"></Button>
-            <Button Content="Change name" Margin="0,0,0,10" Style="{StaticResource MetroFlatButton}"></Button>
+            <Button Content="Add" Margin="0,0,0,10" Style="{StaticResource MetroFlatButton}" x:Name="ButtonAdd" Click="ButtonAdd_Click"></Button>
+            <Button Content="Remove" Margin="0,0,0,10" Style="{StaticResource MetroFlatButton}" x:Name="ButtonRemove" Click="ButtonRemove_Click"></Button>
+            <Button Content="Change name" Margin="0,0,0,10" Style="{StaticResource MetroFlatButton}" x:Name="ButtonRename" Click="ButtonRename_Click"></Button>
+            <Button Content="Close" Margin="0,0,0,10" Style="{StaticResource MetroFlatButton}" x:Name="ButtonClose" Click="ButtonClose_Click"></Button>
         </StackPanel>
         <DockPanel LastChildFill="True" DockPanel.Dock="Left">
             <ListView x:Name="ListViewUsers" ItemsSource="{Binding List}" SelectedItem="{Binding Selected}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
+                        <DockPanel LastChildFill="True">
                             <Image Source="{Binding Online,Converter={StaticResource myStatusConverter}}" MaxHeight="16" MaxWidth="16"></Image>
                             <Label Content="{Binding Id}"></Label>
-                            <Label Content="{Binding LocalName}"></Label>
-                        </StackPanel>
+                            <Label Content="{Binding LocalName}" HorizontalContentAlignment="Center"></Label>
+                        </DockPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.ItemContainerStyle>
@@ -36,4 +38,4 @@
             </ListView>
         </DockPanel>
     </DockPanel>
-</Window>
+</Controls:MetroWindow>

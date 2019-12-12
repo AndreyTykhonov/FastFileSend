@@ -44,16 +44,17 @@
           <Property Name="user_friendlyname" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="user_registerdate" Type="datetime" Nullable="false" />
           <Property Name="user_password" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="user_lastonline" Type="datetime" Nullable="false" />
         </EntityType>
         <Association Name="FK_transactions_files">
           <End Role="files" Type="Self.files" Multiplicity="1" />
-          <End Role="transactions" Type="Self.transactions" Multiplicity="0..1" />
+          <End Role="transactions" Type="Self.transactions" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="files">
               <PropertyRef Name="file_idx" />
             </Principal>
             <Dependent Role="transactions">
-              <PropertyRef Name="download_idx" />
+              <PropertyRef Name="file_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -71,13 +72,13 @@
         </Association>
         <Association Name="FK_transactions_users_sender">
           <End Role="users" Type="Self.users" Multiplicity="1" />
-          <End Role="transactions" Type="Self.transactions" Multiplicity="0..1" />
+          <End Role="transactions" Type="Self.transactions" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="users">
               <PropertyRef Name="user_idx" />
             </Principal>
             <Dependent Role="transactions">
-              <PropertyRef Name="download_idx" />
+              <PropertyRef Name="sender_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -114,6 +115,7 @@
           <Property Name="file_creationdate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="file_url" Type="String" MaxLength="100" FixedLength="true" Unicode="true" Nullable="false" />
           <NavigationProperty Name="transactions" Relationship="Self.FK_transactions_files" FromRole="files" ToRole="transactions" />
+          <NavigationProperty Name="transactions1" Relationship="fastfilesendModel.FK_transactions_files1" FromRole="files" ToRole="transactions" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -137,6 +139,8 @@
           <NavigationProperty Name="files" Relationship="Self.FK_transactions_files" FromRole="transactions" ToRole="files" />
           <NavigationProperty Name="users" Relationship="Self.FK_transactions_transactions_receiver" FromRole="transactions" ToRole="users" />
           <NavigationProperty Name="users1" Relationship="Self.FK_transactions_users_sender" FromRole="transactions" ToRole="users" />
+          <NavigationProperty Name="files1" Relationship="fastfilesendModel.FK_transactions_files1" FromRole="transactions" ToRole="files" />
+          <NavigationProperty Name="users11" Relationship="fastfilesendModel.FK_transactions_users_sender1" FromRole="transactions" ToRole="users" />
         </EntityType>
         <EntityType Name="users">
           <Key>
@@ -148,6 +152,8 @@
           <Property Name="user_password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="transactions" Relationship="Self.FK_transactions_transactions_receiver" FromRole="users" ToRole="transactions" />
           <NavigationProperty Name="transactions1" Relationship="Self.FK_transactions_users_sender" FromRole="users" ToRole="transactions" />
+          <Property Name="user_lastonline" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="transactions11" Relationship="fastfilesendModel.FK_transactions_users_sender1" FromRole="users" ToRole="transactions" />
         </EntityType>
         <Association Name="FK_transactions_files">
           <End Role="files" Type="Self.files" Multiplicity="1" />
@@ -202,7 +208,39 @@
             <End Role="users" EntitySet="users" />
             <End Role="transactions" EntitySet="transactions" />
           </AssociationSet>
+          <AssociationSet Name="FK_transactions_files1" Association="fastfilesendModel.FK_transactions_files1">
+            <End Role="files" EntitySet="files" />
+            <End Role="transactions" EntitySet="transactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_transactions_users_sender1" Association="fastfilesendModel.FK_transactions_users_sender1">
+            <End Role="users" EntitySet="users" />
+            <End Role="transactions" EntitySet="transactions" />
+          </AssociationSet>
         </EntityContainer>
+        <Association Name="FK_transactions_files1">
+          <End Type="fastfilesendModel.files" Role="files" Multiplicity="1" />
+          <End Type="fastfilesendModel.transactions" Role="transactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="files">
+              <PropertyRef Name="file_idx" />
+            </Principal>
+            <Dependent Role="transactions">
+              <PropertyRef Name="file_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_transactions_users_sender1">
+          <End Type="fastfilesendModel.users" Role="users" Multiplicity="1" />
+          <End Type="fastfilesendModel.transactions" Role="transactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="users">
+              <PropertyRef Name="user_idx" />
+            </Principal>
+            <Dependent Role="transactions">
+              <PropertyRef Name="sender_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -246,6 +284,7 @@
           <EntitySetMapping Name="users">
             <EntityTypeMapping TypeName="fastfilesendModel.users">
               <MappingFragment StoreEntitySet="users">
+                <ScalarProperty Name="user_lastonline" ColumnName="user_lastonline" />
                 <ScalarProperty Name="user_idx" ColumnName="user_idx" />
                 <ScalarProperty Name="user_friendlyname" ColumnName="user_friendlyname" />
                 <ScalarProperty Name="user_registerdate" ColumnName="user_registerdate" />

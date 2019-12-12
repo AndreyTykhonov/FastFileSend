@@ -46,5 +46,17 @@ namespace FastFileSend.WPF.Properties {
                 this["password"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string users {
+            get {
+                return ((string)(this["users"]));
+            }
+            set {
+                this["users"] = value;
+            }
+        }
     }
 }

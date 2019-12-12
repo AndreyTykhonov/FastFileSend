@@ -1,4 +1,5 @@
 ﻿using FastFileSend.UI;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +19,15 @@ namespace FastFileSend.WPF
     /// <summary>
     /// Interaction logic for UsersWindow.xaml
     /// </summary>
-    public partial class UsersWindow : Window
+    public partial class UsersWindow : MetroWindow
     {
+        UserViewModel UserViewModel { get; set; }
+
         public UsersWindow(UserViewModel userViewModel)
         {
             InitializeComponent();
+
+            UserViewModel = userViewModel;
 
             ListViewUsers.SelectedItem = null;
             ListViewUsers.DataContext = userViewModel;
@@ -36,6 +41,42 @@ namespace FastFileSend.WPF
                 ListViewUsers.SelectedItem = listViewItem.Content;
                 Close();
             }
+        }
+
+        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            UserModel newUser = new UserModel();
+            UserAddWindow userAddWindow = new UserAddWindow(newUser);
+            userAddWindow.ShowDialog();
+
+            if (UserViewModel.List.Any(x => x.Id == newUser.Id))
+            {
+                return;
+            }
+
+            UserViewModel.List.Add(newUser);
+        }
+
+        private void ButtonRemove_Click(object sender, RoutedEventArgs e)
+        {
+            if (UserViewModel.Selected == null)
+            {
+                return;
+            }
+
+            UserViewModel.List.Remove(UserViewModel.Selected);
+        }
+
+        private void ButtonRename_Click(object sender, RoutedEventArgs e)
+        {
+            UserAddWindow userAddWindow = new UserAddWindow(UserViewModel.Selected);
+            userAddWindow.ShowDialog();
+        }
+
+        private void ButtonClose_Click(object sender, RoutedEventArgs e)
+        {
+            ListViewUsers.SelectedItem = null;
+            Close();
         }
     }
 }

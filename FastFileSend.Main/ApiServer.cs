@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace FastFileSend.Main
 {
@@ -16,6 +17,8 @@ namespace FastFileSend.Main
 
         private static HttpClient HttpClient { get; } = new HttpClient();
         readonly static string ServerHost = "https://localhost:44350/api/";
+
+        Timer TimerHeartbeat { get; set; }
 
         public static async Task<ApiServer> CreateNewAccount()
         {
@@ -34,11 +37,33 @@ namespace FastFileSend.Main
             Id = id;
             Password = password;
             FriendlyName = id.ToString();
+
+            TimerHeartbeat = new Timer(15000);
+            TimerHeartbeat.Elapsed += TimerHeartbeat_Elapsed;
+            TimerHeartbeat.Start();
+
+            TimerHeartbeat_Elapsed(this, null);
+        }
+
+        private async void TimerHeartbeat_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            await NotifyOnline();
         }
 
         public async Task NotifyDownloadedAsync(FileItem file)
         {
             await HttpClient.GetAsync(ServerHost + $"downloaded?file={file.Id}");
+        }
+
+        public async Task NotifyOnline()
+        {
+            await HttpClient.GetAsync(ServerHost + $"online?id={Id}");
+        }
+
+        public async Task<DateTime> GetLastOnline(int id)
+        {
+            string json = await HttpClient.GetStringAsync(ServerHost + $"lastonline?id={id}");
+            return JsonConvert.DeserializeObject<DateTime>(json);
         }
 
         public async Task<List<HistoryItem>> GetHistory()

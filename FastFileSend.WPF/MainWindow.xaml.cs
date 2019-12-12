@@ -25,6 +25,7 @@ namespace FastFileSend.WPF
     public partial class MainWindow : MetroWindow
     {
         HistoryViewModel HistoryViewModel { get; set; }
+        UserViewModel UserViewModel { get; set; }
         ApiServer ApiServer { get; set; }
 
         public MainWindow()
@@ -56,16 +57,17 @@ namespace FastFileSend.WPF
 
             TextBlockId.Text = ApiServer.Id.ToString();
 
+            UserViewModel = new UserViewModel(ApiServer);
+
             IsEnabled = true;
         }
 
         UserModel SelectUser()
         {
-            UserViewModel userViewModel = new UserViewModel();
-            UsersWindow usersWindow = new UsersWindow(userViewModel);
+            UsersWindow usersWindow = new UsersWindow(UserViewModel);
             usersWindow.ShowDialog();
 
-            return userViewModel.Selected;
+            return UserViewModel.Selected;
         }
 
         private async void ButtonSend_Click(object sender, RoutedEventArgs e)
