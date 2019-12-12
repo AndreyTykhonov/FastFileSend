@@ -26,6 +26,7 @@ namespace FastFileSend.Web.Models
         }
     
         public virtual DbSet<files> files { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<transactions> transactions { get; set; }
         public virtual DbSet<users> users { get; set; }
     }

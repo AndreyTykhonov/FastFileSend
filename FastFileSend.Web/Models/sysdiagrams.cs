@@ -12,16 +12,12 @@ namespace FastFileSend.Web.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class transactions
+    public partial class sysdiagrams
     {
-        public int download_idx { get; set; }
-        public int receiver_id { get; set; }
-        public int sender_id { get; set; }
-        public int file_id { get; set; }
-        public int status { get; set; }
-    
-        public virtual files files { get; set; }
-        public virtual users users { get; set; }
-        public virtual users users1 { get; set; }
+        public string name { get; set; }
+        public int principal_id { get; set; }
+        public int diagram_id { get; set; }
+        public Nullable<int> version { get; set; }
+        public byte[] definition { get; set; }
     }
 }

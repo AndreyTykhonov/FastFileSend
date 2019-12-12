@@ -16,9 +16,11 @@ namespace FastFileSend.Web.Models
     {
         public int file_idx { get; set; }
         public string file_name { get; set; }
-        public int file_size { get; set; }
+        public long file_size { get; set; }
         public int file_crc32 { get; set; }
         public System.DateTime file_creationdate { get; set; }
         public string file_url { get; set; }
+    
+        public virtual transactions transactions { get; set; }
     }
 }

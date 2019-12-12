@@ -52,8 +52,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileUploadTest.cs" />
+    <Compile Include="FileUploadTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ApiServerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

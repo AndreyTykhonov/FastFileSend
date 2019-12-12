@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace FastFileSend.Tests
 {
     [TestClass]
-    public class FileUploadTest
+    public class FileUploadTests
     {
         [TestMethod]
         public async Task TestFexUpload()

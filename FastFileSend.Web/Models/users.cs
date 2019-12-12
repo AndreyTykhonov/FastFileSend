@@ -14,8 +14,19 @@ namespace FastFileSend.Web.Models
     
     public partial class users
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public users()
+        {
+            this.transactions = new HashSet<transactions>();
+        }
+    
         public int user_idx { get; set; }
         public string user_friendlyname { get; set; }
         public System.DateTime user_registerdate { get; set; }
+        public string user_password { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<transactions> transactions { get; set; }
+        public virtual transactions transactions1 { get; set; }
     }
 }

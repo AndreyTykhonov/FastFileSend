@@ -121,59 +121,67 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\usersController.cs" />
+    <Compile Include="Controllers\DownloadedController.cs" />
+    <Compile Include="Controllers\HistoryController.cs" />
+    <Compile Include="Controllers\RegisterController.cs" />
+    <Compile Include="Controllers\Security.cs" />
+    <Compile Include="Controllers\SendController.cs" />
+    <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\FastFileSendModel.Context.cs">
+    <Compile Include="Models\fastfilesend.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>FastFileSendModel.Context.tt</DependentUpon>
+      <DependentUpon>fastfilesend.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\FastFileSendModel.cs">
+    <Compile Include="Models\fastfilesend.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>FastFileSendModel.tt</DependentUpon>
+      <DependentUpon>fastfilesend.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\FastFileSendModel.Designer.cs">
+    <Compile Include="Models\fastfilesend.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>FastFileSendModel.edmx</DependentUpon>
+      <DependentUpon>fastfilesend.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\files.cs">
-      <DependentUpon>FastFileSendModel.tt</DependentUpon>
+      <DependentUpon>fastfilesend.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sysdiagrams.cs">
+      <DependentUpon>fastfilesend.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\transactions.cs">
-      <DependentUpon>FastFileSendModel.tt</DependentUpon>
+      <DependentUpon>fastfilesend.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\users.cs">
-      <DependentUpon>FastFileSendModel.tt</DependentUpon>
+      <DependentUpon>fastfilesend.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <EntityDeploy Include="Models\FastFileSendModel.edmx">
+    <EntityDeploy Include="Models\fastfilesend.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>FastFileSendModel.Designer.cs</LastGenOutput>
+      <LastGenOutput>fastfilesend.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="Models\FastFileSendModel.edmx.diagram">
-      <DependentUpon>FastFileSendModel.edmx</DependentUpon>
+    <Content Include="Models\fastfilesend.edmx.diagram">
+      <DependentUpon>fastfilesend.edmx</DependentUpon>
     </Content>
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
-    <Content Include="Models\FastFileSendModel.Context.tt">
+    <Content Include="Models\fastfilesend.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>FastFileSendModel.Context.cs</LastGenOutput>
-      <DependentUpon>FastFileSendModel.edmx</DependentUpon>
+      <DependentUpon>fastfilesend.edmx</DependentUpon>
+      <LastGenOutput>fastfilesend.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\FastFileSendModel.tt">
+    <Content Include="Models\fastfilesend.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>FastFileSendModel.edmx</DependentUpon>
-      <LastGenOutput>FastFileSendModel.cs</LastGenOutput>
+      <DependentUpon>fastfilesend.edmx</DependentUpon>
+      <LastGenOutput>fastfilesend.cs</LastGenOutput>
     </Content>
     <Content Include="Web.config" />
     <None Include="Web.Debug.config">
@@ -191,6 +199,12 @@
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FastFileSend.Main\FastFileSend.Main.csproj">
+      <Project>{43C92482-7A7B-41AB-9414-E950D814ECDD}</Project>
+      <Name>FastFileSend.Main</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
