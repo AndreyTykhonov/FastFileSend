@@ -19,7 +19,7 @@ namespace FastFileSend.UI
             set { progress = value; OnPropertyChanged(); }
         }
 
-        public string Status
+        public string StatusText
         {
             get { return status;  }
             set { status = value; OnPropertyChanged(); }
@@ -31,13 +31,14 @@ namespace FastFileSend.UI
             set { eta = value; OnPropertyChanged(); }
         }
 
+        public int Sender { get; set; }
+        public int Receiver { get; set; }
+
         public int Id { get; set; }
         
         public long Size { get; set; }
 
         public string Name { get; set; }
-
-        public int UploadId { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

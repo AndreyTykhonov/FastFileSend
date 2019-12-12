@@ -22,9 +22,10 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <DockPanel LastChildFill="True">
-                                    <Label Content="{Binding Id}"></Label>
+                                    <Label Content="{Binding Sender}"></Label>
+                                    <Label Content="{Binding Receiver}"></Label>
                                     <Label Content="{Binding Size}"></Label>
-                                    <Label Content="{Binding Status}"></Label>
+                                    <Label Content="{Binding StatusText}"></Label>
                                     <Label Content="{Binding ETA}"></Label>
                                     <ProgressBar Value="{Binding Progress}" Margin="5"></ProgressBar>
                                 </DockPanel>

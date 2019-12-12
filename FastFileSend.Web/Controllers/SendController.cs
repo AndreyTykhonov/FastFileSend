@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Results;
 
 namespace FastFileSend.Web.Controllers
 {
@@ -12,7 +13,7 @@ namespace FastFileSend.Web.Controllers
     {
         private fastfilesendEntities db = new fastfilesendEntities();
 
-        public void Get(int id, string password, int target, int file)
+        public JsonResult<int> Get(int id, string password, int target, int file)
         {
             if (!Security.PasswordValid(id, password))
             {
@@ -30,6 +31,8 @@ namespace FastFileSend.Web.Controllers
 
             db.transactions.Add(newSend);
             db.SaveChanges();
+
+            return Json(newSend.download_idx);
         }
 
         private int FindEmptpyId()

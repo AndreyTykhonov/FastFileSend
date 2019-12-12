@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using FastFileSend.UI;
 using FastFileSend.Main;
+using System.IO;
 
 namespace FastFileSend.WPF
 {
@@ -31,9 +32,6 @@ namespace FastFileSend.WPF
         public MainWindow()
         {
             InitializeComponent();
-
-            HistoryViewModel = new HistoryViewModel();
-            ListViewHistory.DataContext = HistoryViewModel;
 
             IsEnabled = false;
 
@@ -57,6 +55,10 @@ namespace FastFileSend.WPF
 
             TextBlockId.Text = ApiServer.Id.ToString();
 
+
+            HistoryViewModel = new HistoryViewModel(ApiServer);
+            ListViewHistory.DataContext = HistoryViewModel;
+
             UserViewModel = new UserViewModel(ApiServer);
 
             IsEnabled = true;
@@ -79,15 +81,21 @@ namespace FastFileSend.WPF
                 return;
             }
 
+            await SendFile(target, @"C:\Users\KoBRa\Downloads\MahApps.Metro.Demo-v1.6.5-rc0001.zip");
+        }
+
+        private async Task SendFile(UserModel target, string path)
+        {
             HistoryModel downloadModel = new HistoryModel
             {
-                Name = "FirstTest",
-                Status = "Time to get serious",
-                ETA = "beskonechnost",
-                Id = target.Id
+                Name = System.IO.Path.GetFileName(path),
+                StatusText = "Uploading file",
+                ETA = "",
+                Receiver = target.Id,
+                Sender = ApiServer.Id
             };
 
-            HistoryViewModel.List.Add(downloadModel);
+            HistoryViewModel.List.Insert(0, downloadModel);
 
             IFileUploader fileUploader = new DummyFileUploader();
             fileUploader.OnProgress += (double progress, double speed) =>
@@ -99,12 +107,18 @@ namespace FastFileSend.WPF
             fileUploader.OnEnd += () =>
             {
                 downloadModel.Progress = 100;
-                downloadModel.Status = "FINISHED";
-
+                downloadModel.StatusText = "Using API";
             };
 
-            CloudFile cloudFile = await fileUploader.UploadAsync(@"C:\Users\KoBRa\Downloads\MahApps.Metro.Demo-v1.6.5-rc0001.zip");
-            Clipboard.SetText(cloudFile.Url);
+            CloudFile cloudFile = await fileUploader.UploadAsync(path);
+
+            cloudFile = new CloudFile(0, "debug.zip", 0, DateTime.Now, "https://cdn.shazoo.ru/393609_KPsmQaHsNk_382993_uuwtofdnti_fb6f81c359f7cd.jpg");
+
+            FileItem uploadedFile = await ApiServer.Upload(cloudFile);
+            int download_index = await ApiServer.Send(uploadedFile, target.Id);
+            downloadModel.Id = download_index;
+
+            downloadModel.StatusText = "Awaiting remote download";
         }
 
         private void ButtonClose_Click(object sender, RoutedEventArgs e)

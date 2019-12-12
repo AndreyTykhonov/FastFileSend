@@ -74,15 +74,19 @@ namespace FastFileSend.Main
 
         public async Task<FileItem> Upload(CloudFile cloudFile)
         {
-            string fileIdStr = await HttpClient.GetStringAsync(ServerHost + $"upload?name={cloudFile.FileName}&size={cloudFile.Size}&crc32={cloudFile.CRC32}&creationDate={cloudFile.CreationDate}&url={cloudFile.Url}");
+            string url = ServerHost + $"upload?name={cloudFile.FileName}&size={cloudFile.Size}&crc32={cloudFile.CRC32}&url={cloudFile.Url}";
+            Uri targetUri = new Uri(url);
+
+            string fileIdStr = await HttpClient.GetStringAsync(targetUri);
             int fileId = Convert.ToInt32(fileIdStr);
 
             return CloudFileToFileItem(cloudFile, fileId);
         }
 
-        public async Task Send(FileItem fileItem, int targetId)
+        public async Task<int> Send(FileItem fileItem, int targetId)
         {
-            await HttpClient.GetStringAsync(ServerHost + $"send?id={Id}&password={Password}&target={targetId}&file={fileItem.Id}");
+            string json = await HttpClient.GetStringAsync(ServerHost + $"send?id={Id}&password={Password}&target={targetId}&file={fileItem.Id}");
+            return JsonConvert.DeserializeObject<int>(json);
         }
 
         private static FileItem CloudFileToFileItem(CloudFile cloudFile, int fileId)
