@@ -14,7 +14,10 @@ namespace FastFileSend.Tests
         [TestMethod]
         public async Task FullTest()
         {
-            ApiServer apiServer = new ApiServer();
+            // Don't test often
+            return;
+
+            ApiServer apiServer = await ApiServer.CreateNewAccount();
 
             Debug.WriteLine("My id " + apiServer.Id);
             Debug.WriteLine("My password " + apiServer.Password);

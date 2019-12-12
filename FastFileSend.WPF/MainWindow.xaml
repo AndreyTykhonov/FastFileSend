@@ -6,29 +6,34 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FastFileSend.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+        Title="Fast File Send" Height="450" Width="800" WindowStartupLocation="CenterScreen">
 
     <StackPanel>
         <TabControl Margin="10">
             <TabItem Header="Downloads">
-                <ListView x:Name="ListViewHistory" HorizontalContentAlignment="Stretch" ItemsSource="{Binding DownloadList}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <DockPanel LastChildFill="True">
-                                <Label Content="{Binding Id}"></Label>
-                                <Label Content="{Binding Size}"></Label>
-                                <Label Content="{Binding Status}"></Label>
-                                <Label Content="{Binding ETA}"></Label>
-                                <ProgressBar Value="{Binding Progress}" Margin="5"></ProgressBar>
-                            </DockPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                <DockPanel LastChildFill="true">
+                    <Button x:Name="ButtonSend" Content="Send file" Click="ButtonSend_Click" DockPanel.Dock="Top"/>
+                    <ListView x:Name="ListViewHistory" HorizontalContentAlignment="Stretch" ItemsSource="{Binding List}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel LastChildFill="True">
+                                    <Label Content="{Binding Id}"></Label>
+                                    <Label Content="{Binding Size}"></Label>
+                                    <Label Content="{Binding Status}"></Label>
+                                    <Label Content="{Binding ETA}"></Label>
+                                    <ProgressBar Value="{Binding Progress}" Margin="5"></ProgressBar>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </DockPanel>
             </TabItem>
-            <TabItem Header="">
-                <Grid Background="#FFE5E5E5"/>
+            <TabItem Header="My Profile">
+                <WrapPanel Orientation="Vertical">
+                    <Label Content="My Id:"/>
+                    <TextBox x:Name="TextBlockId" IsReadOnly="True"></TextBox>
+                </WrapPanel>
             </TabItem>
         </TabControl>
-        <Button x:Name="ButtonFakeDownload" Content="Button" Click="ButtonFakeDownload_Click"/>
-    </StackPanel>
+        </StackPanel>
 </Controls:MetroWindow>

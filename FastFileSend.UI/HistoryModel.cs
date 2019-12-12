@@ -6,7 +6,7 @@ using System.Text;
 
 namespace FastFileSend.UI
 {
-    public class DownloadModel : INotifyPropertyChanged
+    public class HistoryModel : INotifyPropertyChanged
     {
         private double progress;
         private string status;
@@ -16,19 +16,19 @@ namespace FastFileSend.UI
         public double Progress
         {
             get { return progress; }
-            set { OnPropertyChanged(); progress = value; }
+            set { progress = value; OnPropertyChanged(); }
         }
 
         public string Status
         {
             get { return status;  }
-            set { OnPropertyChanged(); status = value; }
+            set { status = value; OnPropertyChanged(); }
         }
 
         public string ETA
         {
             get { return eta; }
-            set { OnPropertyChanged(); eta = value; }
+            set { eta = value; OnPropertyChanged(); }
         }
 
         public int Id { get; set; }
@@ -36,6 +36,8 @@ namespace FastFileSend.UI
         public long Size { get; set; }
 
         public string Name { get; set; }
+
+        public int UploadId { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

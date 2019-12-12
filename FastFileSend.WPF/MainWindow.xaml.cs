@@ -24,19 +24,57 @@ namespace FastFileSend.WPF
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        DownloadViewModel DownloadViewModel { get; set; }
+        HistoryViewModel HistoryViewModel { get; set; }
+        ApiServer ApiServer { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
 
-            DownloadViewModel = new DownloadViewModel();
-            ListViewHistory.DataContext = DownloadViewModel;
+            HistoryViewModel = new HistoryViewModel();
+            ListViewHistory.DataContext = HistoryViewModel;
+
+            IsEnabled = false;
+
+            AuthUser();
         }
 
-        private async void ButtonFakeDownload_Click(object sender, RoutedEventArgs e)
+        private async Task AuthUser()
         {
-            DownloadModel downloadModel = new DownloadModel
+            if (string.IsNullOrEmpty(Properties.Settings.Default.password))
+            {
+                ApiServer = await ApiServer.CreateNewAccount();
+
+                Properties.Settings.Default.id = ApiServer.Id;
+                Properties.Settings.Default.password = ApiServer.Password;
+                Properties.Settings.Default.Save();
+            }
+            else
+            {
+                ApiServer = new ApiServer(Properties.Settings.Default.id, Properties.Settings.Default.password);
+            }
+
+            TextBlockId.Text = ApiServer.Id.ToString();
+
+            IsEnabled = true;
+        }
+
+        UserModel SelectUser()
+        {
+            UserViewModel userViewModel = new UserViewModel();
+            UsersWindow usersWindow = new UsersWindow(userViewModel);
+            usersWindow.ShowDialog();
+
+            return userViewModel.Selected;
+        }
+
+        private async void ButtonSend_Click(object sender, RoutedEventArgs e)
+        {
+            SelectUser();
+
+            return;
+
+            HistoryModel downloadModel = new HistoryModel
             {
                 Name = "FirstTest",
                 Status = "Time to get serious",
@@ -44,7 +82,7 @@ namespace FastFileSend.WPF
                 Id = 1337
             };
 
-            DownloadViewModel.DownloadList.Add(downloadModel);
+            HistoryViewModel.List.Add(downloadModel);
 
             IFileUploader fileUploader = new DummyFileUploader();
             fileUploader.OnProgress += (double progress, double speed) =>
@@ -57,7 +95,7 @@ namespace FastFileSend.WPF
             {
                 downloadModel.Progress = 100;
                 downloadModel.Status = "FINISHED";
-                
+
             };
 
             CloudFile cloudFile = await fileUploader.UploadAsync(@"C:\Users\KoBRa\Downloads\MahApps.Metro.Demo-v1.6.5-rc0001.zip");

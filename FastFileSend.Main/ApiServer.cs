@@ -14,22 +14,26 @@ namespace FastFileSend.Main
         public string Password { get; set; }
         public string FriendlyName { get; set; }
 
-        private HttpClient HttpClient { get; } = new HttpClient();
-        readonly string ServerHost = "https://localhost:44350/api/";
+        private static HttpClient HttpClient { get; } = new HttpClient();
+        readonly static string ServerHost = "https://localhost:44350/api/";
 
-        public ApiServer()
-        {
-            RegisterAsync().Wait();
-        }
-
-        async Task RegisterAsync()
+        public static async Task<ApiServer> CreateNewAccount()
         {
             string registerJson = await HttpClient.GetStringAsync(ServerHost + "register");
             JObject jObject = JObject.Parse(registerJson);
 
-            Id = (int)jObject["user_idx"];
-            Password = (string)jObject["user_password"];
-            FriendlyName = (string)jObject["user_friendlyname"];
+            int Id = (int)jObject["user_idx"];
+            string Password = (string)jObject["user_password"];
+            string FriendlyName = (string)jObject["user_friendlyname"];
+
+            return new ApiServer(Id, Password);
+        }
+
+        public ApiServer(int id, string password)
+        {
+            Id = id;
+            Password = password;
+            FriendlyName = id.ToString();
         }
 
         public async Task NotifyDownloadedAsync(FileItem file)
