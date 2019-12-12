@@ -11,23 +11,29 @@
     <Window.Resources>
         <ui:UserOnlineImageConverter x:Key="myStatusConverter" />
     </Window.Resources>
-    
-    <DockPanel LastChildFill="True">
-        <ListView x:Name="ListViewUsers" ItemsSource="{Binding List}" SelectedItem="{Binding Selected}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding Online,Converter={StaticResource myStatusConverter}}" MaxHeight="32" MaxWidth="32"></Image>
-                        <Label Content="{Binding Id}"></Label>
-                        <Label Content="{Binding LocalName}"></Label>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
+    <DockPanel LastChildFill="True" Margin="10">
+        <StackPanel Orientation="Vertical" Margin="10">
+            <Button Content="Add" Margin="0,0,0,10" Style="{StaticResource MetroFlatButton}"></Button>
+            <Button Content="Remove" Margin="0,0,0,10" Style="{StaticResource MetroFlatButton}"></Button>
+            <Button Content="Change name" Margin="0,0,0,10" Style="{StaticResource MetroFlatButton}"></Button>
+        </StackPanel>
+        <DockPanel LastChildFill="True" DockPanel.Dock="Left">
+            <ListView x:Name="ListViewUsers" ItemsSource="{Binding List}" SelectedItem="{Binding Selected}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding Online,Converter={StaticResource myStatusConverter}}" MaxHeight="16" MaxWidth="16"></Image>
+                            <Label Content="{Binding Id}"></Label>
+                            <Label Content="{Binding LocalName}"></Label>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </DockPanel>
     </DockPanel>
 </Window>

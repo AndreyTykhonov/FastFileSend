@@ -12,8 +12,13 @@
         <TabControl Margin="10">
             <TabItem Header="Downloads">
                 <DockPanel LastChildFill="true">
-                    <Button x:Name="ButtonSend" Content="Send file" Click="ButtonSend_Click" DockPanel.Dock="Top"/>
-                    <ListView x:Name="ListViewHistory" HorizontalContentAlignment="Stretch" ItemsSource="{Binding List}">
+                    <StackPanel Margin="5">
+                        <Label Content="Your id:" HorizontalContentAlignment="Center"/>
+                        <TextBox x:Name="TextBlockId" IsReadOnly="True" Margin="0,0,0,10" HorizontalContentAlignment="Center"></TextBox>
+                        <Button x:Name="ButtonSend" Content="Send file" Click="ButtonSend_Click" DockPanel.Dock="Left" Style="{StaticResource MetroFlatButton}" Margin="0,0,0,10"/>
+                        <Button x:Name="ButtonClose" Content="Close" Click="ButtonClose_Click"  DockPanel.Dock="Left" Style="{StaticResource MetroFlatButton}" Margin="0,0,0,10"/>
+                    </StackPanel>
+                     <ListView x:Name="ListViewHistory" HorizontalContentAlignment="Stretch" ItemsSource="{Binding List}" DockPanel.Dock="Left">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <DockPanel LastChildFill="True">
@@ -28,11 +33,8 @@
                     </ListView>
                 </DockPanel>
             </TabItem>
-            <TabItem Header="My Profile">
-                <WrapPanel Orientation="Vertical">
-                    <Label Content="My Id:"/>
-                    <TextBox x:Name="TextBlockId" IsReadOnly="True"></TextBox>
-                </WrapPanel>
+            <TabItem Header="">
+
             </TabItem>
         </TabControl>
         </StackPanel>

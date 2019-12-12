@@ -70,16 +70,19 @@ namespace FastFileSend.WPF
 
         private async void ButtonSend_Click(object sender, RoutedEventArgs e)
         {
-            SelectUser();
+            UserModel target = SelectUser();
 
-            return;
+            if (target == null)
+            {
+                return;
+            }
 
             HistoryModel downloadModel = new HistoryModel
             {
                 Name = "FirstTest",
                 Status = "Time to get serious",
                 ETA = "beskonechnost",
-                Id = 1337
+                Id = target.Id
             };
 
             HistoryViewModel.List.Add(downloadModel);
@@ -100,6 +103,11 @@ namespace FastFileSend.WPF
 
             CloudFile cloudFile = await fileUploader.UploadAsync(@"C:\Users\KoBRa\Downloads\MahApps.Metro.Demo-v1.6.5-rc0001.zip");
             Clipboard.SetText(cloudFile.Url);
+        }
+
+        private void ButtonClose_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }
