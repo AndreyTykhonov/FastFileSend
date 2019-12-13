@@ -27,158 +27,19 @@ namespace FastFileSend.WPF
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        HistoryViewModel HistoryViewModel { get; set; }
-        UserViewModel UserViewModel { get; set; }
-        ApiServer ApiServer { get; set; }
+        FastFileSendProgramWindows FastFileSendProgramWindows { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
 
             IsEnabled = false;
-
-            AuthUser();
         }
 
-        private async Task AuthUser()
-        {
-            if (string.IsNullOrEmpty(Properties.Settings.Default.password))
-            {
-                ApiServer = await ApiServer.CreateNewAccount();
-
-                Properties.Settings.Default.id = ApiServer.Id;
-                Properties.Settings.Default.password = ApiServer.Password;
-                Properties.Settings.Default.Save();
-            }
-            else
-            {
-                ApiServer = new ApiServer(Properties.Settings.Default.id, Properties.Settings.Default.password);
-            }
-
-            TextBlockId.Text = ApiServer.Id.ToString();
-
-
-            HistoryViewModel = new HistoryViewModel(ApiServer);
-            ListViewHistory.DataContext = HistoryViewModel;
-
-            UserViewModel = new UserViewModel(ApiServer);
-
-            HistoryViewModel.List.CollectionChanged += List_CollectionChanged;
-
-            IsEnabled = true;
-        }
-
-        private async void List_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems == null)
-            {
-                return;
-            }
-
-            HistoryModel model = (HistoryModel)e.NewItems[0];
-
-            if (model.Fake)
-            {
-                return;
-            }
-
-            if (model.Status == 1)
-            {
-                return;
-            }
-
-            if (model.Receiver != ApiServer.Id)
-            {
-                return;
-            }
-
-            FileDownloader fileDownloader = new FileDownloader();
-
-            FileItem fileItem = new FileItem()
-            {
-                Name = model.Name,
-                Url = model.Url
-            };
-
-            model.StatusText = "Downloading";
-
-            fileDownloader.OnProgress += (double progress, double speed) =>
-            {
-                model.Progress = progress;
-                model.ETA = speed.ToString("0.00 MB/s");
-            };
-
-            await fileDownloader.DownloadAsync(fileItem);
-
-            model.StatusText = "OK";
-            model.ETA = "";
-            ApiServer.NotifyDownloadedAsync(model.Id);
-        }
-
-        UserModel SelectUser()
-        {
-            UsersWindow usersWindow = new UsersWindow(UserViewModel);
-            usersWindow.ShowDialog();
-
-            return UserViewModel.Selected;
-        }
 
         private async void ButtonSend_Click(object sender, RoutedEventArgs e)
         {
-            UserModel target = SelectUser();
-
-            if (target == null)
-            {
-                return;
-            }
-
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-
-            if (!(bool)openFileDialog.ShowDialog())
-            {
-                return;
-            }
-
-            await SendFile(target, openFileDialog.FileName);
-        }
-
-        private async Task SendFile(UserModel target, string path)
-        {
-            FileStream fs = new FileStream(path, FileMode.Open);
-            HistoryModel downloadModel = new HistoryModel
-            {
-                Name = System.IO.Path.GetFileName(path),
-                StatusText = "Uploading file",
-                ETA = "",
-                Receiver = target.Id,
-                Sender = ApiServer.Id,
-                Fake = true,
-                Size = fs.Length,
-            };
-            fs.Close();
-
-            HistoryViewModel.List.Insert(0, downloadModel);
-
-            //IFileUploader fileUploader = new DummyFileUploader();
-            IFileUploader fileUploader = new FexFileUploader();
-            fileUploader.OnProgress += (double progress, double speed) =>
-            {
-                downloadModel.Progress = progress;
-                downloadModel.ETA = speed.ToString("0.00 MB/s");
-            };
-
-            CloudFile cloudFile = await fileUploader.UploadAsync(path);
-
-            downloadModel.Progress = 100;
-            downloadModel.StatusText = "Using API";
-
-            //cloudFile = new CloudFile(0, "debug.zip", 0, DateTime.Now, "https://cdn.shazoo.ru/393609_KPsmQaHsNk_382993_uuwtofdnti_fb6f81c359f7cd.jpg");
-
-            FileItem uploadedFile = await ApiServer.Upload(cloudFile);
-            int download_index = await ApiServer.Send(uploadedFile, target.Id);
-            downloadModel.Id = download_index;
-
-            downloadModel.StatusText = "Awaiting remote download";
+            await FastFileSendProgramWindows.Send();
         }
 
         private void ButtonClose_Click(object sender, RoutedEventArgs e)
@@ -189,6 +50,22 @@ namespace FastFileSend.WPF
         private void ButtonDownloads_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(FilePathHelper.Downloads);
+        }
+
+        private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            FastFileSendProgramWindows = new FastFileSendProgramWindows();
+            await FastFileSendProgramWindows.Login(Properties.Settings.Default.id, Properties.Settings.Default.password);
+
+            Properties.Settings.Default.id = FastFileSendProgramWindows.ApiServer.Id;
+            Properties.Settings.Default.password = FastFileSendProgramWindows.ApiServer.Password;
+            Properties.Settings.Default.Save();
+
+            TextBlockId.Text = FastFileSendProgramWindows.ApiServer.Id.ToString();
+
+            ListViewHistory.DataContext = FastFileSendProgramWindows.HistoryViewModel;
+
+            IsEnabled = true;
         }
     }
 }

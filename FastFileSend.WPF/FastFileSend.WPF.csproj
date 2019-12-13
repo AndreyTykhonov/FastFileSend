@@ -59,6 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="FastFileSendProgramWindows.cs" />
     <Compile Include="UserAddWindow.xaml.cs">
       <DependentUpon>UserAddWindow.xaml</DependentUpon>
     </Compile>
@@ -116,6 +117,10 @@
     <ProjectReference Include="..\FastFileSend.Main\FastFileSend.Main.csproj">
       <Project>{43c92482-7a7b-41ab-9414-e950d814ecdd}</Project>
       <Name>FastFileSend.Main</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FastFileSend.Program\FastFileSend.Program.csproj">
+      <Project>{472D388C-EB61-49D3-A572-AF2BCB32EB16}</Project>
+      <Name>FastFileSend.Program</Name>
     </ProjectReference>
     <ProjectReference Include="..\FastFileSend.UI\FastFileSend.UI.csproj">
       <Project>{5b98ae55-ab52-41b5-b773-85726721b8b4}</Project>

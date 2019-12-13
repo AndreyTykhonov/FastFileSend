@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:FastFileSend.WPF"
         xmlns:ui="clr-namespace:FastFileSend.UI;assembly=FastFileSend.UI"
         mc:Ignorable="d"
-        Title="Fast File Send" Height="450" Width="800" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+        Title="Fast File Send" Height="450" Width="800" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded">
 
     <Window.Resources>
         <ui:SizeConverter x:Key="mySizeConverter" />
