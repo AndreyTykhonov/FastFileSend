@@ -16,7 +16,8 @@ namespace FastFileSend.Main
         public string Password { get; set; }
         public string FriendlyName { get; set; }
 
-        readonly static string ServerHost = "http://91.123.153.211:8080/api/";
+        //readonly static string ServerHost = "http://91.123.153.211:8080/api/";
+        readonly static string ServerHost = "http://fastfilesend.somee.com/api/";
 
         Timer TimerHeartbeat { get; set; }
 

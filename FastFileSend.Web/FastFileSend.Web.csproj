@@ -185,6 +185,7 @@
       <LastGenOutput>fastfilesend.cs</LastGenOutput>
     </Content>
     <Content Include="Web.config" />
+    <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
