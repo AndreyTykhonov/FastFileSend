@@ -3,13 +3,49 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:fastfilesend="clr-namespace:FastFileSend"
              mc:Ignorable="d"
              x:Class="FastFileSend.Views.UserSelectPage">
+
+    <ContentPage.Resources>
+        <fastfilesend:UserOnlineImageConverter x:Key="myStatusConverter" />
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add" Clicked="ToolbarItemAdd_Clicked" />
+        <ToolbarItem Text="Select" Clicked="ToolbarItemSelect_Clicked"/>
+    </ContentPage.ToolbarItems>
+
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+            <ListView x:Name="ListViewUsers" ItemsSource="{Binding List}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.ContextActions>
+                                <MenuItem Clicked="MenuItemEdit_Clicked"
+                                      CommandParameter="{Binding .}"
+                                      Text="Edit" />
+                                <MenuItem Clicked="MenuItemRemove_Clicked"
+                                      CommandParameter="{Binding .}"
+                                      Text="Delete" IsDestructive="True" />
+                            </ViewCell.ContextActions>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackLayout Orientation="Horizontal" Margin="10">
+                                    <Image Source="{Binding Online,Converter={StaticResource myStatusConverter}}" VerticalOptions="Center"></Image>
+                                    <Label Text="{Binding Id}" VerticalOptions="Center"></Label>
+                                    <Label Text="{Binding LocalName}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"></Label>
+                                </StackLayout>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -77,7 +77,6 @@
     <AndroidResource Include="Resources\values\styles.xml" />
     <AndroidResource Include="Resources\values\colors.xml" />
     <AndroidResource Include="Resources\mipmap\icon.png" />
-    <AndroidResource Include="Resources\mipmap\launcher_foreground.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FastFileSend\FastFileSend.csproj">

@@ -23,6 +23,7 @@ namespace FastFileSend.Views
             MasterBehavior = MasterBehavior.Popover;
 
             MenuPages.Add((int)MenuItemType.Downloads, (NavigationPage)Detail);
+
         }
 
         public async Task NavigateFromMenu(int id)
@@ -37,10 +38,13 @@ namespace FastFileSend.Views
                     case (int)MenuItemType.About:
                         MenuPages.Add(id, new NavigationPage(new AboutPage()));
                         break;
-                    case (int)MenuItemType.Send:
-                        await Global.FastFileSendProgramXamarin.Send();
-                        break;
                 }
+            }
+
+            if (id == (int)MenuItemType.Send)
+            {
+                await Global.FastFileSendProgramXamarin.Send();
+                return;
             }
 
             var newPage = MenuPages[id];

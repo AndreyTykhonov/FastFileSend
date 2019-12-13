@@ -1,11 +1,14 @@
 ﻿using FastFileSend.Program;
 using FastFileSend.UI;
+using FastFileSend.Views;
 using Plugin.FilePicker;
 using Plugin.FilePicker.Abstractions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace FastFileSend
 {
@@ -24,9 +27,13 @@ namespace FastFileSend
             return fileData.FilePath;
         }
 
-        public override UserModel SelectUser()
+        public override async Task<UserModel> SelectUserAsync()
         {
-            return base.SelectUser();
+            TaskCompletionSource<UserModel> taskCompletionSource = new TaskCompletionSource<UserModel>();
+            UserSelectPage userSelectPage = new UserSelectPage(taskCompletionSource);
+            await Application.Current.MainPage.Navigation.PushModalAsync(new NavigationPage(userSelectPage) { Title = "Choose user" });
+
+            return await taskCompletionSource.Task;
         }
     }
 }

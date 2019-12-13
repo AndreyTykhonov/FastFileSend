@@ -79,7 +79,7 @@ namespace FastFileSend.Program
             await ApiServer.NotifyDownloadedAsync(model.Id);
         }
 
-        public virtual UserModel SelectUser()
+        public virtual async Task<UserModel> SelectUserAsync()
         {
             return new UserModel();
         }
@@ -91,7 +91,7 @@ namespace FastFileSend.Program
 
         public async Task Send()
         {
-            UserModel target = SelectUser();
+            UserModel target = await SelectUserAsync();
 
             if (target == null)
             {

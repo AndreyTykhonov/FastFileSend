@@ -18,7 +18,7 @@ namespace FastFileSend.WPF
             return (bool)openFileDialog.ShowDialog() ? openFileDialog.FileName : string.Empty;
         }
 
-        public override UserModel SelectUser()
+        public override async Task<UserModel> SelectUserAsync()
         {
             UsersWindow usersWindow = new UsersWindow(UserViewModel);
             usersWindow.ShowDialog();

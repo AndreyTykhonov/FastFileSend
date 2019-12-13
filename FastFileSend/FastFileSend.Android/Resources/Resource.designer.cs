@@ -6753,9 +6753,6 @@ namespace FastFileSend.Droid
 			// aapt resource value: 0x7F0C0000
 			public const int icon = 2131492864;
 			
-			// aapt resource value: 0x7F0C0001
-			public const int launcher_foreground = 2131492865;
-			
 			static Mipmap()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
