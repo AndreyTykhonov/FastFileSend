@@ -36,7 +36,7 @@
                                 <GridViewColumn Header="Progress">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <ProgressBar Value="{Binding Path=Progress}"/>
+                                            <ProgressBar Value="{Binding Path=Progress}" Maximum="1"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>

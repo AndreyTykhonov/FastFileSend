@@ -92,7 +92,7 @@ namespace FastFileSend.Main
         {
             long bytesDownloaded = value;
             double speedMb = bytesDownloaded / 1048576.0 / SpeedWatch.Elapsed.TotalSeconds;
-            OnProgress((double)bytesDownloaded / FileSize * 100, speedMb);
+            OnProgress((double)bytesDownloaded / FileSize, speedMb);
         }
 
         string FindEmptyPath(FileItem fileItem)
