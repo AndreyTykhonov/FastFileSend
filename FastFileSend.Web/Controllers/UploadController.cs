@@ -11,6 +11,8 @@ namespace FastFileSend.Web.Controllers
 {
     public class UploadController : ApiController
     {
+        private fastfilesendEntities db = new fastfilesendEntities();
+
         public JsonResult<int> Get(string name, long size, int crc32, string url)
         {
             int newId = FindEmptpyId();
@@ -25,8 +27,8 @@ namespace FastFileSend.Web.Controllers
                 file_url = url
             };
 
-            Connection.db.files.Add(newFile);
-            Connection.db.SaveChanges();
+            db.files.Add(newFile);
+            db.SaveChanges();
 
             return Json(newId);
         }
@@ -36,7 +38,7 @@ namespace FastFileSend.Web.Controllers
             do
             {
                 int newId = new Random().Next(999999);
-                if (!Connection.db.files.Any(x => x.file_idx == newId))
+                if (!db.files.Any(x => x.file_idx == newId))
                 {
                     return newId;
                 }

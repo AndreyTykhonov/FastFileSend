@@ -12,6 +12,8 @@ namespace FastFileSend.Web.Controllers
 {
     public class RegisterController : ApiController
     {
+        private fastfilesendEntities db = new fastfilesendEntities();
+
         public JsonResult<users> Get()
         {
             int emptyId = FindEmptpyId();
@@ -23,8 +25,8 @@ namespace FastFileSend.Web.Controllers
             newAccount.user_registerdate = DateTime.Now;
             newAccount.user_password = randomPassword.ToString();
 
-            Connection.db.users.Add(newAccount);
-            Connection.db.SaveChanges();
+            db.users.Add(newAccount);
+            db.SaveChanges();
 
             return Json(newAccount);
         }
@@ -34,7 +36,7 @@ namespace FastFileSend.Web.Controllers
             do
             {
                 int newId = new Random().Next(999999);
-                if (!Connection.db.users.Any(x => x.user_idx == newId))
+                if (!db.users.Any(x => x.user_idx == newId))
                 {
                     return newId;
                 }

@@ -10,10 +10,12 @@ namespace FastFileSend.Web.Controllers
 {
     public class OnlineController : ApiController
     {
+        private fastfilesendEntities db = new fastfilesendEntities();
+
         public void Get(int id)
         {
-            Connection.db.users.First(x => x.user_idx == id).user_lastonline = DateTime.Now;
-            Connection.db.SaveChanges();
+            db.users.First(x => x.user_idx == id).user_lastonline = DateTime.Now;
+            db.SaveChanges();
         }
     }
 }

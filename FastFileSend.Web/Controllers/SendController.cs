@@ -11,6 +11,8 @@ namespace FastFileSend.Web.Controllers
 {
     public class SendController : ApiController
     {
+        private fastfilesendEntities db = new fastfilesendEntities();
+
         public JsonResult<int> Get(int id, string password, int target, int file)
         {
             if (!Security.PasswordValid(id, password))
@@ -27,8 +29,8 @@ namespace FastFileSend.Web.Controllers
                 download_idx = FindEmptpyId()
             };
 
-            Connection.db.transactions.Add(newSend);
-            Connection.db.SaveChanges();
+            db.transactions.Add(newSend);
+            db.SaveChanges();
 
             return Json(newSend.download_idx);
         }
@@ -38,7 +40,7 @@ namespace FastFileSend.Web.Controllers
             do
             {
                 int newId = new Random().Next(999999);
-                if (!Connection.db.transactions.Any(x => x.download_idx == newId))
+                if (!db.transactions.Any(x => x.download_idx == newId))
                 {
                     return newId;
                 }

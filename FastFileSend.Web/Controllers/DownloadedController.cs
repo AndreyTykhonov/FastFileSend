@@ -11,10 +11,12 @@ namespace FastFileSend.Web.Controllers
 {
     public class DownloadedController : ApiController
     {
+        private fastfilesendEntities db = new fastfilesendEntities();
+
         public void Get(int download)
         {
-            Connection.db.transactions.First(x => x.download_idx == download).status = 1;
-            Connection.db.SaveChanges();
+            db.transactions.First(x => x.download_idx == download).status = 1;
+            db.SaveChanges();
         }
     }
 }
