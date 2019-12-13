@@ -66,9 +66,16 @@ namespace FastFileSend.Main
 
         public async Task<DateTime> GetLastOnline(int id)
         {
-            HttpClient HttpClient = new HttpClient();
-            string json = await HttpClient.GetStringAsync(ServerHost + $"lastonline?id={id}");
-            return JsonConvert.DeserializeObject<DateTime>(json);
+            try
+            {
+                HttpClient HttpClient = new HttpClient();
+                string json = await HttpClient.GetStringAsync(ServerHost + $"lastonline?id={id}");
+                return JsonConvert.DeserializeObject<DateTime>(json);
+            }
+            catch (HttpRequestException)
+            {
+                return DateTime.MinValue;
+            }
         }
 
         public async Task<List<HistoryItem>> GetHistory()
