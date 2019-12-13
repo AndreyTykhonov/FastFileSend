@@ -17,6 +17,11 @@ namespace FastFileSend.Main
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
                     appdata = Path.Combine(appdata, "FFS");
+
+                    if (!Directory.Exists(appdata))
+                    {
+                        Directory.CreateDirectory(appdata);
+                    }
                 }
 
                 return Path.Combine(appdata, "users.json");
