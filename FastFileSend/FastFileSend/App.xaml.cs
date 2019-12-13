@@ -24,8 +24,8 @@ namespace FastFileSend
             int id = Convert.ToInt32(Preferences.Get("id", 0));
             string password = Preferences.Get("password", string.Empty);
 
-            id = 555045;
-            password = "601941791";
+            //id = 555045;
+            //password = "601941791";
 
             Global.FastFileSendProgramXamarin.Login(id, password).Wait();
 
