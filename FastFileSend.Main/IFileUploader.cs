@@ -9,6 +9,5 @@ namespace FastFileSend.Main
     {
         Task<CloudFile> UploadAsync(string path);
         event Action<double, double> OnProgress;
-        event Action OnEnd;
     }
 }

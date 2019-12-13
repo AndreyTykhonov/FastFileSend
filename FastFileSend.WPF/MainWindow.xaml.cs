@@ -18,6 +18,7 @@ using FastFileSend.UI;
 using FastFileSend.Main;
 using System.IO;
 using Microsoft.Win32;
+using System.Diagnostics;
 
 namespace FastFileSend.WPF
 {
@@ -107,14 +108,11 @@ namespace FastFileSend.WPF
                 model.ETA = speed.ToString("0.00 MB/s");
             };
 
-            fileDownloader.OnEnd += delegate
-            {
-                model.StatusText = "OK";
-                model.ETA = "";
-                ApiServer.NotifyDownloadedAsync(model.Id);
-            };
-
             await fileDownloader.DownloadAsync(fileItem);
+
+            model.StatusText = "OK";
+            model.ETA = "";
+            ApiServer.NotifyDownloadedAsync(model.Id);
         }
 
         UserModel SelectUser()
@@ -166,13 +164,10 @@ namespace FastFileSend.WPF
                 downloadModel.ETA = speed.ToString("0.00 MB/s");
             };
 
-            fileUploader.OnEnd += () =>
-            {
-                downloadModel.Progress = 100;
-                downloadModel.StatusText = "Using API";
-            };
-
             CloudFile cloudFile = await fileUploader.UploadAsync(path);
+
+            downloadModel.Progress = 100;
+            downloadModel.StatusText = "Using API";
 
             //cloudFile = new CloudFile(0, "debug.zip", 0, DateTime.Now, "https://cdn.shazoo.ru/393609_KPsmQaHsNk_382993_uuwtofdnti_fb6f81c359f7cd.jpg");
 
@@ -186,6 +181,11 @@ namespace FastFileSend.WPF
         private void ButtonClose_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void ButtonDownloads_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(FilePathHelper.Downloads);
         }
     }
 }

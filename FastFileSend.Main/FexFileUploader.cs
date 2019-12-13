@@ -21,7 +21,6 @@ namespace FastFileSend.Main
         string FileName { get; set; }
 
         public event Action<double, double> OnProgress = delegate { };
-        public event Action OnEnd = delegate { };
 
         async Task<string> GetUploadTokenAsync()
         {
@@ -44,34 +43,26 @@ namespace FastFileSend.Main
 
         public async Task<CloudFile> UploadAsync(string path)
         {
-            try
-            {
-                FileName = Path.GetFileName(path);
-                FileSize = new FileInfo(path).Length;
+            FileName = Path.GetFileName(path);
+            FileSize = new FileInfo(path).Length;
 
-                await PrepareAuthorizedHttpClient(FileName, FileSize);
+            await PrepareAuthorizedHttpClient(FileName, FileSize);
 
-                JObject json_payload = GenerateJsonPayload(FileName, FileSize);
-                UploadDataInfo uploadDataInfo = await GetUploadDataInfoAsync(json_payload);
+            JObject json_payload = GenerateJsonPayload(FileName, FileSize);
+            UploadDataInfo uploadDataInfo = await GetUploadDataInfoAsync(json_payload);
 
-                Uri uploadUri = new Uri(uploadDataInfo.location);
-                await PrepareUploadLink(uploadUri);
+            Uri uploadUri = new Uri(uploadDataInfo.location);
+            await PrepareUploadLink(uploadUri);
 
-                SpeedWatch = Stopwatch.StartNew();
+            SpeedWatch = Stopwatch.StartNew();
 
-                JObject uploadedFileInfo = await StartUploadAsync(path, uploadUri);
+            JObject uploadedFileInfo = await StartUploadAsync(path, uploadUri);
 
-                SpeedWatch.Stop();
+            SpeedWatch.Stop();
 
-                CloudFile uploadedFile = UploadedInfoToCloudFile(uploadedFileInfo);
+            CloudFile uploadedFile = UploadedInfoToCloudFile(uploadedFileInfo);
 
-                return uploadedFile;
-
-            }
-            finally 
-            {
-                OnEnd();
-            }
+            return uploadedFile;
         }
 
         private static CloudFile UploadedInfoToCloudFile(JObject uploadedFileInfo)

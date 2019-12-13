@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,7 +20,14 @@ namespace FastFileSend.Main
         long FileSize { get; set; }
 
         public event Action<double, double> OnProgress = delegate { };
-        public event Action OnEnd = delegate { };
+
+        async Task<string> GetUploadTokenAsync()
+        {
+            Uri fexGetUploadTokenUri = new Uri("https://api.fex.net/api/v1/anonymous/upload-token");
+            HttpClient = new HttpClient();
+            string json = await HttpClient.GetStringAsync(fexGetUploadTokenUri);
+            return (string)JObject.Parse(json)["token"];
+        }
 
         public async Task DownloadAsync(FileItem fileItem)
         {
@@ -35,7 +44,10 @@ namespace FastFileSend.Main
 
             SpeedWatch = Stopwatch.StartNew();
 
-            HttpResponseMessage response = await HttpClient.GetAsync(fileItem.Url);
+            string token = await GetUploadTokenAsync();
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            HttpResponseMessage response = await HttpClient.GetAsync(fileItem.Url.Trim());
             Stream stream = await response.Content.ReadAsStreamAsync();
 
             FileSize = stream.Length;
@@ -74,17 +86,6 @@ namespace FastFileSend.Main
             SpeedWatch.Stop();
 
             fs.Close();
-            OnEnd();
-        }
-
-        long GetRemoteLength(string url)
-        {
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create("http://example.com/");
-            req.Method = "HEAD";
-            using (HttpWebResponse resp = (HttpWebResponse)(req.GetResponse()))
-            {
-                return resp.ContentLength;
-            }
         }
 
         public void Report(long value)

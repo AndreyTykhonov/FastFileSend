@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,13 +16,14 @@ namespace FastFileSend.Main
         public string Password { get; set; }
         public string FriendlyName { get; set; }
 
-        private static HttpClient HttpClient { get; } = new HttpClient();
         readonly static string ServerHost = "http://91.123.153.211:8080/api/";
 
         Timer TimerHeartbeat { get; set; }
 
         public static async Task<ApiServer> CreateNewAccount()
         {
+            HttpClient HttpClient = new HttpClient();
+
             string registerJson = await HttpClient.GetStringAsync(ServerHost + "register");
             JObject jObject = JObject.Parse(registerJson);
 
@@ -52,28 +54,36 @@ namespace FastFileSend.Main
 
         public async Task NotifyDownloadedAsync(int download)
         {
+            HttpClient HttpClient = new HttpClient();
             await HttpClient.GetAsync(ServerHost + $"downloaded?download={download}");
         }
 
         public async Task NotifyOnline()
         {
+            HttpClient HttpClient = new HttpClient();
             await HttpClient.GetAsync(ServerHost + $"online?id={Id}");
         }
 
         public async Task<DateTime> GetLastOnline(int id)
         {
+            HttpClient HttpClient = new HttpClient();
             string json = await HttpClient.GetStringAsync(ServerHost + $"lastonline?id={id}");
             return JsonConvert.DeserializeObject<DateTime>(json);
         }
 
         public async Task<List<HistoryItem>> GetHistory()
         {
+            HttpClient HttpClient = new HttpClient();
             string json = await HttpClient.GetStringAsync(ServerHost + $"history?id={Id}&password={Password}");
-            return JsonConvert.DeserializeObject<List<HistoryItem>>(json);
+            List<HistoryItem> historyList = JsonConvert.DeserializeObject<List<HistoryItem>>(json);
+
+            return historyList;
         }
 
         public async Task<FileItem> Upload(CloudFile cloudFile)
         {
+            HttpClient HttpClient = new HttpClient();
+
             string url = ServerHost + $"upload?name={cloudFile.FileName}&size={cloudFile.Size}&crc32={cloudFile.CRC32}&url={cloudFile.Url}";
             Uri targetUri = new Uri(url);
 
@@ -85,6 +95,8 @@ namespace FastFileSend.Main
 
         public async Task<int> Send(FileItem fileItem, int targetId)
         {
+            HttpClient HttpClient = new HttpClient();
+
             string json = await HttpClient.GetStringAsync(ServerHost + $"send?id={Id}&password={Password}&target={targetId}&file={fileItem.Id}");
             return JsonConvert.DeserializeObject<int>(json);
         }

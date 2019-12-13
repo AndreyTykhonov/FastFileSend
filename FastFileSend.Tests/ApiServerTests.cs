@@ -42,7 +42,7 @@ namespace FastFileSend.Tests
             Assert.IsFalse(sendedHistory.Receiver != apiServer.Id, "Wrong receiver!");
             Assert.IsFalse(sendedHistory.File.Id != uploadedFile.Id, "Wrong file id!");
 
-            await apiServer.NotifyDownloadedAsync(uploadedFile);
+            //await apiServer.NotifyDownloadedAsync(uploadedFile);
 
             /* Status sets with delay
             myHistory = await apiServer.GetHistory();
