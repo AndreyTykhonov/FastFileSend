@@ -9,7 +9,7 @@
              
     <StackLayout VerticalOptions="FillAndExpand" Margin="10">
         <Label Text="My Id" HorizontalTextAlignment="Center"></Label>
-        <Entry x:Name="EntryId" HorizontalTextAlignment="Center" IsReadOnly="True"></Entry>
+        <Entry x:Name="EntryId" HorizontalTextAlignment="Center" IsReadOnly="True" x:FieldModifier="public"></Entry>
         <ListView x:Name="ListViewMenu"
                     HasUnevenRows="True">
             <d:ListView.ItemsSource>

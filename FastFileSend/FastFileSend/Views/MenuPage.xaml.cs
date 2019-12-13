@@ -41,8 +41,6 @@ namespace FastFileSend.Views
         protected override void OnAppearing()
         {
             base.OnAppearing();
-
-            EntryId.Text = Global.FastFileSendProgramXamarin.ApiServer.Id.ToString();
         }
     }
 }

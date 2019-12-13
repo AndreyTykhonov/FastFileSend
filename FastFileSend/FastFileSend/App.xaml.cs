@@ -19,18 +19,43 @@ namespace FastFileSend
             MainPage = new MainPage();
         }
 
-        protected override void OnStart()
+        protected override async void OnStart()
         {
+            MainPage.IsBusy = true;
+
+            /*
+            if ((await CrossPermissions.Current.CheckPermissionStatusAsync(Plugin.Permissions.Abstractions.Permission.Storage)) != Plugin.Permissions.Abstractions.PermissionStatus.Granted)
+            {
+                var permissions = await CrossPermissions.Current.RequestPermissionsAsync(Plugin.Permissions.Abstractions.Permission.Storage);
+                if (!permissions.TryGetValue(Plugin.Permissions.Abstractions.Permission.Storage, out Plugin.Permissions.Abstractions.PermissionStatus status))
+                {
+                    Quit();
+                }
+
+                if (status != Plugin.Permissions.Abstractions.PermissionStatus.Granted)
+                {
+                    Quit();
+                }
+            }
+            */
+
             int id = Convert.ToInt32(Preferences.Get("id", 0));
             string password = Preferences.Get("password", string.Empty);
 
             //id = 555045;
             //password = "601941791";
 
-            Global.FastFileSendProgramXamarin.Login(id, password).Wait();
+            await Global.FastFileSendProgramXamarin.Login(id, password);
 
             Preferences.Set("id", Global.FastFileSendProgramXamarin.ApiServer.Id);
             Preferences.Set("password", Global.FastFileSendProgramXamarin.ApiServer.Password);
+
+            MasterDetailPage masterDetailPage = MainPage as MasterDetailPage;
+            MenuPage menu = masterDetailPage.Master as MenuPage;
+
+            menu.EntryId.Text = Global.FastFileSendProgramXamarin.ApiServer.Id.ToString();
+
+            MainPage.IsBusy = false;
         }
 
         protected override void OnSleep()
