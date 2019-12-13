@@ -5,12 +5,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FastFileSend.WPF"
-        xmlns:ui="clr-namespace:FastFileSend.UI;assembly=FastFileSend.UI"
         mc:Ignorable="d"
         Title="Fast File Send" Height="450" Width="800" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded">
 
     <Window.Resources>
-        <ui:SizeConverter x:Key="mySizeConverter" />
+        <local:SizeConverter x:Key="mySizeConverter" />
     </Window.Resources>
 
     <StackPanel>

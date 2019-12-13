@@ -5,12 +5,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FastFileSend.WPF"
-        xmlns:ui="clr-namespace:FastFileSend.UI;assembly=FastFileSend.UI"
         mc:Ignorable="d"
         Title="Choose user to send" Height="381.466" Width="498.707" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
 
     <Window.Resources>
-        <ui:UserOnlineImageConverter x:Key="myStatusConverter" />
+        <local:UserOnlineImageConverter x:Key="myStatusConverter" />
     </Window.Resources>
     <DockPanel LastChildFill="True" Margin="10">
         <StackPanel Orientation="Vertical" Margin="10">

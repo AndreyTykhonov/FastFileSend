@@ -11,7 +11,7 @@ namespace FastFileSend.WPF
 {
     public class FastFileSendProgramWindows : FastFileSendProgram
     {
-        public override string SelectFile()
+        public override async Task<string> SelectFileAsync()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
 

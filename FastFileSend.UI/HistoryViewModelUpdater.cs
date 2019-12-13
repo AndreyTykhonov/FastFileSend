@@ -25,7 +25,7 @@ namespace FastFileSend.UI
 
             TimerUpdateHistory = new System.Timers.Timer(1000);
             TimerUpdateHistory.Elapsed += TimerUpdateHistory_Elapsed;
-            TimerUpdateHistory.Start();
+            TimerUpdateHistory.AutoReset = false;
 
             TimerUpdateHistory_Elapsed(this, null);
         }
@@ -35,7 +35,7 @@ namespace FastFileSend.UI
             List<HistoryItem> historyList = await ApiServer.GetHistory();
             var historyModel = historyList.Select(x => HistoryItemToHistoryModel(x));
 
-            foreach (HistoryModel model in historyModel)
+            foreach (HistoryModel model in historyModel.ToArray())
             {
                 var duplicate = HistoryViewModel.List.ToArray().FirstOrDefault(x => x.Id == model.Id);
 
@@ -53,6 +53,8 @@ namespace FastFileSend.UI
 
                 uiContext.Send(x => HistoryViewModel.List.Insert(0, model), null);
             }
+
+            TimerUpdateHistory.Start();
         }
 
         HistoryModel HistoryItemToHistoryModel(HistoryItem historyItem)

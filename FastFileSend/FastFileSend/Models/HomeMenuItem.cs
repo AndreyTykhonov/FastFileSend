@@ -6,8 +6,9 @@ namespace FastFileSend.Models
 {
     public enum MenuItemType
     {
-        Browse,
-        About
+        Downloads,
+        About,
+        Send
     }
     public class HomeMenuItem
     {

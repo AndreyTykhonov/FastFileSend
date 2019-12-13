@@ -84,7 +84,7 @@ namespace FastFileSend.Program
             return new UserModel();
         }
 
-        public virtual string SelectFile()
+        public virtual async Task<string> SelectFileAsync()
         {
             return string.Empty;
         }
@@ -98,7 +98,7 @@ namespace FastFileSend.Program
                 return;
             }
 
-            string filePath = SelectFile();
+            string filePath = await SelectFileAsync();
 
             if (string.IsNullOrEmpty(filePath))
             {

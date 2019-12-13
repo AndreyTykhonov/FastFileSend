@@ -23,8 +23,6 @@ namespace FastFileSend.Views
         public ItemsPage()
         {
             InitializeComponent();
-
-            BindingContext = viewModel = new ItemsViewModel();
         }
 
         async void OnItemSelected(object sender, SelectedItemChangedEventArgs args)
@@ -48,8 +46,7 @@ namespace FastFileSend.Views
         {
             base.OnAppearing();
 
-            if (viewModel.Items.Count == 0)
-                viewModel.LoadItemsCommand.Execute(null);
+            ItemsListView.BindingContext = Global.FastFileSendProgramXamarin.HistoryViewModel;
         }
     }
 }

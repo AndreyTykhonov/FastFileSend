@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastFileSend", "FastFileSen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastFileSend.UI", "FastFileSend.UI\FastFileSend.UI.csproj", "{5B98AE55-AB52-41B5-B773-85726721B8B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Program", "FastFileSend.Program\FastFileSend.Program.csproj", "{472D388C-EB61-49D3-A572-AF2BCB32EB16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastFileSend.Program", "FastFileSend.Program\FastFileSend.Program.csproj", "{472D388C-EB61-49D3-A572-AF2BCB32EB16}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

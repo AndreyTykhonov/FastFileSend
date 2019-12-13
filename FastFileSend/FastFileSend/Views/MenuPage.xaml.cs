@@ -20,8 +20,9 @@ namespace FastFileSend.Views
 
             menuItems = new List<HomeMenuItem>
             {
-                new HomeMenuItem {Id = MenuItemType.Browse, Title="Browse" },
-                new HomeMenuItem {Id = MenuItemType.About, Title="About" }
+                new HomeMenuItem {Id = MenuItemType.Downloads, Title="Downloads" },
+                new HomeMenuItem {Id = MenuItemType.Send, Title="Send" },
+                //new HomeMenuItem {Id = MenuItemType.About, Title="About" }
             };
 
             ListViewMenu.ItemsSource = menuItems;
@@ -35,6 +36,13 @@ namespace FastFileSend.Views
                 var id = (int)((HomeMenuItem)e.SelectedItem).Id;
                 await RootPage.NavigateFromMenu(id);
             };
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            EntryId.Text = Global.FastFileSendProgramXamarin.ApiServer.Id.ToString();
         }
     }
 }

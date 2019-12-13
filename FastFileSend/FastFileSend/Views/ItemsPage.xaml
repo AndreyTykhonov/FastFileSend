@@ -3,47 +3,39 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="clr-namespace:FastFileSend.UI;assembly=FastFileSend.UI"
+             xmlns:fastfilesend="clr-namespace:FastFileSend"
              mc:Ignorable="d"
              x:Class="FastFileSend.Views.ItemsPage"
              Title="{Binding Title}"
              x:Name="BrowseItemsPage">
 
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add" Clicked="AddItem_Clicked" />
-    </ContentPage.ToolbarItems>
+    <ContentPage.Resources>
+        <fastfilesend:SizeConverter x:Key="mySizeConverter" />
+    </ContentPage.Resources>
 
     <StackLayout>
         <ListView x:Name="ItemsListView"
-                ItemsSource="{Binding Items}"
+                ItemsSource="{Binding List}"
                 VerticalOptions="FillAndExpand"
-                HasUnevenRows="true"
-                RefreshCommand="{Binding LoadItemsCommand}"
-                IsPullToRefreshEnabled="true"
-                IsRefreshing="{Binding IsBusy, Mode=OneWay}"
                 CachingStrategy="RecycleElement"
-                ItemSelected="OnItemSelected">
-            <d:ListView.ItemsSource>
-                <x:Array Type="{x:Type x:String}">
-                    <x:String>First Item</x:String>
-                    <x:String>Second Item</x:String>
-                    <x:String>Third Item</x:String>
-                    <x:String>Fourth Item</x:String>
-                    <x:String>Fifth Item</x:String>
-                    <x:String>Sixth Item</x:String>
-                </x:Array>
-            </d:ListView.ItemsSource>
+                HasUnevenRows="True">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
                         <StackLayout Padding="10" Orientation="Vertical">
                             <StackLayout Orientation="Horizontal" Padding="0,0,0,0">
-                                <Label Text="999 999 999" HorizontalOptions="StartAndExpand"></Label>
-                                <Label Text="Awaiting download" HorizontalOptions="EndAndExpand"></Label>
+                                <Label Text="{Binding Sender}" HorizontalOptions="StartAndExpand" ></Label>
+                                <Label Text="{Binding Receiver}" HorizontalOptions="EndAndExpand"></Label>
                             </StackLayout>
                             <StackLayout Orientation="Horizontal">
-                                <Label Text="2020 GB"></Label>
-                                <ProgressBar Progress="0.5" HorizontalOptions="FillAndExpand"></ProgressBar>
-                                <Label Text="12 min"></Label>
+                                <Label Text="{Binding Size, Converter={StaticResource mySizeConverter}}"></Label>
+                                <ProgressBar Progress="{Binding Progress}" HorizontalOptions="FillAndExpand"></ProgressBar>
+                                <Label Text="{Binding ETA}"></Label>
+                            </StackLayout>
+                            <StackLayout Orientation="Horizontal">
+                                <Label Text="{Binding Name}" HorizontalOptions="StartAndExpand"></Label>
+                                <Label Text="{Binding StatusText}" HorizontalOptions="EndAndExpand"></Label>
                             </StackLayout>
                         </StackLayout>
                     </ViewCell>

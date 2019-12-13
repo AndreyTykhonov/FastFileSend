@@ -7,7 +7,9 @@
              x:Class="FastFileSend.Views.MenuPage"
              Title="Menu">
              
-    <StackLayout VerticalOptions="FillAndExpand">
+    <StackLayout VerticalOptions="FillAndExpand" Margin="10">
+        <Label Text="My Id" HorizontalTextAlignment="Center"></Label>
+        <Entry x:Name="EntryId" HorizontalTextAlignment="Center" IsReadOnly="True"></Entry>
         <ListView x:Name="ListViewMenu"
                     HasUnevenRows="True">
             <d:ListView.ItemsSource>
