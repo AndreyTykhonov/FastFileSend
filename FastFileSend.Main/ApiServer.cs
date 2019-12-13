@@ -74,10 +74,24 @@ namespace FastFileSend.Main
         public async Task<List<HistoryItem>> GetHistory()
         {
             HttpClient HttpClient = new HttpClient();
-            string json = await HttpClient.GetStringAsync(ServerHost + $"history?id={Id}&password={Password}");
-            List<HistoryItem> historyList = JsonConvert.DeserializeObject<List<HistoryItem>>(json);
 
-            return historyList;
+            HttpResponseMessage httpResponseMessage = await HttpClient.GetAsync(ServerHost + $"history?id={Id}&password={Password}");
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                string json = await httpResponseMessage.Content.ReadAsStringAsync();
+                List<HistoryItem> historyList = JsonConvert.DeserializeObject<List<HistoryItem>>(json);
+                foreach (HistoryItem item in historyList)
+                {
+                    item.File.Name = item.File.Name.Trim();
+                }
+
+                return historyList;
+            }
+            else
+            {
+                string reason = await httpResponseMessage.Content.ReadAsStringAsync();
+                throw new Exception(reason);
+            }
         }
 
         public async Task<FileItem> Upload(CloudFile cloudFile)

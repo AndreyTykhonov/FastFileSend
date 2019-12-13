@@ -5,8 +5,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FastFileSend.WPF"
+        xmlns:ui="clr-namespace:FastFileSend.UI;assembly=FastFileSend.UI"
         mc:Ignorable="d"
         Title="Fast File Send" Height="450" Width="800" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+
+    <Window.Resources>
+        <ui:SizeConverter x:Key="mySizeConverter" />
+    </Window.Resources>
 
     <StackPanel>
         <TabControl Margin="10">
@@ -19,20 +24,25 @@
                         <Button x:Name="ButtonDownloads" Content="Downloads" Click="ButtonDownloads_Click"  DockPanel.Dock="Left" Style="{StaticResource MetroFlatButton}" Margin="0,0,0,10"/>
                         <Button x:Name="ButtonClose" Content="Close" Click="ButtonClose_Click"  DockPanel.Dock="Left" Style="{StaticResource MetroFlatButton}" Margin="0,0,0,10"/>
                     </StackPanel>
-                     <ListView x:Name="ListViewHistory" HorizontalContentAlignment="Stretch" ItemsSource="{Binding List}" DockPanel.Dock="Left">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <DockPanel LastChildFill="True">
-                                    <Label Content="{Binding Name}"></Label>
-                                    <Label Content="{Binding Sender}"></Label>
-                                    <Label Content="{Binding Receiver}"></Label>
-                                    <Label Content="{Binding Size}"></Label>
-                                    <Label Content="{Binding StatusText}"></Label>
-                                    <Label Content="{Binding ETA}"></Label>
-                                    <ProgressBar Value="{Binding Progress}" Margin="5"></ProgressBar>
-                                </DockPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
+
+                    <ListView x:Name="ListViewHistory" HorizontalContentAlignment="Stretch" ItemsSource="{Binding List}" DockPanel.Dock="Left">
+                        <ListView.View>
+                            <GridView x:Name="GridViewHistory">
+                                <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                                <GridViewColumn Header="Sender" DisplayMemberBinding="{Binding Sender}"/>
+                                <GridViewColumn Header="Receiver" DisplayMemberBinding="{Binding Receiver}"/>
+                                <GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size,Converter={StaticResource mySizeConverter}}"/>
+                                <GridViewColumn Header="Status" DisplayMemberBinding="{Binding StatusText}"/>
+                                <GridViewColumn Header="ETA" DisplayMemberBinding="{Binding ETA}"/>
+                                <GridViewColumn Header="Progress">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <ProgressBar Value="{Binding Path=Progress}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
                     </ListView>
                 </DockPanel>
             </TabItem>
