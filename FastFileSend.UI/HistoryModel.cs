@@ -34,6 +34,8 @@ namespace FastFileSend.UI
         public int Sender { get; set; }
         public int Receiver { get; set; }
 
+        public int Status { get; set; }
+
         public int Id { get; set; }
         
         public long Size { get; set; }
@@ -41,6 +43,8 @@ namespace FastFileSend.UI
         public string Name { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool Fake { get; set; } = false;
 
         public void OnPropertyChanged([CallerMemberName]string prop = "")
         {

@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using FastFileSend.UI;
 using FastFileSend.Main;
 using System.IO;
+using Microsoft.Win32;
 
 namespace FastFileSend.WPF
 {
@@ -61,7 +62,59 @@ namespace FastFileSend.WPF
 
             UserViewModel = new UserViewModel(ApiServer);
 
+            HistoryViewModel.List.CollectionChanged += List_CollectionChanged;
+
             IsEnabled = true;
+        }
+
+        private async void List_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems == null)
+            {
+                return;
+            }
+
+            HistoryModel model = (HistoryModel)e.NewItems[0];
+
+            if (model.Fake)
+            {
+                return;
+            }
+
+            if (model.Status == 1)
+            {
+                return;
+            }
+
+            if (model.Receiver != ApiServer.Id)
+            {
+                return;
+            }
+
+            FileDownloader fileDownloader = new FileDownloader();
+
+            FileItem fileItem = new FileItem()
+            {
+                Name = model.Name,
+                Url = model.Url
+            };
+
+            model.StatusText = "Downloading";
+
+            fileDownloader.OnProgress += (double progress, double speed) =>
+            {
+                model.Progress = progress;
+                model.ETA = speed.ToString("0.00 MB/s");
+            };
+
+            fileDownloader.OnEnd += delegate
+            {
+                model.StatusText = "OK";
+                model.ETA = "";
+                ApiServer.NotifyDownloadedAsync(model.Id);
+            };
+
+            await fileDownloader.DownloadAsync(fileItem);
         }
 
         UserModel SelectUser()
@@ -81,7 +134,14 @@ namespace FastFileSend.WPF
                 return;
             }
 
-            await SendFile(target, @"C:\Users\KoBRa\Downloads\MahApps.Metro.Demo-v1.6.5-rc0001.zip");
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            if (!(bool)openFileDialog.ShowDialog())
+            {
+                return;
+            }
+
+            await SendFile(target, openFileDialog.FileName);
         }
 
         private async Task SendFile(UserModel target, string path)
@@ -92,12 +152,14 @@ namespace FastFileSend.WPF
                 StatusText = "Uploading file",
                 ETA = "",
                 Receiver = target.Id,
-                Sender = ApiServer.Id
+                Sender = ApiServer.Id,
+                Fake = true
             };
 
             HistoryViewModel.List.Insert(0, downloadModel);
 
-            IFileUploader fileUploader = new DummyFileUploader();
+            //IFileUploader fileUploader = new DummyFileUploader();
+            IFileUploader fileUploader = new FexFileUploader();
             fileUploader.OnProgress += (double progress, double speed) =>
             {
                 downloadModel.Progress = progress;
@@ -112,7 +174,7 @@ namespace FastFileSend.WPF
 
             CloudFile cloudFile = await fileUploader.UploadAsync(path);
 
-            cloudFile = new CloudFile(0, "debug.zip", 0, DateTime.Now, "https://cdn.shazoo.ru/393609_KPsmQaHsNk_382993_uuwtofdnti_fb6f81c359f7cd.jpg");
+            //cloudFile = new CloudFile(0, "debug.zip", 0, DateTime.Now, "https://cdn.shazoo.ru/393609_KPsmQaHsNk_382993_uuwtofdnti_fb6f81c359f7cd.jpg");
 
             FileItem uploadedFile = await ApiServer.Upload(cloudFile);
             int download_index = await ApiServer.Send(uploadedFile, target.Id);

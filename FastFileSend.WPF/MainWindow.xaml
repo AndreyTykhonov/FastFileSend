@@ -22,6 +22,7 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <DockPanel LastChildFill="True">
+                                    <Label Content="{Binding Name}"></Label>
                                     <Label Content="{Binding Sender}"></Label>
                                     <Label Content="{Binding Receiver}"></Label>
                                     <Label Content="{Binding Size}"></Label>

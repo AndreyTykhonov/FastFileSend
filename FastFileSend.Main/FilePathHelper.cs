@@ -31,5 +31,13 @@ namespace FastFileSend.Main
                 return Path.Combine(AppDataFolder, "users.json");
             }
         }
+
+        public static string Downloads
+        {
+            get
+            {
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+            }
+        }
     }
 }

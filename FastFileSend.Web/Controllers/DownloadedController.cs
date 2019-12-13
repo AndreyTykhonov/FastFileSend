@@ -13,9 +13,9 @@ namespace FastFileSend.Web.Controllers
     {
         private fastfilesendEntities db = new fastfilesendEntities();
 
-        public void Get(int file)
+        public void Get(int download)
         {
-            db.transactions.First(x => x.file_id == file).status = 1;
+            db.transactions.First(x => x.download_idx == download).status = 1;
             db.SaveChanges();
         }
     }

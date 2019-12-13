@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Timers;
 
 namespace FastFileSend.UI
@@ -12,14 +13,17 @@ namespace FastFileSend.UI
         HistoryViewModel HistoryViewModel { get; set; }
         ApiServer ApiServer { get; set; }
         
-        Timer TimerUpdateHistory { get; set; }
+        System.Timers.Timer TimerUpdateHistory { get; set; }
+        SynchronizationContext uiContext;
 
         public HistoryViewModelUpdater(ApiServer apiServer, HistoryViewModel historyViewModel)
         {
             ApiServer = apiServer;
             HistoryViewModel = historyViewModel;
 
-            TimerUpdateHistory = new Timer(1000);
+            uiContext = SynchronizationContext.Current;
+
+            TimerUpdateHistory = new System.Timers.Timer(1000);
             TimerUpdateHistory.Elapsed += TimerUpdateHistory_Elapsed;
             TimerUpdateHistory.Start();
 
@@ -33,17 +37,30 @@ namespace FastFileSend.UI
 
             foreach (HistoryModel model in historyModel)
             {
-                if (HistoryViewModel.List.Any(x => x.Id == model.Id))
+                var duplicate = HistoryViewModel.List.ToArray().FirstOrDefault(x => x.Id == model.Id);
+
+                if (duplicate != null)
                 {
-                    continue;
+                    if (duplicate.Fake)
+                    {
+                        uiContext.Send(x => HistoryViewModel.List.Remove(duplicate), null);
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
 
-                HistoryViewModel.List.Add(model);
+                uiContext.Send(x => HistoryViewModel.List.Insert(0, model), null);
             }
         }
 
         HistoryModel HistoryItemToHistoryModel(HistoryItem historyItem)
         {
+            bool imReceiver = historyItem.Receiver == ApiServer.Id;
+            bool imAwaitingDownload = historyItem.Status == 0;
+            bool timeToDownload = imReceiver && imAwaitingDownload;
+
             HistoryModel historyModel = new HistoryModel()
             {
                 ETA = "",
@@ -52,9 +69,16 @@ namespace FastFileSend.UI
                 Receiver = historyItem.Receiver,
                 Sender = historyItem.Sender,
                 Size = historyItem.File.Size,
-                StatusText = historyItem.Status == 0 && historyItem.Receiver == ApiServer.Id? "Preparing to download" : "Awaiting remote download",
-                Url = historyItem.File.Url
+                StatusText = timeToDownload ? "Preparing to download" : "Awaiting remote download",
+                Url = historyItem.File.Url,
+                Status = historyItem.Status,
+                Progress = timeToDownload ? 0 : 100
             };
+
+            if (historyItem.Status == 1)
+            {
+                historyModel.StatusText = "OK";
+            }
 
             return historyModel;
         }

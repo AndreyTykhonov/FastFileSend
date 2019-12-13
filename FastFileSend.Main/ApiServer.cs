@@ -16,7 +16,7 @@ namespace FastFileSend.Main
         public string FriendlyName { get; set; }
 
         private static HttpClient HttpClient { get; } = new HttpClient();
-        readonly static string ServerHost = "https://localhost:44350/api/";
+        readonly static string ServerHost = "http://91.123.153.211:8080/api/";
 
         Timer TimerHeartbeat { get; set; }
 
@@ -50,9 +50,9 @@ namespace FastFileSend.Main
             await NotifyOnline();
         }
 
-        public async Task NotifyDownloadedAsync(FileItem file)
+        public async Task NotifyDownloadedAsync(int download)
         {
-            await HttpClient.GetAsync(ServerHost + $"downloaded?file={file.Id}");
+            await HttpClient.GetAsync(ServerHost + $"downloaded?download={download}");
         }
 
         public async Task NotifyOnline()
