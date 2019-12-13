@@ -144,6 +144,7 @@ namespace FastFileSend.WPF
 
         private async Task SendFile(UserModel target, string path)
         {
+            FileStream fs = new FileStream(path, FileMode.Open);
             HistoryModel downloadModel = new HistoryModel
             {
                 Name = System.IO.Path.GetFileName(path),
@@ -151,8 +152,10 @@ namespace FastFileSend.WPF
                 ETA = "",
                 Receiver = target.Id,
                 Sender = ApiServer.Id,
-                Fake = true
+                Fake = true,
+                Size = fs.Length,
             };
+            fs.Close();
 
             HistoryViewModel.List.Insert(0, downloadModel);
 

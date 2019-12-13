@@ -129,7 +129,6 @@
     <Compile Include="Controllers\Security.cs" />
     <Compile Include="Controllers\SendController.cs" />
     <Compile Include="Controllers\UploadController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

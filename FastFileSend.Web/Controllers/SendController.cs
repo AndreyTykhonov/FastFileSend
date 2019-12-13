@@ -11,8 +11,6 @@ namespace FastFileSend.Web.Controllers
 {
     public class SendController : ApiController
     {
-        private fastfilesendEntities db = new fastfilesendEntities();
-
         public JsonResult<int> Get(int id, string password, int target, int file)
         {
             if (!Security.PasswordValid(id, password))
@@ -20,32 +18,39 @@ namespace FastFileSend.Web.Controllers
                 throw new Exception("Wrong password!");
             }
 
-            transactions newSend = new transactions()
+            using (fastfilesendEntities db = new fastfilesendEntities())
             {
-                file_id = file,
-                sender_id = id,
-                receiver_id = target,
-                status = 0,
-                download_idx = FindEmptpyId()
-            };
 
-            db.transactions.Add(newSend);
-            db.SaveChanges();
+                transactions newSend = new transactions()
+                {
+                    file_id = file,
+                    sender_id = id,
+                    receiver_id = target,
+                    status = 0,
+                    download_idx = FindEmptpyId()
+                };
 
-            return Json(newSend.download_idx);
+                db.transactions.Add(newSend);
+                db.SaveChanges();
+
+                return Json(newSend.download_idx);
+            }
         }
 
         private int FindEmptpyId()
         {
-            do
+            using (fastfilesendEntities db = new fastfilesendEntities())
             {
-                int newId = new Random().Next(999999);
-                if (!db.transactions.Any(x => x.download_idx == newId))
+                do
                 {
-                    return newId;
+                    int newId = new Random().Next(999999);
+                    if (!db.transactions.Any(x => x.download_idx == newId))
+                    {
+                        return newId;
+                    }
                 }
+                while (true);
             }
-            while (true);
         }
     }
 }
