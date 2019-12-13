@@ -31,7 +31,7 @@ namespace FastFileSend.UI
             {
                 DateTime lastOnline = await ApiServer.GetLastOnline(user.Id);
                 
-                user.Online = DateTime.Now.AddSeconds(-30) < lastOnline;
+                user.Online = DateTime.UtcNow.AddSeconds(-30) < lastOnline;
             }
         }
     }

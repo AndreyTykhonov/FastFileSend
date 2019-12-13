@@ -14,7 +14,7 @@ namespace FastFileSend.Web.Controllers
         {
             using (fastfilesendEntities db = new fastfilesendEntities())
             {
-                db.users.First(x => x.user_idx == id).user_lastonline = DateTime.Now;
+                db.users.First(x => x.user_idx == id).user_lastonline = DateTime.UtcNow;
                 db.SaveChanges();
             }
         }
