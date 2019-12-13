@@ -11,11 +11,9 @@ namespace FastFileSend.Web.Controllers
 {
     public class LastOnlineController : ApiController
     {
-        private fastfilesendEntities db = new fastfilesendEntities();
-
         public JsonResult<DateTime> Get(int id)
         {
-            return Json(db.users.First(x => x.user_idx == id).user_lastonline);
+            return Json(Connection.db.users.First(x => x.user_idx == id).user_lastonline);
         }
     }
 }

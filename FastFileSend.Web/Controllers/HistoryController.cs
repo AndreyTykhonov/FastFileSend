@@ -13,8 +13,6 @@ namespace FastFileSend.Web.Controllers
 
     public class HistoryController : ApiController
     {
-        private fastfilesendEntities db = new fastfilesendEntities();
-
         public JsonResult<List<HistoryItem>> Get(int id, string password)
         {
             if (!Security.PasswordValid(id, password))
@@ -22,7 +20,7 @@ namespace FastFileSend.Web.Controllers
                 throw new Exception("Wrong password!");
             }
 
-            var containsMyId = db.transactions.Where(x => x.sender_id == id || x.receiver_id == id).ToList();
+            var containsMyId = Connection.db.transactions.Where(x => x.sender_id == id || x.receiver_id == id).ToList();
 
             List<HistoryItem> historyList = new List<HistoryItem>();
 
@@ -44,7 +42,7 @@ namespace FastFileSend.Web.Controllers
 
         private FileItem FilesToFileItem(int file_id)
         {
-            files file = db.files.First(x => x.file_idx == file_id);
+            files file = Connection.db.files.First(x => x.file_idx == file_id);
 
             FileItem fileItem = new FileItem();
             fileItem.CRC32 = file.file_crc32;
