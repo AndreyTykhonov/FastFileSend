@@ -2,33 +2,24 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Xamarin.Forms;
 
 namespace FastFileSend.Main
 {
     public static class FilePathHelper
     {
-        static string AppDataFolder { get; set; }
-
-        static FilePathHelper()
-        {
-            AppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-
-            if (AppDataFolder.Contains(":"))
-            {
-                AppDataFolder = Path.Combine(AppDataFolder, "FFS");
-
-                if (!Directory.Exists(AppDataFolder))
-                {
-                    Directory.CreateDirectory(AppDataFolder);
-                }
-            }
-        }
-
         public static string UsersConfig
         {
             get
             {
-                return Path.Combine(AppDataFolder, "users.json");
+                string appdata = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
+                {
+                    return appdata;
+                }
+
+                return Path.Combine(appdata, "users.json");
             }
         }
 
@@ -36,6 +27,11 @@ namespace FastFileSend.Main
         {
             get
             {
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
+                {
+                    return "/storage/emulated/0/Download";
+                }
+
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
             }
         }
