@@ -14,9 +14,9 @@ namespace FastFileSend.Main
             {
                 string appdata = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
 
-                if (Environment.OSVersion.Platform == PlatformID.Unix)
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
-                    return appdata;
+                    appdata = Path.Combine(appdata, "FFS");
                 }
 
                 return Path.Combine(appdata, "users.json");

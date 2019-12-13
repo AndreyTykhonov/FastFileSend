@@ -97,7 +97,7 @@ namespace FastFileSend.Main
 
         string FindEmptyPath(FileItem fileItem)
         {
-            for (int i = 0; i < 100; i++)
+            for (int i = 1; i < 100; i++)
             {
                 string name = Path.GetFileNameWithoutExtension(fileItem.Name);
                 string ext = Path.GetExtension(fileItem.Name);

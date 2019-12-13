@@ -40,7 +40,7 @@ namespace FastFileSend.Views
         private void UserEditPage_Disappearing(object sender, EventArgs e)
         {
             var userModel = (sender as UserEditPage).BindingContext;
-            Global.FastFileSendProgramXamarin.UserViewModel.List.Add((UserModel)userModel);
+            Global.FastFileSendProgramXamarin.UserViewModel.List.Add(userModel as UserModel);
         }
 
         UserModel Selected()
