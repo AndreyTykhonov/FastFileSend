@@ -11,7 +11,7 @@ namespace FastFileSend.Main
 {
     internal class ProgressableStreamContent : HttpContent
     {
-        private const int defaultBufferSize = 4096;
+        private const int defaultBufferSize = 16384;
 
         private Stream content;
         private int bufferSize;

@@ -54,7 +54,7 @@ namespace FastFileSend.Main
 
             var totalRead = 0L;
             var totalReads = 0L;
-            var buffer = new byte[8192];
+            var buffer = new byte[16384];
             var isMoreToRead = true;
 
             do
