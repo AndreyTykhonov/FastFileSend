@@ -9,7 +9,6 @@ using Xamarin.Forms.Xaml;
 
 using FastFileSend.Models;
 using FastFileSend.Views;
-using FastFileSend.ViewModels;
 
 namespace FastFileSend.Views
 {
@@ -18,23 +17,9 @@ namespace FastFileSend.Views
     [DesignTimeVisible(false)]
     public partial class ItemsPage : ContentPage
     {
-        ItemsViewModel viewModel;
-
         public ItemsPage()
         {
             InitializeComponent();
-        }
-
-        async void OnItemSelected(object sender, SelectedItemChangedEventArgs args)
-        {
-            var item = args.SelectedItem as Item;
-            if (item == null)
-                return;
-
-            await Navigation.PushAsync(new ItemDetailPage(new ItemDetailViewModel(item)));
-
-            // Manually deselect item.
-            ItemsListView.SelectedItem = null;
         }
 
         async void AddItem_Clicked(object sender, EventArgs e)

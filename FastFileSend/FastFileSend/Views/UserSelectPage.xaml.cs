@@ -10,7 +10,6 @@ using Xamarin.Forms.Xaml;
 
 namespace FastFileSend.Views
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class UserSelectPage : ContentPage
     {
         TaskCompletionSource<UserModel> TaskCompletionSource { get; set; }
