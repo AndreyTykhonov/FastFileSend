@@ -33,11 +33,15 @@ namespace FastFileSend.WPF
             ListViewUsers.DataContext = userViewModel;
         }
 
+        bool selected = false;
+
         private void ListViewItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             ListViewItem listViewItem = sender as ListViewItem;
+
             if (listViewItem != null)
             {
+                selected = true;
                 ListViewUsers.SelectedItem = listViewItem.Content;
                 Close();
             }
@@ -81,8 +85,10 @@ namespace FastFileSend.WPF
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            ListViewUsers.SelectedItem = null;
-            Close();
+            if (!selected)
+            {
+                ListViewUsers.SelectedItem = null;
+            }
         }
     }
 }
