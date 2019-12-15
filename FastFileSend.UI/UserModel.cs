@@ -9,7 +9,7 @@ namespace FastFileSend.UI
     public class UserModel : INotifyPropertyChanged
     {
         private int id;
-        private string localName;
+        private string localName = string.Empty;
         private bool online;
 
         public int Id
