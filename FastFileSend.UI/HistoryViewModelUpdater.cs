@@ -44,6 +44,14 @@ namespace FastFileSend.UI
                     if (duplicate.Fake)
                     {
                         uiContext.Send(x => HistoryViewModel.List.Remove(duplicate), null);
+                        continue;
+                    }
+
+                    if (duplicate.Status != model.Status)
+                    {
+                        duplicate.Status = model.Status;
+                        duplicate.StatusText = "OK";
+                        continue;
                     }
                     else
                     {
