@@ -18,7 +18,7 @@
 
     <ContentPage.Content>
         <StackLayout>
-            <ListView x:Name="ListViewUsers" ItemsSource="{Binding List}">
+            <ListView x:Name="ListViewUsers" ItemsSource="{Binding List}" CachingStrategy="RecycleElement">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
