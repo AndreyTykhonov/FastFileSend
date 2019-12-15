@@ -85,7 +85,7 @@ namespace FastFileSend.Main
 
         private async Task<JObject> StartUploadAsync(string path, Uri uploadUri)
         {
-            FileStream fs = File.OpenRead(path);
+            FileStream fs = File.Open(path, FileMode.Open, FileAccess.Read);
 
             StreamContent streamContent = new StreamContent(fs);
             streamContent.Headers.Add("Content-Type", "application/octet-stream");
