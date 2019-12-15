@@ -27,8 +27,17 @@ namespace FastFileSend.Views
             ListViewUsers.BindingContext = Global.FastFileSendProgramXamarin.UserViewModel;
         }
 
+        bool CanAddUser = true;
+
         private async void ToolbarItemAdd_Clicked(object sender, EventArgs e)
         {
+            if (!CanAddUser)
+            {
+                return;
+            }
+
+            CanAddUser = false;
+
             UserModel newUser = new UserModel();
             UserEditPage userEditPage = new UserEditPage(newUser);
             userEditPage.Disappearing += UserEditPage_Disappearing;
@@ -40,6 +49,8 @@ namespace FastFileSend.Views
         {
             var userModel = (sender as UserEditPage).BindingContext;
             Global.FastFileSendProgramXamarin.UserViewModel.List.Add(userModel as UserModel);
+
+            CanAddUser = true;
         }
 
         UserModel Selected()
