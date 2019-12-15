@@ -13,6 +13,7 @@ namespace FastFileSend.Views
     public partial class UserEditPage : ContentPage
     {
         UserModel UserModel { get; set; }
+        public bool OkPressed { get; set; } = false;
 
         public UserEditPage(UserModel userModel)
         {
@@ -24,6 +25,7 @@ namespace FastFileSend.Views
 
         private void ToolbarItem_Clicked(object sender, EventArgs e)
         {
+            OkPressed = true;
             Navigation.PopModalAsync();
         }
     }
