@@ -49,15 +49,15 @@ namespace FastFileSend.Views
 
         private async void MenuItemEdit_Clicked(object sender, EventArgs e)
         {
-            if (Selected() != null)
-            {
-                UserEditPage userEditPage = new UserEditPage(Selected());
-                await Navigation.PushModalAsync(userEditPage);
-            }
+            UserModel selected = (sender as MenuItem).CommandParameter as UserModel;
+
+            UserEditPage userEditPage = new UserEditPage(selected);
+            await Navigation.PushModalAsync(userEditPage);
         }
         private void MenuItemRemove_Clicked(object sender, EventArgs e)
         {
-            Global.FastFileSendProgramXamarin.UserViewModel.List.Remove(Selected());
+            UserModel selected = (sender as MenuItem).CommandParameter as UserModel;
+            Global.FastFileSendProgramXamarin.UserViewModel.List.Remove(selected);
         }
 
         private void ToolbarItemSelect_Clicked(object sender, EventArgs e)
