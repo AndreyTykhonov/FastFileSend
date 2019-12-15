@@ -26,17 +26,13 @@ namespace FastFileSend.WPF
         {
             InitializeComponent();
 
-            StackPanelContent.DataContext = userModel;
-
             UserModel = userModel;
+            StackPanelContent.DataContext = UserModel;
         }
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (string.IsNullOrEmpty(UserModel.LocalName) || UserModel.LocalName.Length < 5)
-            {
-                UserModel.LocalName = "CHANGE NAME!";
-            }
+            //
         }
     }
 }
