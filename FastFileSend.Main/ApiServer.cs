@@ -77,6 +77,11 @@ namespace FastFileSend.Main
             {
                 return DateTime.MinValue;
             }
+            catch (TaskCanceledException)
+            {
+                // Timeout. Server 
+                return DateTime.MinValue;
+            }
         }
 
         public async Task<List<HistoryItem>> GetHistory()
