@@ -78,5 +78,11 @@ namespace FastFileSend.WPF
             ListViewUsers.SelectedItem = null;
             Close();
         }
+
+        private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ListViewUsers.SelectedItem = null;
+            Close();
+        }
     }
 }

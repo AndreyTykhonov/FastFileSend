@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FastFileSend.WPF"
         mc:Ignorable="d"
-        Title="Choose user to send" Height="381.466" Width="498.707" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="Choose user to send" Height="381.466" Width="498.707" Closing="MetroWindow_Closing" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
 
     <Window.Resources>
         <local:UserOnlineImageConverter x:Key="myStatusConverter" />
