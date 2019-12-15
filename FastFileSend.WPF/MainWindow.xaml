@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FastFileSend.WPF"
         mc:Ignorable="d"
-        Title="Fast File Send" Height="450" Width="800" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded">
+        Title="Fast File Send" Height="450" Width="800" SizeToContent="WidthAndHeight"  WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize"  Loaded="MetroWindow_Loaded">
 
     <Window.Resources>
         <local:SizeConverter x:Key="mySizeConverter" />
@@ -15,7 +15,7 @@
     <StackPanel>
         <TabControl Margin="10">
             <TabItem Header="Downloads">
-                <DockPanel LastChildFill="true">
+                <DockPanel>
                     <StackPanel Margin="5">
                         <Label Content="Your id:" HorizontalContentAlignment="Center"/>
                         <TextBox x:Name="TextBlockId" IsReadOnly="True" Margin="0,0,0,10" HorizontalContentAlignment="Center"></TextBox>
@@ -24,7 +24,7 @@
                         <Button x:Name="ButtonClose" Content="Close" Click="ButtonClose_Click"  DockPanel.Dock="Left" Style="{StaticResource MetroFlatButton}" Margin="0,0,0,10"/>
                     </StackPanel>
 
-                    <ListView x:Name="ListViewHistory" HorizontalContentAlignment="Stretch" ItemsSource="{Binding List}" DockPanel.Dock="Left">
+                    <ListView x:Name="ListViewHistory" MaxHeight="500" HorizontalContentAlignment="Stretch" ItemsSource="{Binding List}" DockPanel.Dock="Left">
                         <ListView.View>
                             <GridView x:Name="GridViewHistory">
                                 <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
