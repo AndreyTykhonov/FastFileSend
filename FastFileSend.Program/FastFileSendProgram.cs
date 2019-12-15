@@ -2,6 +2,7 @@
 using FastFileSend.UI;
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FastFileSend.Program
@@ -141,10 +142,18 @@ namespace FastFileSend.Program
             //cloudFile = new CloudFile(0, "debug.zip", 0, DateTime.Now, "https://cdn.shazoo.ru/393609_KPsmQaHsNk_382993_uuwtofdnti_fb6f81c359f7cd.jpg");
 
             FileItem uploadedFile = await ApiServer.Upload(cloudFile);
-            int download_index = await ApiServer.Send(uploadedFile, target.Id);
-            downloadModel.Id = download_index;
 
-            downloadModel.StatusText = "Awaiting remote download";
+            try
+            {
+                int download_index = await ApiServer.Send(uploadedFile, target.Id);
+                downloadModel.Id = download_index;
+
+                downloadModel.StatusText = "Awaiting remote download";
+            }
+            catch (HttpRequestException)
+            {
+                HistoryViewModel.List.Remove(downloadModel);
+            }
         }
     }
 }
