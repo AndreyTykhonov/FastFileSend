@@ -111,6 +111,12 @@ namespace FastFileSend.Program
 
         private async Task SendFile(UserModel target, string path)
         {
+            string filename = Path.GetFileName(path);
+            if (filename.Length >= 300)
+            {
+                return;
+            }
+
             FileStream fs = new FileStream(path, FileMode.Open);
             HistoryModel downloadModel = new HistoryModel
             {
