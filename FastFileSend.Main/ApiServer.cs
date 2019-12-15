@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Web;
 
 namespace FastFileSend.Main
 {
@@ -109,10 +110,18 @@ namespace FastFileSend.Main
 
         public async Task<FileItem> Upload(CloudFile cloudFile)
         {
+            var builder = new UriBuilder(ServerHost + "upload");
+
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query["name"] = cloudFile.FileName;
+            query["size"] = cloudFile.Size.ToString();
+            query["crc32"] = cloudFile.CRC32.ToString();
+            query["url"] = cloudFile.Url;
+            builder.Query = query.ToString();
+
             HttpClient HttpClient = new HttpClient();
 
-            string url = ServerHost + $"upload?name={cloudFile.FileName}&size={cloudFile.Size}&crc32={cloudFile.CRC32}&url={cloudFile.Url}";
-            Uri targetUri = new Uri(url);
+            Uri targetUri = new Uri(builder.ToString());
 
             string fileIdStr = await HttpClient.GetStringAsync(targetUri);
             int fileId = Convert.ToInt32(fileIdStr);
