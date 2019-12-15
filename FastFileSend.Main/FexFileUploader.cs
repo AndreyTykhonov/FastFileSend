@@ -52,7 +52,15 @@ namespace FastFileSend.Main
             UploadDataInfo uploadDataInfo = await GetUploadDataInfoAsync(json_payload);
 
             Uri uploadUri = new Uri(uploadDataInfo.location);
-            await PrepareUploadLink(uploadUri);
+
+            try
+            {
+                await PrepareUploadLink(uploadUri);
+            }
+            catch (HttpRequestException e)
+            {
+                throw new HttpRequestException($"Payload: {json_payload}. UploadDataInfo: {uploadDataInfo}. Auth: {HttpClient.DefaultRequestHeaders.Authorization}", e);
+            }
 
             SpeedWatch = Stopwatch.StartNew();
 
