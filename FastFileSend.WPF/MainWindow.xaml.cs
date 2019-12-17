@@ -19,6 +19,7 @@ using FastFileSend.Main;
 using System.IO;
 using Microsoft.Win32;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace FastFileSend.WPF
 {
@@ -64,6 +65,13 @@ namespace FastFileSend.WPF
             TextBlockId.Text = FastFileSendProgramWindows.ApiServer.Id.ToString();
 
             ListViewHistory.DataContext = FastFileSendProgramWindows.HistoryViewModel;
+            ListViewHistory.ItemsSource = FastFileSendProgramWindows.HistoryViewModel.List;
+
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewHistory.ItemsSource);
+            view.SortDescriptions.Add(new SortDescription("Date", ListSortDirection.Descending));
+            //view.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+
+
 
             IsEnabled = true;
         }

@@ -127,6 +127,7 @@ namespace FastFileSend.Program
                 Sender = ApiServer.Id,
                 Fake = true,
                 Size = fs.Length,
+                Date = DateTime.Now
             };
             fs.Close();
 

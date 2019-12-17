@@ -27,7 +27,8 @@ namespace FastFileSend.Web.Controllers
                     sender_id = id,
                     receiver_id = target,
                     status = 0,
-                    download_idx = FindEmptpyId()
+                    download_idx = FindEmptpyId(),
+                    date = DateTime.UtcNow
                 };
 
                 db.transactions.Add(newSend);
