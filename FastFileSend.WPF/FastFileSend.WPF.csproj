@@ -61,6 +61,7 @@
     </ApplicationDefinition>
     <Compile Include="FastFileSendProgramWindows.cs" />
     <Compile Include="SizeConverter.cs" />
+    <Compile Include="StatusConverter.cs" />
     <Compile Include="UserAddWindow.xaml.cs">
       <DependentUpon>UserAddWindow.xaml</DependentUpon>
     </Compile>

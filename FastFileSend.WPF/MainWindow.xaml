@@ -10,6 +10,7 @@
 
     <Window.Resources>
         <local:SizeConverter x:Key="mySizeConverter" />
+        <local:StatusConverter x:Key="myStatusConverter" />
     </Window.Resources>
 
     <StackPanel>
@@ -32,7 +33,7 @@
                                 <GridViewColumn Header="Receiver" DisplayMemberBinding="{Binding Receiver}"/>
                                 <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}"/>
                                 <GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size,Converter={StaticResource mySizeConverter}}"/>
-                                <GridViewColumn Header="Status" DisplayMemberBinding="{Binding StatusText}"/>
+                                <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status,Converter={StaticResource myStatusConverter}}"/>
                                 <GridViewColumn Header="Speed" DisplayMemberBinding="{Binding ETA}"/>
                                 <GridViewColumn Header="Progress">
                                     <GridViewColumn.CellTemplate>

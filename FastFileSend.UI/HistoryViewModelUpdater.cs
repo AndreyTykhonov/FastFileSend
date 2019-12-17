@@ -45,19 +45,13 @@ namespace FastFileSend.UI
                     {
                         PropertyHelper.CopyPropertiesTo(model, duplicate);
                         //uiContext.Send(x => HistoryViewModel.List.Remove(duplicate), null);
-                        continue;
                     }
-
                     if (duplicate.Status != model.Status)
                     {
                         duplicate.Status = model.Status;
-                        duplicate.StatusText = "OK";
-                        continue;
                     }
-                    else
-                    {
-                        continue;
-                    }
+
+                    continue;
                 }
 
                 uiContext.Send(x => HistoryViewModel.List.Insert(0, model), null);
@@ -80,17 +74,11 @@ namespace FastFileSend.UI
                 Receiver = historyItem.Receiver,
                 Sender = historyItem.Sender,
                 Size = historyItem.File.Size,
-                StatusText = timeToDownload ? "Preparing to download" : "Awaiting remote download",
                 Url = historyItem.File.Url,
-                Status = historyItem.Status,
+                Status = (HistoryModelStatus)historyItem.Status,
                 Progress = timeToDownload ? 0 : 100,
                 Date = historyItem.Date.ToLocalTime(),
             };
-
-            if (historyItem.Status == 1)
-            {
-                historyModel.StatusText = "OK";
-            }
 
             return historyModel;
         }

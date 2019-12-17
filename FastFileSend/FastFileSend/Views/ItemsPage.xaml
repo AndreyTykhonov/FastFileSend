@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:FastFileSend.UI;assembly=FastFileSend.UI"
              xmlns:fastfilesend="clr-namespace:FastFileSend"
+             xmlns:wpf="clr-namespace:FastFileSend.WPF"
              mc:Ignorable="d"
              x:Class="FastFileSend.Views.ItemsPage"
              Title="{Binding Title}"
@@ -12,6 +13,7 @@
 
     <ContentPage.Resources>
         <fastfilesend:SizeConverter x:Key="mySizeConverter" />
+        <wpf:StatusConverter x:Key="myStatusConverter" />
     </ContentPage.Resources>
 
     <StackLayout>
@@ -38,7 +40,7 @@
                                 <Label Text="{Binding StatusText}" HorizontalOptions="EndAndExpand"></Label>
                             </StackLayout>
                             <StackLayout Orientation="Horizontal">
-                                <Label Text="{Binding Date}" HorizontalOptions="StartAndExpand"></Label>
+                                <Label Text="{Binding Date,Converter={StaticResource myStatusConverter}}" HorizontalOptions="StartAndExpand"></Label>
                             </StackLayout>
                         </StackLayout>
                     </ViewCell>

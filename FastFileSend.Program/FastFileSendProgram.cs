@@ -46,7 +46,7 @@ namespace FastFileSend.Program
                 return;
             }
 
-            if (model.Status == 1)
+            if (model.Status == HistoryModelStatus.Ok)
             {
                 return;
             }
@@ -64,7 +64,7 @@ namespace FastFileSend.Program
                 Url = model.Url
             };
 
-            model.StatusText = "Downloading";
+            model.Status = HistoryModelStatus.Downloading;
 
             fileDownloader.OnProgress += (double progress, double speed) =>
             {
@@ -74,7 +74,7 @@ namespace FastFileSend.Program
 
             await fileDownloader.DownloadAsync(fileItem);
 
-            model.StatusText = "OK";
+            model.Status = HistoryModelStatus.Ok;
             model.ETA = "";
 
             await ApiServer.NotifyDownloadedAsync(model.Id);
@@ -121,7 +121,7 @@ namespace FastFileSend.Program
             HistoryModel downloadModel = new HistoryModel
             {
                 Name = System.IO.Path.GetFileName(path),
-                StatusText = "Uploading file",
+                Status = HistoryModelStatus.Uploading,
                 ETA = "",
                 Receiver = target.Id,
                 Sender = ApiServer.Id,
@@ -144,7 +144,7 @@ namespace FastFileSend.Program
             CloudFile cloudFile = await fileUploader.UploadAsync(path);
 
             downloadModel.Progress = 100;
-            downloadModel.StatusText = "Using API";
+            downloadModel.Status = HistoryModelStatus.UsingAPI;
 
             //cloudFile = new CloudFile(0, "debug.zip", 0, DateTime.Now, "https://cdn.shazoo.ru/393609_KPsmQaHsNk_382993_uuwtofdnti_fb6f81c359f7cd.jpg");
 
@@ -155,7 +155,7 @@ namespace FastFileSend.Program
                 int download_index = await ApiServer.Send(uploadedFile, target.Id);
                 downloadModel.Id = download_index;
 
-                downloadModel.StatusText = "Awaiting remote download";
+                downloadModel.Status = HistoryModelStatus.Awaiting;
             }
             catch (HttpRequestException)
             {
