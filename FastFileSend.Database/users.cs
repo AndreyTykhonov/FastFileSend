@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FastFileSend.Web.Models
+namespace FastFileSend.Database
 {
     using System;
     using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace FastFileSend.Web.Models
         public users()
         {
             this.transactions = new HashSet<transactions>();
-            this.transactions11 = new HashSet<transactions>();
+            this.transactions1 = new HashSet<transactions>();
         }
     
         public int user_idx { get; set; }
@@ -29,8 +29,7 @@ namespace FastFileSend.Web.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<transactions> transactions { get; set; }
-        public virtual transactions transactions1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<transactions> transactions11 { get; set; }
+        public virtual ICollection<transactions> transactions1 { get; set; }
     }
 }

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FastFileSend.Web.Models
+namespace FastFileSend.Database
 {
     using System;
     using System.Collections.Generic;
@@ -17,7 +17,7 @@ namespace FastFileSend.Web.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public files()
         {
-            this.transactions1 = new HashSet<transactions>();
+            this.transactions = new HashSet<transactions>();
         }
     
         public int file_idx { get; set; }
@@ -27,8 +27,7 @@ namespace FastFileSend.Web.Models
         public System.DateTime file_creationdate { get; set; }
         public string file_url { get; set; }
     
-        public virtual transactions transactions { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<transactions> transactions1 { get; set; }
+        public virtual ICollection<transactions> transactions { get; set; }
     }
 }

@@ -132,58 +132,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\fastfilesend.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>fastfilesend.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\fastfilesend.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>fastfilesend.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\fastfilesend.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>fastfilesend.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\files.cs">
-      <DependentUpon>fastfilesend.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\sysdiagrams.cs">
-      <DependentUpon>fastfilesend.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\transactions.cs">
-      <DependentUpon>fastfilesend.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\users.cs">
-      <DependentUpon>fastfilesend.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <EntityDeploy Include="Models\fastfilesend.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>fastfilesend.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\fastfilesend.edmx.diagram">
-      <DependentUpon>fastfilesend.edmx</DependentUpon>
-    </Content>
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
-    <Content Include="Models\fastfilesend.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>fastfilesend.edmx</DependentUpon>
-      <LastGenOutput>fastfilesend.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\fastfilesend.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>fastfilesend.edmx</DependentUpon>
-      <LastGenOutput>fastfilesend.cs</LastGenOutput>
-    </Content>
     <Content Include="Web.config" />
     <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
     <None Include="Web.Debug.config">
@@ -193,16 +148,16 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-    <Folder Include="Content\" />
-    <Folder Include="Views\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FastFileSend.Database\FastFileSend.Database.csproj">
+      <Project>{EFCD1F8D-92F5-41C1-8222-6D18F49CBCE5}</Project>
+      <Name>FastFileSend.Database</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FastFileSend.Main\FastFileSend.Main.csproj">
       <Project>{43C92482-7A7B-41AB-9414-E950D814ECDD}</Project>
       <Name>FastFileSend.Main</Name>

@@ -4,27 +4,17 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="fastfilesendModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="fastfilesendModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="files">
           <Key>
             <PropertyRef Name="file_idx" />
           </Key>
           <Property Name="file_idx" Type="int" Nullable="false" />
-          <Property Name="file_name" Type="nchar" MaxLength="50" Nullable="false" />
+          <Property Name="file_name" Type="nchar" MaxLength="300" Nullable="false" />
           <Property Name="file_size" Type="bigint" Nullable="false" />
           <Property Name="file_crc32" Type="int" Nullable="false" />
-          <Property Name="file_creationdate" Type="datetime" Nullable="false" />
+          <Property Name="file_creationdate" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="file_url" Type="nchar" MaxLength="100" Nullable="false" />
-        </EntityType>
-        <EntityType Name="sysdiagrams">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="principal_id" Type="int" Nullable="false" />
-          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="version" Type="int" />
-          <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
         <EntityType Name="transactions">
           <Key>
@@ -42,9 +32,9 @@
           </Key>
           <Property Name="user_idx" Type="int" Nullable="false" />
           <Property Name="user_friendlyname" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="user_registerdate" Type="datetime" Nullable="false" />
+          <Property Name="user_registerdate" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="user_password" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="user_lastonline" Type="datetime" Nullable="false" />
+          <Property Name="user_lastonline" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
         <Association Name="FK_transactions_files">
           <End Role="files" Type="Self.files" Multiplicity="1" />
@@ -84,7 +74,6 @@
         </Association>
         <EntityContainer Name="fastfilesendModelStoreContainer">
           <EntitySet Name="files" EntityType="Self.files" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="transactions" EntityType="Self.transactions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="users" EntityType="Self.users" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_transactions_files" Association="Self.FK_transactions_files">
@@ -100,7 +89,8 @@
             <End Role="transactions" EntitySet="transactions" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="fastfilesendModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -109,23 +99,12 @@
             <PropertyRef Name="file_idx" />
           </Key>
           <Property Name="file_idx" Type="Int32" Nullable="false" />
-          <Property Name="file_name" Type="String" MaxLength="50" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="file_name" Type="String" MaxLength="300" FixedLength="true" Unicode="true" Nullable="false" />
           <Property Name="file_size" Type="Int64" Nullable="false" />
           <Property Name="file_crc32" Type="Int32" Nullable="false" />
-          <Property Name="file_creationdate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="file_creationdate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="file_url" Type="String" MaxLength="100" FixedLength="true" Unicode="true" Nullable="false" />
           <NavigationProperty Name="transactions" Relationship="Self.FK_transactions_files" FromRole="files" ToRole="transactions" />
-          <NavigationProperty Name="transactions1" Relationship="fastfilesendModel.FK_transactions_files1" FromRole="files" ToRole="transactions" />
-        </EntityType>
-        <EntityType Name="sysdiagrams">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         <EntityType Name="transactions">
           <Key>
@@ -139,8 +118,6 @@
           <NavigationProperty Name="files" Relationship="Self.FK_transactions_files" FromRole="transactions" ToRole="files" />
           <NavigationProperty Name="users" Relationship="Self.FK_transactions_transactions_receiver" FromRole="transactions" ToRole="users" />
           <NavigationProperty Name="users1" Relationship="Self.FK_transactions_users_sender" FromRole="transactions" ToRole="users" />
-          <NavigationProperty Name="files1" Relationship="fastfilesendModel.FK_transactions_files1" FromRole="transactions" ToRole="files" />
-          <NavigationProperty Name="users11" Relationship="fastfilesendModel.FK_transactions_users_sender1" FromRole="transactions" ToRole="users" />
         </EntityType>
         <EntityType Name="users">
           <Key>
@@ -148,22 +125,21 @@
           </Key>
           <Property Name="user_idx" Type="Int32" Nullable="false" />
           <Property Name="user_friendlyname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="user_registerdate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="user_registerdate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="user_password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="user_lastonline" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="transactions" Relationship="Self.FK_transactions_transactions_receiver" FromRole="users" ToRole="transactions" />
           <NavigationProperty Name="transactions1" Relationship="Self.FK_transactions_users_sender" FromRole="users" ToRole="transactions" />
-          <Property Name="user_lastonline" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="transactions11" Relationship="fastfilesendModel.FK_transactions_users_sender1" FromRole="users" ToRole="transactions" />
         </EntityType>
         <Association Name="FK_transactions_files">
           <End Role="files" Type="Self.files" Multiplicity="1" />
-          <End Role="transactions" Type="Self.transactions" Multiplicity="0..1" />
+          <End Role="transactions" Type="Self.transactions" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="files">
               <PropertyRef Name="file_idx" />
             </Principal>
             <Dependent Role="transactions">
-              <PropertyRef Name="download_idx" />
+              <PropertyRef Name="file_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -181,19 +157,18 @@
         </Association>
         <Association Name="FK_transactions_users_sender">
           <End Role="users" Type="Self.users" Multiplicity="1" />
-          <End Role="transactions" Type="Self.transactions" Multiplicity="0..1" />
+          <End Role="transactions" Type="Self.transactions" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="users">
               <PropertyRef Name="user_idx" />
             </Principal>
             <Dependent Role="transactions">
-              <PropertyRef Name="download_idx" />
+              <PropertyRef Name="sender_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="fastfilesendEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="files" EntityType="Self.files" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
           <EntitySet Name="transactions" EntityType="Self.transactions" />
           <EntitySet Name="users" EntityType="Self.users" />
           <AssociationSet Name="FK_transactions_files" Association="Self.FK_transactions_files">
@@ -208,39 +183,7 @@
             <End Role="users" EntitySet="users" />
             <End Role="transactions" EntitySet="transactions" />
           </AssociationSet>
-          <AssociationSet Name="FK_transactions_files1" Association="fastfilesendModel.FK_transactions_files1">
-            <End Role="files" EntitySet="files" />
-            <End Role="transactions" EntitySet="transactions" />
-          </AssociationSet>
-          <AssociationSet Name="FK_transactions_users_sender1" Association="fastfilesendModel.FK_transactions_users_sender1">
-            <End Role="users" EntitySet="users" />
-            <End Role="transactions" EntitySet="transactions" />
-          </AssociationSet>
         </EntityContainer>
-        <Association Name="FK_transactions_files1">
-          <End Type="fastfilesendModel.files" Role="files" Multiplicity="1" />
-          <End Type="fastfilesendModel.transactions" Role="transactions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="files">
-              <PropertyRef Name="file_idx" />
-            </Principal>
-            <Dependent Role="transactions">
-              <PropertyRef Name="file_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_transactions_users_sender1">
-          <End Type="fastfilesendModel.users" Role="users" Multiplicity="1" />
-          <End Type="fastfilesendModel.transactions" Role="transactions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="users">
-              <PropertyRef Name="user_idx" />
-            </Principal>
-            <Dependent Role="transactions">
-              <PropertyRef Name="sender_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -259,17 +202,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="fastfilesendModel.sysdiagrams">
-              <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="definition" ColumnName="definition" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="transactions">
             <EntityTypeMapping TypeName="fastfilesendModel.transactions">
               <MappingFragment StoreEntitySet="transactions">
@@ -284,11 +216,11 @@
           <EntitySetMapping Name="users">
             <EntityTypeMapping TypeName="fastfilesendModel.users">
               <MappingFragment StoreEntitySet="users">
-                <ScalarProperty Name="user_lastonline" ColumnName="user_lastonline" />
                 <ScalarProperty Name="user_idx" ColumnName="user_idx" />
                 <ScalarProperty Name="user_friendlyname" ColumnName="user_friendlyname" />
                 <ScalarProperty Name="user_registerdate" ColumnName="user_registerdate" />
                 <ScalarProperty Name="user_password" ColumnName="user_password" />
+                <ScalarProperty Name="user_lastonline" ColumnName="user_lastonline" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
