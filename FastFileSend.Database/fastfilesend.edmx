@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="fastfilesendModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="fastfilesendModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="files">
           <Key>
             <PropertyRef Name="file_idx" />
@@ -25,6 +25,7 @@
           <Property Name="sender_id" Type="int" Nullable="false" />
           <Property Name="file_id" Type="int" Nullable="false" />
           <Property Name="status" Type="int" Nullable="false" />
+          <Property Name="date" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
         <EntityType Name="users">
           <Key>
@@ -89,8 +90,7 @@
             <End Role="transactions" EntitySet="transactions" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="fastfilesendModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -104,7 +104,7 @@
           <Property Name="file_crc32" Type="Int32" Nullable="false" />
           <Property Name="file_creationdate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="file_url" Type="String" MaxLength="100" FixedLength="true" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="transactions" Relationship="Self.FK_transactions_files" FromRole="files" ToRole="transactions" />
+          <NavigationProperty Name="transactions_files" Relationship="Self.FK_transactions_files" FromRole="files" ToRole="transactions" />
         </EntityType>
         <EntityType Name="transactions">
           <Key>
@@ -115,9 +115,10 @@
           <Property Name="sender_id" Type="Int32" Nullable="false" />
           <Property Name="file_id" Type="Int32" Nullable="false" />
           <Property Name="status" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="files" Relationship="Self.FK_transactions_files" FromRole="transactions" ToRole="files" />
-          <NavigationProperty Name="users" Relationship="Self.FK_transactions_transactions_receiver" FromRole="transactions" ToRole="users" />
-          <NavigationProperty Name="users1" Relationship="Self.FK_transactions_users_sender" FromRole="transactions" ToRole="users" />
+          <NavigationProperty Name="files_idx" Relationship="Self.FK_transactions_files" FromRole="transactions" ToRole="files" />
+          <NavigationProperty Name="receiver_useridx" Relationship="Self.FK_transactions_transactions_receiver" FromRole="transactions" ToRole="users" />
+          <NavigationProperty Name="sender_useridx" Relationship="Self.FK_transactions_users_sender" FromRole="transactions" ToRole="users" />
+          <Property Name="date" Type="DateTime" Nullable="false" Precision="7" />
         </EntityType>
         <EntityType Name="users">
           <Key>
@@ -128,8 +129,8 @@
           <Property Name="user_registerdate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="user_password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="user_lastonline" Type="DateTime" Nullable="false" Precision="7" />
-          <NavigationProperty Name="transactions" Relationship="Self.FK_transactions_transactions_receiver" FromRole="users" ToRole="transactions" />
-          <NavigationProperty Name="transactions1" Relationship="Self.FK_transactions_users_sender" FromRole="users" ToRole="transactions" />
+          <NavigationProperty Name="transactions_receiver" Relationship="Self.FK_transactions_transactions_receiver" FromRole="users" ToRole="transactions" />
+          <NavigationProperty Name="transactions_sender" Relationship="Self.FK_transactions_users_sender" FromRole="users" ToRole="transactions" />
         </EntityType>
         <Association Name="FK_transactions_files">
           <End Role="files" Type="Self.files" Multiplicity="1" />
@@ -188,45 +189,45 @@
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
-      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="fastfilesendModelStoreContainer" CdmEntityContainer="fastfilesendEntities">
-          <EntitySetMapping Name="files">
-            <EntityTypeMapping TypeName="fastfilesendModel.files">
-              <MappingFragment StoreEntitySet="files">
-                <ScalarProperty Name="file_idx" ColumnName="file_idx" />
-                <ScalarProperty Name="file_name" ColumnName="file_name" />
-                <ScalarProperty Name="file_size" ColumnName="file_size" />
-                <ScalarProperty Name="file_crc32" ColumnName="file_crc32" />
-                <ScalarProperty Name="file_creationdate" ColumnName="file_creationdate" />
-                <ScalarProperty Name="file_url" ColumnName="file_url" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="transactions">
-            <EntityTypeMapping TypeName="fastfilesendModel.transactions">
-              <MappingFragment StoreEntitySet="transactions">
-                <ScalarProperty Name="download_idx" ColumnName="download_idx" />
-                <ScalarProperty Name="receiver_id" ColumnName="receiver_id" />
-                <ScalarProperty Name="sender_id" ColumnName="sender_id" />
-                <ScalarProperty Name="file_id" ColumnName="file_id" />
-                <ScalarProperty Name="status" ColumnName="status" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="users">
-            <EntityTypeMapping TypeName="fastfilesendModel.users">
-              <MappingFragment StoreEntitySet="users">
-                <ScalarProperty Name="user_idx" ColumnName="user_idx" />
-                <ScalarProperty Name="user_friendlyname" ColumnName="user_friendlyname" />
-                <ScalarProperty Name="user_registerdate" ColumnName="user_registerdate" />
-                <ScalarProperty Name="user_password" ColumnName="user_password" />
-                <ScalarProperty Name="user_lastonline" ColumnName="user_lastonline" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-        </EntityContainerMapping>
-      </Mapping>
-    </edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="fastfilesendModelStoreContainer" CdmEntityContainer="fastfilesendEntities">
+    <EntitySetMapping Name="files">
+      <EntityTypeMapping TypeName="IsTypeOf(fastfilesendModel.files)">
+        <MappingFragment StoreEntitySet="files">
+          <ScalarProperty Name="file_idx" ColumnName="file_idx" />
+          <ScalarProperty Name="file_name" ColumnName="file_name" />
+          <ScalarProperty Name="file_size" ColumnName="file_size" />
+          <ScalarProperty Name="file_crc32" ColumnName="file_crc32" />
+          <ScalarProperty Name="file_creationdate" ColumnName="file_creationdate" />
+          <ScalarProperty Name="file_url" ColumnName="file_url" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="transactions">
+      <EntityTypeMapping TypeName="IsTypeOf(fastfilesendModel.transactions)">
+        <MappingFragment StoreEntitySet="transactions">
+          <ScalarProperty Name="download_idx" ColumnName="download_idx" />
+          <ScalarProperty Name="receiver_id" ColumnName="receiver_id" />
+          <ScalarProperty Name="sender_id" ColumnName="sender_id" />
+          <ScalarProperty Name="file_id" ColumnName="file_id" />
+          <ScalarProperty Name="status" ColumnName="status" />
+          <ScalarProperty Name="date" ColumnName="date" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="users">
+      <EntityTypeMapping TypeName="IsTypeOf(fastfilesendModel.users)">
+        <MappingFragment StoreEntitySet="users">
+          <ScalarProperty Name="user_idx" ColumnName="user_idx" />
+          <ScalarProperty Name="user_friendlyname" ColumnName="user_friendlyname" />
+          <ScalarProperty Name="user_registerdate" ColumnName="user_registerdate" />
+          <ScalarProperty Name="user_password" ColumnName="user_password" />
+          <ScalarProperty Name="user_lastonline" ColumnName="user_lastonline" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
   <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
@@ -240,7 +241,7 @@
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
         <DesignerProperty Name="EnablePluralization" Value="false" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
-        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
       </DesignerInfoPropertySet>
     </Options>

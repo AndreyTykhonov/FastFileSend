@@ -19,9 +19,10 @@ namespace FastFileSend.Database
         public int sender_id { get; set; }
         public int file_id { get; set; }
         public int status { get; set; }
+        public System.DateTime date { get; set; }
     
-        public virtual files files { get; set; }
-        public virtual users users { get; set; }
-        public virtual users users1 { get; set; }
+        public virtual files files_idx { get; set; }
+        public virtual users receiver_useridx { get; set; }
+        public virtual users sender_useridx { get; set; }
     }
 }

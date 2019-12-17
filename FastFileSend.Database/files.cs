@@ -17,7 +17,7 @@ namespace FastFileSend.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public files()
         {
-            this.transactions = new HashSet<transactions>();
+            this.transactions_files = new HashSet<transactions>();
         }
     
         public int file_idx { get; set; }
@@ -28,6 +28,6 @@ namespace FastFileSend.Database
         public string file_url { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<transactions> transactions { get; set; }
+        public virtual ICollection<transactions> transactions_files { get; set; }
     }
 }

@@ -17,8 +17,8 @@ namespace FastFileSend.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public users()
         {
-            this.transactions = new HashSet<transactions>();
-            this.transactions1 = new HashSet<transactions>();
+            this.transactions_receiver = new HashSet<transactions>();
+            this.transactions_sender = new HashSet<transactions>();
         }
     
         public int user_idx { get; set; }
@@ -28,8 +28,8 @@ namespace FastFileSend.Database
         public System.DateTime user_lastonline { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<transactions> transactions { get; set; }
+        public virtual ICollection<transactions> transactions_receiver { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<transactions> transactions1 { get; set; }
+        public virtual ICollection<transactions> transactions_sender { get; set; }
     }
 }
