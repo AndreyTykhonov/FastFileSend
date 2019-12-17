@@ -43,7 +43,7 @@ namespace FastFileSend.UI
                 {
                     if (duplicate.Fake)
                     {
-                        PropertyHelper.CopyPropertiesTo<HistoryModel, HistoryModel>(model, duplicate);
+                        PropertyHelper.CopyPropertiesTo(model, duplicate);
                         //uiContext.Send(x => HistoryViewModel.List.Remove(duplicate), null);
                         continue;
                     }
@@ -84,7 +84,7 @@ namespace FastFileSend.UI
                 Url = historyItem.File.Url,
                 Status = historyItem.Status,
                 Progress = timeToDownload ? 0 : 100,
-                Date = historyItem.Date,
+                Date = historyItem.Date.ToLocalTime(),
             };
 
             if (historyItem.Status == 1)
