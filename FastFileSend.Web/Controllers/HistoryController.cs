@@ -36,6 +36,7 @@ namespace FastFileSend.Web.Controllers
                     FileItem fileItem = FilesToFileItem(item.file_id);
                     historyItem.File = fileItem;
                     historyItem.Status = item.status;
+                    historyItem.Date = item.date;
 
                     historyList.Add(historyItem);
                 }

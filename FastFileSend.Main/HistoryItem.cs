@@ -1,4 +1,6 @@
-﻿namespace FastFileSend.Main
+﻿using System;
+
+namespace FastFileSend.Main
 {
     public class HistoryItem
     {
@@ -7,5 +9,6 @@
         public int Sender { get; set; }
         public int Status { get; set; }
         public FileItem File { get; set; }
+        public DateTime Date { get; set; }
     }
 }
