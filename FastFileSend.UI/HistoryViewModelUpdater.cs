@@ -43,7 +43,8 @@ namespace FastFileSend.UI
                 {
                     if (duplicate.Fake)
                     {
-                        uiContext.Send(x => HistoryViewModel.List.Remove(duplicate), null);
+                        PropertyHelper.CopyPropertiesTo<HistoryModel, HistoryModel>(model, duplicate);
+                        //uiContext.Send(x => HistoryViewModel.List.Remove(duplicate), null);
                         continue;
                     }
 
