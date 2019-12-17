@@ -27,7 +27,7 @@ namespace FastFileSend.Web.Controllers
 
                 List<HistoryItem> historyList = new List<HistoryItem>();
 
-                foreach (var item in containsMyId.Where(x => x.date > DateTime.UtcNow.AddDays(-7))
+                foreach (var item in containsMyId.Where(x => x.date > DateTime.UtcNow.AddDays(-7)))
                 {
                     HistoryItem historyItem = new HistoryItem();
                     historyItem.Receiver = item.receiver_id;
