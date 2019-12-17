@@ -82,7 +82,8 @@ namespace FastFileSend.UI
                 StatusText = timeToDownload ? "Preparing to download" : "Awaiting remote download",
                 Url = historyItem.File.Url,
                 Status = historyItem.Status,
-                Progress = timeToDownload ? 0 : 100
+                Progress = timeToDownload ? 0 : 100,
+                Date = historyItem.Date,
             };
 
             if (historyItem.Status == 1)

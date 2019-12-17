@@ -30,6 +30,7 @@
                                 <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
                                 <GridViewColumn Header="Sender" DisplayMemberBinding="{Binding Sender}"/>
                                 <GridViewColumn Header="Receiver" DisplayMemberBinding="{Binding Receiver}"/>
+                                <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}"/>
                                 <GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size,Converter={StaticResource mySizeConverter}}"/>
                                 <GridViewColumn Header="Status" DisplayMemberBinding="{Binding StatusText}"/>
                                 <GridViewColumn Header="Speed" DisplayMemberBinding="{Binding ETA}"/>

@@ -11,6 +11,7 @@ namespace FastFileSend.UI
         private double progress;
         private string status;
         private string eta;
+        private DateTime date;
 
         public string Url { get; set; }
         public double Progress
@@ -29,6 +30,12 @@ namespace FastFileSend.UI
         {
             get { return eta; }
             set { eta = value; OnPropertyChanged(); }
+        }
+
+        public DateTime Date
+        {
+            get { return date; }
+            set { date = value; OnPropertyChanged(); }
         }
 
         public int Sender { get; set; }
