@@ -37,6 +37,9 @@
                                 <Label Text="{Binding Name}" HorizontalOptions="StartAndExpand"></Label>
                                 <Label Text="{Binding StatusText}" HorizontalOptions="EndAndExpand"></Label>
                             </StackLayout>
+                            <StackLayout Orientation="Horizontal">
+                                <Label Text="{Binding Date}" HorizontalOptions="StartAndExpand"></Label>
+                            </StackLayout>
                         </StackLayout>
                     </ViewCell>
                 </DataTemplate>
