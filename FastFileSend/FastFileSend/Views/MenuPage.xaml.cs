@@ -27,7 +27,7 @@ namespace FastFileSend.Views
 
             ListViewMenu.ItemsSource = menuItems;
 
-            ListViewMenu.SelectedItem = menuItems[0];
+            
             ListViewMenu.ItemSelected += async (sender, e) =>
             {
                 if (e.SelectedItem == null)
@@ -35,7 +35,7 @@ namespace FastFileSend.Views
 
                 var id = (int)((HomeMenuItem)e.SelectedItem).Id;
                 await RootPage.NavigateFromMenu(id);
-                ListViewMenu.SelectedItem = menuItems[0];
+                ListViewMenu.SelectedItem = null;
             };
         }
 

@@ -23,24 +23,21 @@ namespace FastFileSend.Views
             MasterBehavior = MasterBehavior.Popover;
 
             MenuPages.Add((int)MenuItemType.Downloads, (NavigationPage)Detail);
-
         }
 
         public async Task NavigateFromMenu(int id)
         {
+            IsPresented = false;
+
             switch (id)
             {
                 case (int)MenuItemType.Downloads:
-                    MenuPages.Add(id, new NavigationPage(new ItemsPage()));
+                    IsPresented = false;
                     break;
                 case (int)MenuItemType.Send:
                     await Global.FastFileSendProgramXamarin.Send();
                     break;
             }
-
-            await Task.Delay(100);
-
-            IsPresented = false;
         }
     }
 }

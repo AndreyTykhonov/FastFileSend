@@ -56,6 +56,11 @@ namespace FastFileSend.Views
             CanAddUser = true;
         }
 
+        protected override void OnDisappearing()
+        {
+            TaskCompletionSource.TrySetResult(null);
+        }
+
         UserModel Selected()
         {
             return (UserModel)ListViewUsers.SelectedItem;
@@ -81,8 +86,8 @@ namespace FastFileSend.Views
                 return;
             }
 
-            Navigation.PopModalAsync();
             TaskCompletionSource.SetResult(Selected());
+            Navigation.PopModalAsync();            
         }
     }
 }

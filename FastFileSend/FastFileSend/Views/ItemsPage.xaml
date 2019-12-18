@@ -37,10 +37,10 @@
                             </StackLayout>
                             <StackLayout Orientation="Horizontal">
                                 <Label Text="{Binding Name}" HorizontalOptions="StartAndExpand"></Label>
-                                <Label Text="{Binding StatusText}" HorizontalOptions="EndAndExpand"></Label>
+                                <Label Text="{Binding Status,Converter={StaticResource myStatusConverter}}" HorizontalOptions="EndAndExpand"></Label>
                             </StackLayout>
                             <StackLayout Orientation="Horizontal">
-                                <Label Text="{Binding Date,Converter={StaticResource myStatusConverter}}" HorizontalOptions="StartAndExpand"></Label>
+                                <Label Text="{Binding Date}" HorizontalOptions="StartAndExpand"></Label>
                             </StackLayout>
                         </StackLayout>
                     </ViewCell>

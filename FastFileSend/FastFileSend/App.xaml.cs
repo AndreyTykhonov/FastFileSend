@@ -37,7 +37,7 @@ namespace FastFileSend
             }
             */
 
-            if (!File.Exists(FilePathHelper.AccountConfig))
+            if (File.Exists(FilePathHelper.AccountConfig))
             {
                 int id = Convert.ToInt32(Preferences.Get("id", 0));
                 string password = Preferences.Get("password", string.Empty);
