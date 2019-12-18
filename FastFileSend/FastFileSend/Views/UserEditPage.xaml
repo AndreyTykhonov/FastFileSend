@@ -14,7 +14,7 @@
     <ContentPage.Content>
         <StackLayout x:Name="StackLayoutContent" Margin="10">
             <Label Text="User id:"></Label>
-            <Entry Text="{Binding Id}"></Entry>
+            <Entry Text="{Binding Id}" Keyboard="Numeric"></Entry>
             <Label Text="Local name:"></Label>
             <Entry Text="{Binding LocalName}"></Entry>
         </StackLayout>
