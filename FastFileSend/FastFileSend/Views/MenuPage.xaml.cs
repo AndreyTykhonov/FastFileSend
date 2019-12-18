@@ -35,6 +35,7 @@ namespace FastFileSend.Views
 
                 var id = (int)((HomeMenuItem)e.SelectedItem).Id;
                 await RootPage.NavigateFromMenu(id);
+                ListViewMenu.SelectedItem = menuItems[0];
             };
         }
 

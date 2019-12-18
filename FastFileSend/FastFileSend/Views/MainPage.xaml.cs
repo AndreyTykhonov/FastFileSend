@@ -28,33 +28,19 @@ namespace FastFileSend.Views
 
         public async Task NavigateFromMenu(int id)
         {
-            if (!MenuPages.ContainsKey(id))
+            switch (id)
             {
-                switch (id)
-                {
-                    case (int)MenuItemType.Downloads:
-                        MenuPages.Add(id, new NavigationPage(new ItemsPage()));
-                        break;
-                }
+                case (int)MenuItemType.Downloads:
+                    MenuPages.Add(id, new NavigationPage(new ItemsPage()));
+                    break;
+                case (int)MenuItemType.Send:
+                    await Global.FastFileSendProgramXamarin.Send();
+                    break;
             }
 
-            if (id == (int)MenuItemType.Send)
-            {
-                await Global.FastFileSendProgramXamarin.Send();
-                return;
-            }
+            await Task.Delay(100);
 
-            var newPage = MenuPages[id];
-
-            if (newPage != null && Detail != newPage)
-            {
-                Detail = newPage;
-
-                if (Device.RuntimePlatform == Device.Android)
-                    await Task.Delay(100);
-
-                IsPresented = false;
-            }
+            IsPresented = false;
         }
     }
 }
