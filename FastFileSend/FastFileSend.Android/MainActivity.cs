@@ -24,11 +24,6 @@ namespace FastFileSend.Droid
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
-            base.OnCreate(savedInstanceState);
-
-            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
-
             Permission permission_storage = CheckSelfPermission(Manifest.Permission.WriteExternalStorage);
             if (permission_storage != Permission.Granted)
             {
@@ -46,8 +41,14 @@ namespace FastFileSend.Droid
                 if (permission_storage != Permission.Granted)
                 {
                     Finish();
+                    return;
                 }
             }
+
+            base.OnCreate(savedInstanceState);
+
+            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
+            global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
             LoadApplication(new App());
         }
