@@ -1,5 +1,6 @@
 ﻿using FastFileSend.Main;
 using FastFileSend.UI;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -13,23 +14,34 @@ namespace FastFileSend.Program
         public UserViewModel UserViewModel { get; set; }
         public ApiServer ApiServer { get; set; }
 
-        public async Task Login(int id, string password)
+        public async Task Login()
         {
-            if (string.IsNullOrEmpty(password))
+            if (File.Exists(FilePathHelper.AccountConfig))
             {
-                ApiServer = await ApiServer.CreateNewAccount();
+                AccountDetails accountDetails = JsonConvert.DeserializeObject<AccountDetails>(File.ReadAllText(FilePathHelper.AccountConfig));
+                ApiServer = new ApiServer(accountDetails.Id, accountDetails.Password);
             }
             else
             {
-                ApiServer = new ApiServer(id, password);
+                ApiServer = await ApiServer.CreateNewAccount();
+                AccountDetails accountDetails = new AccountDetails { Id = ApiServer.Id, Password = ApiServer.Password };
+                string json = JsonConvert.SerializeObject(accountDetails);
+                File.WriteAllText(FilePathHelper.AccountConfig, json);
             }
-
 
             HistoryViewModel = new HistoryViewModel(ApiServer);
 
             UserViewModel = new UserViewModel(ApiServer, HistoryViewModel);
 
             HistoryViewModel.List.CollectionChanged += List_CollectionChanged;
+        }
+
+        [Obsolete("Use this method need only for migration!")]
+        public void CreateAccountDetails(int id, string password)
+        {
+            AccountDetails accountDetails = new AccountDetails { Id = id, Password = password };
+            string json = JsonConvert.SerializeObject(accountDetails);
+            File.WriteAllText(FilePathHelper.AccountConfig, json);
         }
 
         private async void List_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

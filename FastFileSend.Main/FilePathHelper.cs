@@ -8,23 +8,36 @@ namespace FastFileSend.Main
 {
     public static class FilePathHelper
     {
+        static string GetFFSSettingsFolder()
+        {
+            string appdata = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                appdata = Path.Combine(appdata, "FFS");
+
+                if (!Directory.Exists(appdata))
+                {
+                    Directory.CreateDirectory(appdata);
+                }
+            }
+
+            return appdata;
+        }
+
         public static string UsersConfig
         {
             get
             {
-                string appdata = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+                return Path.Combine(GetFFSSettingsFolder(), "users.json");
+            }
+        }
 
-                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                {
-                    appdata = Path.Combine(appdata, "FFS");
-
-                    if (!Directory.Exists(appdata))
-                    {
-                        Directory.CreateDirectory(appdata);
-                    }
-                }
-
-                return Path.Combine(appdata, "users.json");
+        public static string AccountConfig
+        {
+            get
+            {
+                return Path.Combine(GetFFSSettingsFolder(), "account.json");
             }
         }
 

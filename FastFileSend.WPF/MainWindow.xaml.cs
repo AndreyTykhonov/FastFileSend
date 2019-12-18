@@ -53,14 +53,18 @@ namespace FastFileSend.WPF
             Process.Start(FilePathHelper.Downloads);
         }
 
+        
+
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
             FastFileSendProgramWindows = new FastFileSendProgramWindows();
-            await FastFileSendProgramWindows.Login(Properties.Settings.Default.id, Properties.Settings.Default.password);
 
-            Properties.Settings.Default.id = FastFileSendProgramWindows.ApiServer.Id;
-            Properties.Settings.Default.password = FastFileSendProgramWindows.ApiServer.Password;
-            Properties.Settings.Default.Save();
+            if (!File.Exists(FilePathHelper.AccountConfig))
+            {
+                FastFileSendProgramWindows.CreateAccountDetails(Properties.Settings.Default.id, Properties.Settings.Default.password);
+            }
+
+            await FastFileSendProgramWindows.Login();
 
             TextBlockId.Text = FastFileSendProgramWindows.ApiServer.Id.ToString();
 
@@ -70,8 +74,6 @@ namespace FastFileSend.WPF
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewHistory.ItemsSource);
             view.SortDescriptions.Add(new SortDescription("Date", ListSortDirection.Descending));
             //view.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-
-
 
             IsEnabled = true;
         }
