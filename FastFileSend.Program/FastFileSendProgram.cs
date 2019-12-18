@@ -27,7 +27,7 @@ namespace FastFileSend.Program
 
             HistoryViewModel = new HistoryViewModel(ApiServer);
 
-            UserViewModel = new UserViewModel(ApiServer);
+            UserViewModel = new UserViewModel(ApiServer, HistoryViewModel);
 
             HistoryViewModel.List.CollectionChanged += List_CollectionChanged;
         }

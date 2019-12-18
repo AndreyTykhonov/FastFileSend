@@ -34,7 +34,7 @@ namespace FastFileSend.UI
             return target.LocalName;
         }
 
-        public UserViewModel(ApiServer apiServer)
+        public UserViewModel(ApiServer apiServer, HistoryViewModel historyViewModel)
         {
             List = new ObservableCollection<UserModel> { };
 
@@ -49,6 +49,31 @@ namespace FastFileSend.UI
             foreach (var item in List)
             {
                 item.PropertyChanged += UserViewModel_PropertyChanged;
+            }
+
+            historyViewModel.List.CollectionChanged += HistoryViewList_CollectionChanged;
+        }
+
+        private void HistoryViewList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems == null)
+            {
+                return;
+            }
+
+            foreach (var item in e.NewItems)
+            {
+                HistoryModel historyModel = item as HistoryModel;
+                TryAddUser(historyModel.Receiver);
+                TryAddUser(historyModel.Sender);
+            }
+        }
+
+        private void TryAddUser(int id)
+        {
+            if (!List.Any(x => x.Id == id))
+            {
+                List.Add(new UserModel { Id = id, LocalName = id.ToString() });
             }
         }
 
