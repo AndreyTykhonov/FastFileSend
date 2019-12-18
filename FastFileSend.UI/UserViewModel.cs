@@ -45,9 +45,31 @@ namespace FastFileSend.UI
             UserViewModelUpdateStatus = new UserViewModelUpdateStatus(ApiServer, this);
 
             List.CollectionChanged += List_CollectionChanged;
+            
+            foreach (var item in List)
+            {
+                item.PropertyChanged += UserViewModel_PropertyChanged;
+            }
         }
 
         private void List_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+                foreach (var item in e.NewItems)
+                {
+                    (item as UserModel).PropertyChanged += UserViewModel_PropertyChanged;
+                }
+
+            if (e.OldItems != null)
+                foreach (var item in e.OldItems)
+                {
+                    (item as UserModel).PropertyChanged += UserViewModel_PropertyChanged;
+                }
+
+            Save();
+        }
+
+        private void UserViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Save();
         }
