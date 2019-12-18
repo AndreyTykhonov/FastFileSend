@@ -29,7 +29,25 @@ namespace FastFileSend.Droid
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
-            ActivityCompat.RequestPermissions(this, new String[] { Manifest.Permission.ReadExternalStorage, Manifest.Permission.WriteExternalStorage }, 1000);
+            Permission permission_storage = CheckSelfPermission(Manifest.Permission.WriteExternalStorage);
+            if (permission_storage != Permission.Granted)
+            {
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                alert.SetTitle("Permissions");
+                alert.SetMessage("You need to grant read-write permissions to use this app!");
+                alert.SetPositiveButton("Okay", (senderAlert, args) => { });
+                Dialog dialog = alert.Create();
+                dialog.Show();
+
+                ActivityCompat.RequestPermissions(this, new String[] { Manifest.Permission.ReadExternalStorage, Manifest.Permission.WriteExternalStorage }, 1000);
+
+                permission_storage = CheckSelfPermission(Manifest.Permission.WriteExternalStorage);
+
+                if (permission_storage != Permission.Granted)
+                {
+                    Finish();
+                }
+            }
 
             LoadApplication(new App());
         }
