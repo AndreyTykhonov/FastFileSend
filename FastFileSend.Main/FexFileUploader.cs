@@ -92,19 +92,39 @@ namespace FastFileSend.Main
         {
             FileStream fs = File.Open(path, FileMode.Open, FileAccess.Read);
 
-            StreamContent streamContent = new StreamContent(fs);
-            streamContent.Headers.Add("Content-Type", "application/octet-stream");
+            int bufferSize = 4 * 1024 * 1024;
+            do
+            {
+                long sendPosition = fs.Position;
+                long readUntil = Math.Min(fs.Length, fs.Position + bufferSize);
+                int readSize = (int)(readUntil - fs.Position);
 
+                byte[] buffer = new byte[readSize];
+                fs.Read(buffer, 0, readSize);
 
-            ProgressableStreamContent progressableStreamContent = new ProgressableStreamContent(fs, this);
-            progressableStreamContent.Headers.Add("Content-Type", "application/octet-stream");
+                Stream bufferStream = new MemoryStream();
+                bufferStream.Write(buffer, 0, readSize);
+                bufferStream.Position = 0;
 
-            HttpResponseMessage response = await HttpClient.PatchAsync(uploadUri, progressableStreamContent);
+                StreamContent streamContent = new StreamContent(bufferStream);
+                streamContent.Headers.Add("Content-Type", "application/octet-stream");
 
-            string response_str = await response.Content.ReadAsStringAsync();
+                HttpResponseMessage response = await HttpClient.PatchAsync(uploadUri, streamContent, sendPosition);
 
-            JObject uploadedFileInfo = JObject.Parse(response_str);
-            return uploadedFileInfo;
+                bool finalPush = fs.Position == fs.Length;
+
+                if (finalPush)
+                {
+                    response.EnsureSuccessStatusCode();
+
+                    string response_str = await response.Content.ReadAsStringAsync();
+
+                    JObject uploadedFileInfo = JObject.Parse(response_str);
+                    return uploadedFileInfo;
+                }
+
+                Report(fs.Position);
+            } while (true);
         }
 
         private async Task PrepareUploadLink(Uri uploadUri)

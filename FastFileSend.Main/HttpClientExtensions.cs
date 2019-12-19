@@ -9,13 +9,15 @@ namespace FastFileSend.Main
 {
     public static class HttpClientExtensions
     {
-        public static async Task<HttpResponseMessage> PatchAsync(this HttpClient client, Uri requestUri, HttpContent iContent)
+        public static async Task<HttpResponseMessage> PatchAsync(this HttpClient client, Uri requestUri, HttpContent iContent, long position)
         {
             var method = new HttpMethod("PATCH");
             var request = new HttpRequestMessage(method, requestUri)
             {
                 Content = iContent
             };
+
+            request.Headers.Add("fsp-offset", position.ToString());
 
             HttpResponseMessage response = new HttpResponseMessage();
             try

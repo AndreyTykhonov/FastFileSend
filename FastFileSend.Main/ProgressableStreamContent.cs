@@ -39,6 +39,7 @@ namespace FastFileSend.Main
         protected override Task SerializeToStreamAsync(Stream stream, TransportContext context)
         {
             Contract.Assert(stream != null);
+            stream.WriteTimeout = 3000000;
 
             PrepareContent();
 
