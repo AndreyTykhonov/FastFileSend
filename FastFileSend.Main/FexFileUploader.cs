@@ -115,6 +115,7 @@ namespace FastFileSend.Main
 
                 if (finalPush)
                 {
+                    fs.Close();
                     response.EnsureSuccessStatusCode();
 
                     string response_str = await response.Content.ReadAsStringAsync();
