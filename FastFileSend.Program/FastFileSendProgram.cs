@@ -73,7 +73,8 @@ namespace FastFileSend.Program
             FileItem fileItem = new FileItem()
             {
                 Name = model.Name,
-                Url = model.Url
+                Url = model.Url,
+                Size = model.Size,
             };
 
             model.Status = HistoryModelStatus.Downloading;

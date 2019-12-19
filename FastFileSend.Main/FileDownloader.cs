@@ -29,6 +29,23 @@ namespace FastFileSend.Main
             return (string)JObject.Parse(json)["token"];
         }
 
+        public long GetFileSize(string url)
+        {
+            long result = -1;
+
+            System.Net.WebRequest req = System.Net.WebRequest.Create(url);
+            req.Method = "HEAD";
+            using (System.Net.WebResponse resp = req.GetResponse())
+            {
+                if (long.TryParse(resp.Headers.Get("Content-Length"), out long ContentLength))
+                {
+                    result = ContentLength;
+                }
+            }
+
+            return result;
+        }
+
         public async Task DownloadAsync(FileItem fileItem)
         {
             string path = Path.Combine(FilePathHelper.Downloads, fileItem.Name);
@@ -47,10 +64,12 @@ namespace FastFileSend.Main
             string token = await GetUploadTokenAsync();
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage response = await HttpClient.GetAsync(fileItem.Url.Trim());
+            Uri fileUri = new Uri(fileItem.Url.Trim());
+
+            HttpResponseMessage response = await HttpClient.GetAsync(fileUri, HttpCompletionOption.ResponseHeadersRead);
             Stream stream = await response.Content.ReadAsStreamAsync();
 
-            FileSize = stream.Length;
+            FileSize = fileItem.Size;
 
             var totalRead = 0L;
             var totalReads = 0L;
