@@ -71,6 +71,11 @@ namespace FastFileSend.UI
 
         private void TryAddUser(int id)
         {
+            if (id == ApiServer.Id)
+            {
+                return;
+            }
+
             if (!List.Any(x => x.Id == id))
             {
                 List.Add(new UserModel { Id = id, LocalName = id.ToString() });
