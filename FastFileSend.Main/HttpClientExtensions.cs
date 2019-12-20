@@ -19,15 +19,7 @@ namespace FastFileSend.Main
 
             request.Headers.Add("fsp-offset", position.ToString());
 
-            HttpResponseMessage response = new HttpResponseMessage();
-            try
-            {
-                response = await client.SendAsync(request);
-            }
-            catch (TaskCanceledException e)
-            {
-                Debug.WriteLine("ERROR: " + e.ToString());
-            }
+            HttpResponseMessage response = await client.SendAsync(request);
 
             return response;
         }

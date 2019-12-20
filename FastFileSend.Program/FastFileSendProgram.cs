@@ -19,11 +19,11 @@ namespace FastFileSend.Program
             if (File.Exists(FilePathHelper.AccountConfig))
             {
                 AccountDetails accountDetails = JsonConvert.DeserializeObject<AccountDetails>(File.ReadAllText(FilePathHelper.AccountConfig));
-                ApiServer = new ApiServer(accountDetails.Id, accountDetails.Password);
+                ApiServer = new ApiServer(accountDetails.Id, accountDetails.Password, new HttpClientHandler());
             }
             else
             {
-                ApiServer = await ApiServer.CreateNewAccount();
+                ApiServer = await ApiServer.CreateNewAccount(new HttpClientHandler());
                 AccountDetails accountDetails = new AccountDetails { Id = ApiServer.Id, Password = ApiServer.Password };
                 string json = JsonConvert.SerializeObject(accountDetails);
                 File.WriteAllText(FilePathHelper.AccountConfig, json);
@@ -70,12 +70,7 @@ namespace FastFileSend.Program
 
             FileDownloader fileDownloader = new FileDownloader();
 
-            FileItem fileItem = new FileItem()
-            {
-                Name = model.Name,
-                Url = model.Url,
-                Size = model.Size,
-            };
+            FileItem fileItem = new FileItem(0, model.Name, model.Size, 0, model.Date, model.Url);
 
             model.Status = HistoryModelStatus.Downloading;
 
@@ -147,21 +142,21 @@ namespace FastFileSend.Program
             HistoryViewModel.List.Insert(0, downloadModel);
 
             //IFileUploader fileUploader = new DummyFileUploader();
-            IFileUploader fileUploader = new FexFileUploader();
+            FexFileUploader fileUploader = new FexFileUploader();
             fileUploader.OnProgress += (double progress, double speed) =>
             {
                 downloadModel.Progress = progress;
                 downloadModel.ETA = speed.ToString("0.00 MB/s");
             };
 
-            CloudFile cloudFile = await fileUploader.UploadAsync(path);
+            FileItem fileItem = await fileUploader.UploadAsync(path);
 
             downloadModel.Progress = 100;
             downloadModel.Status = HistoryModelStatus.UsingAPI;
 
             //cloudFile = new CloudFile(0, "debug.zip", 0, DateTime.Now, "https://cdn.shazoo.ru/393609_KPsmQaHsNk_382993_uuwtofdnti_fb6f81c359f7cd.jpg");
 
-            FileItem uploadedFile = await ApiServer.Upload(cloudFile);
+            FileItem uploadedFile = await ApiServer.Upload(fileItem);
 
             try
             {

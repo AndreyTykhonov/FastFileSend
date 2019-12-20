@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace FastFileSend.Main
 {
 
-    public class FexFileUploader : IFileUploader, IProgress<long>
+    public class FexFileUploader : IProgress<long>
     {
         HttpClient HttpClient { get; set; }
         Stopwatch SpeedWatch { get; set; }
@@ -41,7 +41,7 @@ namespace FastFileSend.Main
             return JsonConvert.DeserializeObject<UploadDataInfo>(response_str);
         }
 
-        public async Task<CloudFile> UploadAsync(string path)
+        public async Task<FileItem> UploadAsync(string path)
         {
             FileName = Path.GetFileName(path);
             FileSize = new FileInfo(path).Length;
@@ -73,18 +73,18 @@ namespace FastFileSend.Main
 
             SpeedWatch.Stop();
 
-            CloudFile uploadedFile = UploadedInfoToCloudFile(uploadedFileInfo);
+            FileItem uploadedFile = UploadedInfoToFileItem(uploadedFileInfo);
 
             return uploadedFile;
         }
 
-        private static CloudFile UploadedInfoToCloudFile(JObject uploadedFileInfo)
+        private static FileItem UploadedInfoToFileItem(JObject uploadedFileInfo)
         {
             DateTime uploadedDateTime = DateTimeOffset.FromUnixTimeMilliseconds((long)uploadedFileInfo["created_at"]).DateTime;
             string crc32_str = (string)uploadedFileInfo["crc32"];
             int crc32 = int.Parse(crc32_str, System.Globalization.NumberStyles.HexNumber);
 
-            CloudFile uploadedFile = new CloudFile((long)uploadedFileInfo["size"], (string)uploadedFileInfo["name"], crc32, uploadedDateTime, (string)uploadedFileInfo["download_url"]);
+            FileItem uploadedFile = new FileItem(0, (string)uploadedFileInfo["name"], (long)uploadedFileInfo["size"], crc32, uploadedDateTime, (string)uploadedFileInfo["download_url"]);
             return uploadedFile;
         }
 

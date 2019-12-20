@@ -9,6 +9,7 @@ namespace FastFileSend.Tests
     [TestClass]
     public class FileUploadTests
     {
+        /*
         [TestMethod]
         public async Task TestFexUpload()
         {
@@ -24,5 +25,6 @@ namespace FastFileSend.Tests
 
             Debug.WriteLine(cloudFile);
         }
+        */
     }
 }

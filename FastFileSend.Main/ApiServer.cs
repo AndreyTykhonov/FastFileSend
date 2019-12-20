@@ -17,27 +17,16 @@ namespace FastFileSend.Main
         public string Password { get; set; }
         public string FriendlyName { get; set; }
 
-        //readonly static string ServerHost = "http://91.123.153.211:8080/api/";
         readonly static string ServerHost = "http://fastfilesend.somee.com/api/";
 
         Timer TimerHeartbeat { get; set; }
 
-        public static async Task<ApiServer> CreateNewAccount()
+        HttpMessageHandler HttpMessageHandler { get; set; }
+
+        public ApiServer(int id, string password, HttpMessageHandler httpClientHandler)
         {
-            HttpClient HttpClient = new HttpClient();
+            HttpMessageHandler = httpClientHandler;
 
-            string registerJson = await HttpClient.GetStringAsync(ServerHost + "register");
-            JObject jObject = JObject.Parse(registerJson);
-
-            int Id = (int)jObject["user_idx"];
-            string Password = (string)jObject["user_password"];
-            string FriendlyName = (string)jObject["user_friendlyname"];
-
-            return new ApiServer(Id, Password);
-        }
-
-        public ApiServer(int id, string password)
-        {
             Id = id;
             Password = password;
             FriendlyName = id.ToString();
@@ -49,6 +38,20 @@ namespace FastFileSend.Main
             TimerHeartbeat_Elapsed(this, null);
         }
 
+        public static async Task<ApiServer> CreateNewAccount(HttpMessageHandler httpClientHandler)
+        {
+            HttpClient HttpClient = new HttpClient(httpClientHandler);
+
+            string registerJson = await HttpClient.GetStringAsync(ServerHost + "register");
+            JObject jObject = JObject.Parse(registerJson);
+
+            int Id = (int)jObject["user_idx"];
+            string Password = (string)jObject["user_password"];
+            string FriendlyName = (string)jObject["user_friendlyname"];
+
+            return new ApiServer(Id, Password, httpClientHandler);
+        }
+
         private async void TimerHeartbeat_Elapsed(object sender, ElapsedEventArgs e)
         {
             await NotifyOnline();
@@ -56,13 +59,13 @@ namespace FastFileSend.Main
 
         public async Task NotifyDownloadedAsync(int download)
         {
-            HttpClient HttpClient = new HttpClient();
+            HttpClient HttpClient = new HttpClient(HttpMessageHandler);
             await HttpClient.GetAsync(ServerHost + $"downloaded?download={download}");
         }
 
         public async Task NotifyOnline()
         {
-            HttpClient HttpClient = new HttpClient();
+            HttpClient HttpClient = new HttpClient(HttpMessageHandler);
             await HttpClient.GetAsync(ServerHost + $"online?id={Id}");
         }
 
@@ -70,7 +73,7 @@ namespace FastFileSend.Main
         {
             try
             {
-                HttpClient HttpClient = new HttpClient();
+                HttpClient HttpClient = new HttpClient(HttpMessageHandler);
                 string json = await HttpClient.GetStringAsync(ServerHost + $"lastonline?id={id}");
                 return JsonConvert.DeserializeObject<DateTime>(json);
             }
@@ -87,7 +90,7 @@ namespace FastFileSend.Main
 
         public async Task<List<HistoryItem>> GetHistory()
         {
-            HttpClient HttpClient = new HttpClient();
+            HttpClient HttpClient = new HttpClient(HttpMessageHandler);
 
             HttpResponseMessage httpResponseMessage = await HttpClient.GetAsync(ServerHost + $"history?id={Id}&password={Password}");
             if (httpResponseMessage.IsSuccessStatusCode)
@@ -108,48 +111,35 @@ namespace FastFileSend.Main
             }
         }
 
-        public async Task<FileItem> Upload(CloudFile cloudFile)
+        public async Task<FileItem> Upload(FileItem fileItem)
         {
             var builder = new UriBuilder(ServerHost + "upload");
 
             var query = HttpUtility.ParseQueryString(builder.Query);
-            query["name"] = cloudFile.FileName;
-            query["size"] = cloudFile.Size.ToString();
-            query["crc32"] = cloudFile.CRC32.ToString();
-            query["url"] = cloudFile.Url;
+            query["name"] = fileItem.Name;
+            query["size"] = fileItem.Size.ToString();
+            query["crc32"] = fileItem.CRC32.ToString();
+            query["url"] = fileItem.Url;
             builder.Query = query.ToString();
 
-            HttpClient HttpClient = new HttpClient();
+            HttpClient HttpClient = new HttpClient(HttpMessageHandler);
 
             Uri targetUri = new Uri(builder.ToString());
 
             string fileIdStr = await HttpClient.GetStringAsync(targetUri);
             int fileId = Convert.ToInt32(fileIdStr);
 
-            return CloudFileToFileItem(cloudFile, fileId);
+            fileItem.Id = fileId;
+
+            return fileItem;
         }
 
         public async Task<int> Send(FileItem fileItem, int targetId)
         {
-            HttpClient HttpClient = new HttpClient();
+            HttpClient HttpClient = new HttpClient(HttpMessageHandler);
 
             string json = await HttpClient.GetStringAsync(ServerHost + $"send?id={Id}&password={Password}&target={targetId}&file={fileItem.Id}");
             return JsonConvert.DeserializeObject<int>(json);
-        }
-
-        private static FileItem CloudFileToFileItem(CloudFile cloudFile, int fileId)
-        {
-            FileItem fileItem = new FileItem
-            {
-                Name = cloudFile.FileName,
-                CRC32 = cloudFile.CRC32,
-                Size = cloudFile.Size,
-                Id = fileId,
-                CreationDate = cloudFile.CreationDate,
-                Url = cloudFile.Url
-            };
-
-            return fileItem;
         }
     }
 }
