@@ -58,6 +58,9 @@ namespace FastFileSend.Tests
                     Assert.IsTrue(request.RequestUri.Query == "?id=406028&password=520568373&target=5000&file=500", "Wrong send query!");
                     content = JsonConvert.SerializeObject(1000);
                     break;
+                default:
+                    throw new Exception("Unknown request: " + request.RequestUri);
+                    break;
             }
 
             HttpResponseMessage responseMessage = new HttpResponseMessage(status)

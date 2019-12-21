@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -21,7 +22,7 @@ namespace FastFileSend.Main
 
         Timer TimerHeartbeat { get; set; }
 
-        HttpMessageHandler HttpMessageHandler { get; set; }
+        static HttpMessageHandler HttpMessageHandler { get; set; }
 
         public ApiServer(int id, string password, HttpMessageHandler httpClientHandler)
         {
@@ -31,19 +32,35 @@ namespace FastFileSend.Main
             Password = password;
             FriendlyName = id.ToString();
 
+            StartHeartbeatTimer();
+        }
+
+        private void StartHeartbeatTimer()
+        {
             TimerHeartbeat = new Timer(15000);
             TimerHeartbeat.Elapsed += TimerHeartbeat_Elapsed;
-            TimerHeartbeat.Start();
+            TimerHeartbeat.AutoReset = false;
 
             TimerHeartbeat_Elapsed(this, null);
         }
 
+       static async Task<T> SendQuery<T>(string api, string query)
+        {
+            using (HttpClient httpClient = new HttpClient(HttpMessageHandler))
+            {
+                httpClient.BaseAddress = new Uri(ServerHost);
+                HttpResponseMessage response = await httpClient.GetAsync($"{api}?{query}");
+
+                response.EnsureSuccessStatusCode();
+                string content = await response.Content.ReadAsStringAsync();
+
+                return JsonConvert.DeserializeObject<T>(content);
+            }
+        }
+
         public static async Task<ApiServer> CreateNewAccount(HttpMessageHandler httpClientHandler)
         {
-            HttpClient HttpClient = new HttpClient(httpClientHandler);
-
-            string registerJson = await HttpClient.GetStringAsync(ServerHost + "register");
-            JObject jObject = JObject.Parse(registerJson);
+            JObject jObject = await SendQuery<JObject>("register", "");
 
             int Id = (int)jObject["user_idx"];
             string Password = (string)jObject["user_password"];
@@ -55,91 +72,78 @@ namespace FastFileSend.Main
         private async void TimerHeartbeat_Elapsed(object sender, ElapsedEventArgs e)
         {
             await NotifyOnline();
+            TimerHeartbeat.Start();
         }
 
         public async Task NotifyDownloadedAsync(int download)
         {
-            HttpClient HttpClient = new HttpClient(HttpMessageHandler);
-            await HttpClient.GetAsync(ServerHost + $"downloaded?download={download}");
+            var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
+            nameValueCollection["download"] = download.ToString();
+
+            await SendQuery<object>("downloaded", nameValueCollection.ToString());
         }
 
         public async Task NotifyOnline()
         {
-            HttpClient HttpClient = new HttpClient(HttpMessageHandler);
-            await HttpClient.GetAsync(ServerHost + $"online?id={Id}");
+            var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
+            nameValueCollection["id"] = Id.ToString();
+
+            await SendQuery<object>("online", nameValueCollection.ToString());
         }
 
         public async Task<DateTime> GetLastOnline(int id)
         {
             try
             {
-                HttpClient HttpClient = new HttpClient(HttpMessageHandler);
-                string json = await HttpClient.GetStringAsync(ServerHost + $"lastonline?id={id}");
-                return JsonConvert.DeserializeObject<DateTime>(json);
+                var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
+                nameValueCollection["id"] = id.ToString();
+
+                return await SendQuery<DateTime>("lastonline", nameValueCollection.ToString());
             }
             catch (HttpRequestException)
             {
-                return DateTime.MinValue;
-            }
-            catch (TaskCanceledException)
-            {
-                // Timeout. Server 
                 return DateTime.MinValue;
             }
         }
 
         public async Task<List<HistoryItem>> GetHistory()
         {
-            HttpClient HttpClient = new HttpClient(HttpMessageHandler);
+            var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
+            nameValueCollection["id"] = Id.ToString();
+            nameValueCollection["password"] = Password.ToString();
 
-            HttpResponseMessage httpResponseMessage = await HttpClient.GetAsync(ServerHost + $"history?id={Id}&password={Password}");
-            if (httpResponseMessage.IsSuccessStatusCode)
-            {
-                string json = await httpResponseMessage.Content.ReadAsStringAsync();
-                List<HistoryItem> historyList = JsonConvert.DeserializeObject<List<HistoryItem>>(json);
-                foreach (HistoryItem item in historyList)
-                {
-                    item.File.Name = item.File.Name.Trim();
-                }
+            List<HistoryItem> historyItems = await SendQuery<List<HistoryItem>>("history", nameValueCollection.ToString());
 
-                return historyList;
-            }
-            else
+            foreach (HistoryItem item in historyItems)
             {
-                string reason = await httpResponseMessage.Content.ReadAsStringAsync();
-                throw new Exception(reason);
+                item.File.Name = item.File.Name.Trim();
             }
+
+            return historyItems;
         }
 
         public async Task<FileItem> Upload(FileItem fileItem)
         {
-            var builder = new UriBuilder(ServerHost + "upload");
-
-            var query = HttpUtility.ParseQueryString(builder.Query);
+            var query = HttpUtility.ParseQueryString(string.Empty);
             query["name"] = fileItem.Name;
             query["size"] = fileItem.Size.ToString();
             query["crc32"] = fileItem.CRC32.ToString();
             query["url"] = fileItem.Url;
-            builder.Query = query.ToString();
 
-            HttpClient HttpClient = new HttpClient(HttpMessageHandler);
-
-            Uri targetUri = new Uri(builder.ToString());
-
-            string fileIdStr = await HttpClient.GetStringAsync(targetUri);
-            int fileId = Convert.ToInt32(fileIdStr);
-
-            fileItem.Id = fileId;
+            fileItem.Id = await SendQuery<int>("upload", query.ToString());
 
             return fileItem;
         }
 
         public async Task<int> Send(FileItem fileItem, int targetId)
         {
-            HttpClient HttpClient = new HttpClient(HttpMessageHandler);
+            var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
+            nameValueCollection["id"] = Id.ToString();
+            nameValueCollection["password"] = Password.ToString();
+            nameValueCollection["target"] = targetId.ToString();
+            nameValueCollection["file"] = fileItem.Id.ToString();
 
-            string json = await HttpClient.GetStringAsync(ServerHost + $"send?id={Id}&password={Password}&target={targetId}&file={fileItem.Id}");
-            return JsonConvert.DeserializeObject<int>(json);
+            return await SendQuery<int>("send", nameValueCollection.ToString());
         }
     }
 }
