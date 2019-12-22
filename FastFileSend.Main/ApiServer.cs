@@ -46,7 +46,7 @@ namespace FastFileSend.Main
 
        static async Task<T> SendQuery<T>(string api, string query)
         {
-            using (HttpClient httpClient = new HttpClient(HttpMessageHandler))
+            using (HttpClient httpClient = new HttpClient(HttpMessageHandler, false))
             {
                 httpClient.BaseAddress = new Uri(ServerHost);
                 HttpResponseMessage response = await httpClient.GetAsync($"{api}?{query}");
