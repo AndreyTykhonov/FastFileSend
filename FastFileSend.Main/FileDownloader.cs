@@ -12,38 +12,13 @@ using System.Threading.Tasks;
 
 namespace FastFileSend.Main
 {
-    public class FileDownloader : IProgress<long>
+    public class FileDownloader : ProgressableFile
     {
-        HttpClient HttpClient { get; set; } = new HttpClient();
-        Stopwatch SpeedWatch { get; set; }
-
-        long FileSize { get; set; }
-
-        public event Action<double, double> OnProgress = delegate { };
-
         async Task<string> GetUploadTokenAsync()
         {
             Uri fexGetUploadTokenUri = new Uri("https://api.fex.net/api/v1/anonymous/upload-token");
-            HttpClient = new HttpClient();
             string json = await HttpClient.GetStringAsync(fexGetUploadTokenUri);
             return (string)JObject.Parse(json)["token"];
-        }
-
-        public long GetFileSize(string url)
-        {
-            long result = -1;
-
-            System.Net.WebRequest req = System.Net.WebRequest.Create(url);
-            req.Method = "HEAD";
-            using (System.Net.WebResponse resp = req.GetResponse())
-            {
-                if (long.TryParse(resp.Headers.Get("Content-Length"), out long ContentLength))
-                {
-                    result = ContentLength;
-                }
-            }
-
-            return result;
         }
 
         public async Task DownloadAsync(FileItem fileItem)
@@ -59,8 +34,6 @@ namespace FastFileSend.Main
 
             FileStream fs = new FileStream(path, FileMode.Create);
 
-            SpeedWatch = Stopwatch.StartNew();
-
             string token = await GetUploadTokenAsync();
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -69,7 +42,7 @@ namespace FastFileSend.Main
             HttpResponseMessage response = await HttpClient.GetAsync(fileUri, HttpCompletionOption.ResponseHeadersRead);
             Stream stream = await response.Content.ReadAsStreamAsync();
 
-            FileSize = fileItem.Size;
+            Size = fileItem.Size;
 
             var totalRead = 0L;
             var totalReads = 0L;
@@ -90,7 +63,7 @@ namespace FastFileSend.Main
                     totalRead += read;
                     totalReads += 1;
 
-                    Report(totalRead);
+                    Position = totalRead;
 
                     /*
                     if (totalReads % 2000 == 0)
@@ -102,16 +75,7 @@ namespace FastFileSend.Main
             }
             while (isMoreToRead);
 
-            SpeedWatch.Stop();
-
             fs.Close();
-        }
-
-        public void Report(long value)
-        {
-            long bytesDownloaded = value;
-            double speedMb = bytesDownloaded / 1048576.0 / SpeedWatch.Elapsed.TotalSeconds;
-            OnProgress((double)bytesDownloaded / FileSize, speedMb);
         }
 
         string FindEmptyPath(FileItem fileItem)

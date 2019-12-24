@@ -12,20 +12,11 @@ using System.Threading.Tasks;
 namespace FastFileSend.Main
 {
 
-    public class FexFileUploader : IProgress<long>
+    public class FexFileUploader : ProgressableFile
     {
-        HttpClient HttpClient { get; set; }
-        Stopwatch SpeedWatch { get; set; }
-
-        long FileSize { get; set; }
-        string FileName { get; set; }
-
-        public event Action<double, double> OnProgress = delegate { };
-
         async Task<string> GetUploadTokenAsync()
         {
             Uri fexGetUploadTokenUri = new Uri("https://api.fex.net/api/v1/anonymous/upload-token");
-            HttpClient = new HttpClient();
             string json = await HttpClient.GetStringAsync(fexGetUploadTokenUri);
             return (string) JObject.Parse(json)["token"];
         }
@@ -43,12 +34,12 @@ namespace FastFileSend.Main
 
         public async Task<FileItem> UploadAsync(string path)
         {
-            FileName = Path.GetFileName(path);
-            FileSize = new FileInfo(path).Length;
+            string fileName = Path.GetFileName(path);
+            Size = new FileInfo(path).Length;
 
-            await PrepareAuthorizedHttpClient(FileName, FileSize);
+            await PrepareAuthorizedHttpClient(fileName, Size);
 
-            JObject json_payload = GenerateJsonPayload(FileName, FileSize);
+            JObject json_payload = GenerateJsonPayload(fileName, Size);
             UploadDataInfo uploadDataInfo = await GetUploadDataInfoAsync(json_payload);
 
             Uri uploadUri = new Uri(uploadDataInfo.location);
@@ -67,11 +58,7 @@ namespace FastFileSend.Main
                 }
             } while (true);
 
-            SpeedWatch = Stopwatch.StartNew();
-
             JObject uploadedFileInfo = await StartUploadAsync(path, uploadUri);
-
-            SpeedWatch.Stop();
 
             FileItem uploadedFile = UploadedInfoToFileItem(uploadedFileInfo);
 
@@ -124,7 +111,7 @@ namespace FastFileSend.Main
                     return uploadedFileInfo;
                 }
 
-                Report(fs.Position);
+                Position = fs.Position;
             } while (true);
         }
 
@@ -152,13 +139,6 @@ namespace FastFileSend.Main
             json_payload.Add("size", size);
             json_payload.Add("name", filename);
             return json_payload;
-        }
-
-        public void Report(long value)
-        {
-            long bytesDownloaded = value;
-            double speedMb = bytesDownloaded  / 1048576.0 / SpeedWatch.Elapsed.TotalSeconds;
-            OnProgress((double)bytesDownloaded / FileSize, speedMb);
         }
     }
 }
