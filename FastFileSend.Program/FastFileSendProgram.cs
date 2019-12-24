@@ -77,7 +77,7 @@ namespace FastFileSend.Program
             fileDownloader.OnProgress += (double progress, double speed) =>
             {
                 model.Progress = progress;
-                model.ETA = speed.ToString("0.00 MB/s");
+                model.ETA = SizeUtils.BytesToString(Convert.ToInt32(speed), "/s");
             };
 
             await fileDownloader.DownloadAsync(fileItem);
@@ -146,7 +146,7 @@ namespace FastFileSend.Program
             fileUploader.OnProgress += (double progress, double speed) =>
             {
                 downloadModel.Progress = progress;
-                downloadModel.ETA = speed.ToString("0.00 MB/s");
+                downloadModel.ETA = SizeUtils.BytesToString(Convert.ToInt32(speed), "/s");
             };
 
             FileItem fileItem = await fileUploader.UploadAsync(path);
