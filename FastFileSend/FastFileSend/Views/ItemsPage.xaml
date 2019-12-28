@@ -25,6 +25,9 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
+                        <ViewCell.ContextActions>
+                            <MenuItem Text="Resend" Clicked="MenuItem_Clicked" CommandParameter="{Binding .}"/>
+                        </ViewCell.ContextActions>
                         <StackLayout Padding="10" Orientation="Vertical">
                             <StackLayout Orientation="Horizontal" Padding="0,0,0,0">
                                 <Label Text="{Binding Sender}" HorizontalOptions="StartAndExpand" ></Label>

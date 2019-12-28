@@ -9,6 +9,7 @@ using Xamarin.Forms.Xaml;
 
 using FastFileSend.Models;
 using FastFileSend.Views;
+using FastFileSend.UI;
 
 namespace FastFileSend.Views
 {
@@ -32,6 +33,18 @@ namespace FastFileSend.Views
             base.OnAppearing();
 
             ItemsListView.BindingContext = Global.FastFileSendProgramXamarin.HistoryViewModel;
+        }
+
+        private async void MenuItem_Clicked(object sender, EventArgs e)
+        {
+            HistoryModel selected = (sender as MenuItem).CommandParameter as HistoryModel;
+
+            if (selected == null)
+            {
+                return;
+            }
+
+            await Global.FastFileSendProgramXamarin.Send(selected.File);
         }
     }
 }
