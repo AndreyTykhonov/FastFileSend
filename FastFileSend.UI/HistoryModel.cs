@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FastFileSend.Main;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -13,6 +14,7 @@ namespace FastFileSend.UI
         private DateTime date;
         private HistoryModelStatus status;
 
+        public FileItem File { get; set; }
         public string Url { get; set; }
         public double Progress
         {

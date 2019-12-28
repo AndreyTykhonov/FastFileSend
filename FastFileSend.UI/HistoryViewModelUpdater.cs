@@ -78,6 +78,7 @@ namespace FastFileSend.UI
                 Status = (HistoryModelStatus)historyItem.Status,
                 Progress = timeToDownload ? 0 : 100,
                 Date = historyItem.Date.ToLocalTime(),
+                File = historyItem.File
             };
 
             return historyModel;

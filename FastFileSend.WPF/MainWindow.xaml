@@ -26,6 +26,11 @@
                     </StackPanel>
 
                     <ListView x:Name="ListViewHistory" MaxHeight="500" HorizontalContentAlignment="Stretch" ItemsSource="{Binding List}" DockPanel.Dock="Left">
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Resend file" Click="MenuItem_Click"/>
+                            </ContextMenu>
+                        </ListView.ContextMenu>
                         <ListView.View>
                             <GridView x:Name="GridViewHistory">
                                 <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>

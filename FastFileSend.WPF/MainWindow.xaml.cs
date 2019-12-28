@@ -51,9 +51,7 @@ namespace FastFileSend.WPF
         private void ButtonDownloads_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(FilePathHelper.Downloads);
-        }
-
-        
+        }    
 
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
@@ -76,6 +74,17 @@ namespace FastFileSend.WPF
             //view.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
 
             IsEnabled = true;
+        }
+
+        private async void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            HistoryModel historyModel = ListViewHistory.SelectedItem as HistoryModel;
+            if (historyModel == null)
+            {
+                return;
+            }
+
+            await FastFileSendProgramWindows.Send(historyModel.File);
         }
     }
 }
