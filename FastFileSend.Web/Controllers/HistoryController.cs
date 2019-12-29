@@ -51,13 +51,7 @@ namespace FastFileSend.Web.Controllers
             {
                 files file = db.files.First(x => x.file_idx == file_id);
 
-                FileItem fileItem = new FileItem();
-                fileItem.CRC32 = file.file_crc32;
-                fileItem.CreationDate = file.file_creationdate;
-                fileItem.Id = file.file_idx;
-                fileItem.Name = file.file_name;
-                fileItem.Size = file.file_size;
-                fileItem.Url = file.file_url;
+                FileItem fileItem = new FileItem(file.file_idx, file.file_name, file.file_size, file.file_crc32, file.file_creationdate, file.file_url);
                 return fileItem;
             }
         }
