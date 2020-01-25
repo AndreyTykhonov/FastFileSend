@@ -112,16 +112,20 @@ namespace FastFileSend.Program
                 return;
             }
 
-            HistoryModel historyModel = HistoryModelAdd(filePath, target);
+            HistoryModel historyModel = null;
 
             try
             {
+                historyModel = HistoryModelAdd(filePath, target);
                 FileItem uploadedFile = await UploadFile(filePath, historyModel);
                 await SendFile(target, uploadedFile, historyModel);
             }
             catch (IOException)
             {
-                HistoryViewModel.List.Remove(historyModel);
+                if (historyModel != null)
+                {
+                    HistoryViewModel.List.Remove(historyModel);
+                }
             }
         }
 
