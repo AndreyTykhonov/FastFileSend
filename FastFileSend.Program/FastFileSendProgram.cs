@@ -14,16 +14,16 @@ namespace FastFileSend.Program
         public UserViewModel UserViewModel { get; set; }
         public ApiServer ApiServer { get; set; }
 
-        public async Task Login()
+        public async Task Login(HttpClientHandler httpClientHandler)
         {
             if (File.Exists(FilePathHelper.AccountConfig))
             {
                 AccountDetails accountDetails = JsonConvert.DeserializeObject<AccountDetails>(File.ReadAllText(FilePathHelper.AccountConfig));
-                ApiServer = new ApiServer(accountDetails.Id, accountDetails.Password, new HttpClientHandler());
+                ApiServer = new ApiServer(accountDetails.Id, accountDetails.Password, httpClientHandler);
             }
             else
             {
-                ApiServer = await ApiServer.CreateNewAccount(new HttpClientHandler());
+                ApiServer = await ApiServer.CreateNewAccount(httpClientHandler);
                 AccountDetails accountDetails = new AccountDetails { Id = ApiServer.Id, Password = ApiServer.Password };
                 string json = JsonConvert.SerializeObject(accountDetails);
                 File.WriteAllText(FilePathHelper.AccountConfig, json);

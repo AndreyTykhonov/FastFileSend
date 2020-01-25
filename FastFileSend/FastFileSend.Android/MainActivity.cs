@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Android.Support.V4.App;
 using Android;
+using Xamarin.Forms;
 
 namespace FastFileSend.Droid
 {
@@ -25,6 +26,8 @@ namespace FastFileSend.Droid
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+
+            DependencyService.Register<IHttpClientService, HttpClientService>();
 
             Permission permission_storage = CheckSelfPermission(Manifest.Permission.WriteExternalStorage);
             if (permission_storage != Permission.Granted)

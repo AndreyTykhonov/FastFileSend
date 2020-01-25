@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Xamarin.Essentials;
 using System.IO;
 using FastFileSend.Main;
+using System.Net.Http;
 
 namespace FastFileSend
 {
@@ -21,30 +22,9 @@ namespace FastFileSend
 
         protected override async void OnStart()
         {
-            /*
-            if ((await CrossPermissions.Current.CheckPermissionStatusAsync(Plugin.Permissions.Abstractions.Permission.Storage)) != Plugin.Permissions.Abstractions.PermissionStatus.Granted)
-            {
-                var permissions = await CrossPermissions.Current.RequestPermissionsAsync(Plugin.Permissions.Abstractions.Permission.Storage);
-                if (!permissions.TryGetValue(Plugin.Permissions.Abstractions.Permission.Storage, out Plugin.Permissions.Abstractions.PermissionStatus status))
-                {
-                    Quit();
-                }
+            HttpClientHandler httpClientHandler = DependencyService.Get<IHttpClientService>().Handler;
 
-                if (status != Plugin.Permissions.Abstractions.PermissionStatus.Granted)
-                {
-                    Quit();
-                }
-            }
-            */
-
-            if (File.Exists(FilePathHelper.AccountConfig))
-            {
-                int id = Convert.ToInt32(Preferences.Get("id", 0));
-                string password = Preferences.Get("password", string.Empty);
-                Global.FastFileSendProgramXamarin.CreateAccountDetails(id, password);
-            }
-
-            await Global.FastFileSendProgramXamarin.Login();
+            await Global.FastFileSendProgramXamarin.Login(httpClientHandler);
 
             Preferences.Set("id", Global.FastFileSendProgramXamarin.ApiServer.Id);
             Preferences.Set("password", Global.FastFileSendProgramXamarin.ApiServer.Password);

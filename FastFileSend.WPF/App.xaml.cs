@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -33,7 +34,7 @@ namespace FastFileSend.WPF
                 FastFileSendProgramWindows.CreateAccountDetails(FastFileSend.WPF.Properties.Settings.Default.id, FastFileSend.WPF.Properties.Settings.Default.password);
             }
 
-            FastFileSendProgramWindows.Login().Wait();
+            FastFileSendProgramWindows.Login(new HttpClientHandler()).Wait();
         }
     }
 }
