@@ -46,7 +46,7 @@ namespace FastFileSend.WPF
             if (hamburgerMenuItem == HamburgerItemId)
             {
                 Clipboard.SetText(HamburgerItemId.Label);
-                HamburgerMenu.SelectedIndex = 0;
+                HamburgerMenu.SelectedOptionsItem = null;
 
                 await this.ShowMessageAsync("Fast File Send", "Your ID was copied to clipboard!");
             }
@@ -59,16 +59,14 @@ namespace FastFileSend.WPF
                 case "Send file":
                     FastFileSendProgramWindows ffsWindows = (Application.Current as App).FastFileSendProgramWindows;
                     await ffsWindows.Send();
-                    HamburgerMenu.SelectedIndex = 0;
                     break;
                 case "Downloads":                    
                     Process.Start(FilePathHelper.Downloads);
-                    HamburgerMenu.SelectedIndex = 0;
-                    break;
-                default:
-                    HamburgerMenu.SelectedIndex = 0;
                     break;
             }
+
+            HamburgerMenu.SelectedOptionsItem = null;
+            HamburgerMenu.SelectedIndex = 0;
         }
 
         string GetAppVersion()
