@@ -17,6 +17,11 @@ namespace FastFileSend.WPF
     {
         public FastFileSendProgramWindows FastFileSendProgramWindows { get; set; }
 
+        public static App GetInstance()
+        {
+            return Current as App;
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
