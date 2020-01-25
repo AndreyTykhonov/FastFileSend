@@ -20,6 +20,7 @@ using System.IO;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.ComponentModel;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace FastFileSend.WPF
 {
@@ -28,63 +29,61 @@ namespace FastFileSend.WPF
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        FastFileSendProgramWindows FastFileSendProgramWindows { get; set; }
-
         public MainWindow()
         {
             InitializeComponent();
-
-            IsEnabled = false;
         }
 
-
-        private async void ButtonSend_Click(object sender, RoutedEventArgs e)
+        private async void HamburgerMenu_ItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs e)
         {
-            await FastFileSendProgramWindows.Send();
-        }
+            HamburgerMenuIconItem hamburgerMenuItem = e.InvokedItem as HamburgerMenuIconItem;
 
-        private void ButtonClose_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        private void ButtonDownloads_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start(FilePathHelper.Downloads);
-        }    
-
-        private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            FastFileSendProgramWindows = new FastFileSendProgramWindows();
-
-            if (!File.Exists(FilePathHelper.AccountConfig))
-            {
-                FastFileSendProgramWindows.CreateAccountDetails(Properties.Settings.Default.id, Properties.Settings.Default.password);
-            }
-
-            await FastFileSendProgramWindows.Login();
-
-            TextBlockId.Text = FastFileSendProgramWindows.ApiServer.Id.ToString();
-
-            ListViewHistory.DataContext = FastFileSendProgramWindows.HistoryViewModel;
-            ListViewHistory.ItemsSource = FastFileSendProgramWindows.HistoryViewModel.List;
-
-            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewHistory.ItemsSource);
-            view.SortDescriptions.Add(new SortDescription("Date", ListSortDirection.Descending));
-            //view.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-
-            IsEnabled = true;
-        }
-
-        private async void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            HistoryModel historyModel = ListViewHistory.SelectedItem as HistoryModel;
-            if (historyModel == null)
+            if (hamburgerMenuItem == null)
             {
                 return;
             }
 
-            await FastFileSendProgramWindows.Send(historyModel.File);
+            if (hamburgerMenuItem == HamburgerItemId)
+            {
+                Clipboard.SetText(HamburgerItemId.Label);
+                HamburgerMenu.SelectedIndex = 0;
+
+                await this.ShowMessageAsync("Fast File Send", "Your ID was copied to clipboard!");
+            }
+
+            switch (hamburgerMenuItem.Label)
+            {
+                case "History": 
+                    HamburgerMenu.Content = e.InvokedItem;
+                    break;
+                case "Send file":
+                    FastFileSendProgramWindows ffsWindows = (Application.Current as App).FastFileSendProgramWindows;
+                    await ffsWindows.Send();
+                    HamburgerMenu.SelectedIndex = 0;
+                    break;
+                case "Downloads":                    
+                    Process.Start(FilePathHelper.Downloads);
+                    HamburgerMenu.SelectedIndex = 0;
+                    break;
+                default:
+                    HamburgerMenu.SelectedIndex = 0;
+                    break;
+            }
+        }
+
+        string GetAppVersion()
+        {
+            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            return fvi.FileVersion;
+        }
+
+        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            FastFileSendProgramWindows ffsWindows = (Application.Current as App).FastFileSendProgramWindows;
+            HamburgerItemId.Label = ffsWindows.ApiServer.Id.ToString();
+
+            Title = $"Fast File Send {GetAppVersion()}";
         }
     }
 }

@@ -25,5 +25,10 @@ namespace FastFileSend.WPF
 
             return UserViewModel.Selected;
         }
+
+        internal void CreateAccountDetails(object id, object password)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

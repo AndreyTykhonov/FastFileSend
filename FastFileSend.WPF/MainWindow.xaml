@@ -5,56 +5,75 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FastFileSend.WPF"
-        mc:Ignorable="d"
-        Title="Fast File Send" Height="450" Width="800" SizeToContent="WidthAndHeight"  WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize"  Loaded="MetroWindow_Loaded">
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    mc:Ignorable="d"
+        Title="Fast File Send" Height="450" Width="800" MinHeight="450" MinWidth="800" SizeToContent="WidthAndHeight"  WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded">
 
-    <Window.Resources>
-        <local:SizeConverter x:Key="mySizeConverter" />
-        <local:StatusConverter x:Key="myStatusConverter" />
-    </Window.Resources>
+    <Controls:MetroWindow.Resources>
+        <ResourceDictionary>
+            <!--  This is the template for the menu items.  -->
+            <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type Controls:HamburgerMenuIconItem}">
+                <Grid Height="48">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <ContentControl Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Content="{Binding Icon}"
+                                    Focusable="False"
+                                    IsTabStop="False" />
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               FontSize="16"
+                               Text="{Binding Label}" />
+                </Grid>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Controls:MetroWindow.Resources>
+    
+    <DockPanel>
+        <Controls:HamburgerMenu ItemTemplate="{StaticResource MenuItemTemplate}" OptionsItemTemplate="{StaticResource MenuItemTemplate}" SelectedIndex="0" ItemInvoked="HamburgerMenu_ItemInvoked" x:Name="HamburgerMenu">
+            <Controls:HamburgerMenu.ItemsSource>
+                <Controls:HamburgerMenuItemCollection>
+                    <Controls:HamburgerMenuIconItem Label="History" Icon="{iconPacks:Material Kind=History}">
+                        <Controls:HamburgerMenuIconItem.Tag>
+                            <local:Downloads/>
+                        </Controls:HamburgerMenuIconItem.Tag>
+                    </Controls:HamburgerMenuIconItem>
+                </Controls:HamburgerMenuItemCollection>
+            </Controls:HamburgerMenu.ItemsSource>
 
-    <StackPanel>
-        <TabControl Margin="10">
-            <TabItem Header="Downloads">
-                <DockPanel>
-                    <StackPanel Margin="5">
-                        <Label Content="Your id:" HorizontalContentAlignment="Center"/>
-                        <TextBox x:Name="TextBlockId" IsReadOnly="True" Margin="0,0,0,10" HorizontalContentAlignment="Center"></TextBox>
-                        <Button x:Name="ButtonSend" Content="Send file" Click="ButtonSend_Click" DockPanel.Dock="Left" Style="{StaticResource MetroFlatButton}" Margin="0,0,0,10"/>
-                        <Button x:Name="ButtonDownloads" Content="Downloads" Click="ButtonDownloads_Click"  DockPanel.Dock="Left" Style="{StaticResource MetroFlatButton}" Margin="0,0,0,10"/>
-                        <Button x:Name="ButtonClose" Content="Close" Click="ButtonClose_Click"  DockPanel.Dock="Left" Style="{StaticResource MetroFlatButton}" Margin="0,0,0,10"/>
-                    </StackPanel>
-
-                    <ListView x:Name="ListViewHistory" MaxHeight="500" HorizontalContentAlignment="Stretch" ItemsSource="{Binding List}" DockPanel.Dock="Left">
-                        <ListView.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Resend file" Click="MenuItem_Click"/>
-                            </ContextMenu>
-                        </ListView.ContextMenu>
-                        <ListView.View>
-                            <GridView x:Name="GridViewHistory">
-                                <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
-                                <GridViewColumn Header="Sender" DisplayMemberBinding="{Binding Sender}"/>
-                                <GridViewColumn Header="Receiver" DisplayMemberBinding="{Binding Receiver}"/>
-                                <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}"/>
-                                <GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size,Converter={StaticResource mySizeConverter}}"/>
-                                <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status,Converter={StaticResource myStatusConverter}}"/>
-                                <GridViewColumn Header="Speed" DisplayMemberBinding="{Binding ETA}"/>
-                                <GridViewColumn Header="Progress">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <ProgressBar Value="{Binding Path=Progress}" Maximum="1"/>
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
-                </DockPanel>
-            </TabItem>
-            <TabItem Header="">
-
-            </TabItem>
-        </TabControl>
-        </StackPanel>
+            <Controls:HamburgerMenu.OptionsItemsSource>
+                <Controls:HamburgerMenuItemCollection>
+                    <Controls:HamburgerMenuIconItem Label="Send file" Icon="{iconPacks:Material Kind=Send}" />
+                    <Controls:HamburgerMenuIconItem Label="Downloads" Icon="{iconPacks:Material Kind=Folder}" />
+                    <Controls:HamburgerMenuIconItem Icon="{iconPacks:Material Kind=Identifier}" x:Name="HamburgerItemId"/>
+                </Controls:HamburgerMenuItemCollection>
+            </Controls:HamburgerMenu.OptionsItemsSource>
+            <Controls:HamburgerMenu.ContentTemplate>
+                <DataTemplate DataType="{x:Type Controls:HamburgerMenuIconItem}">
+                    <Grid Margin="20 0 10 0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0"
+                                       Margin="0 15 0 5"
+                                       Padding="0"
+                                       FontFamily="{DynamicResource HeaderFontFamily}"
+                                       FontSize="{DynamicResource HeaderFontSize}"
+                                       Text="{Binding Label}" />
+                        <ScrollViewer Grid.Row="1"
+                                          Focusable="False"
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          VerticalScrollBarVisibility="Auto">
+                            <ContentControl Content="{Binding Tag}" Focusable="False" />
+                        </ScrollViewer>
+                    </Grid>
+                </DataTemplate>
+            </Controls:HamburgerMenu.ContentTemplate>
+        </Controls:HamburgerMenu>
+    </DockPanel>
 </Controls:MetroWindow>
