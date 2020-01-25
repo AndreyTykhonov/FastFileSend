@@ -36,14 +36,6 @@ namespace FastFileSend.Program
             HistoryViewModel.List.CollectionChanged += List_CollectionChanged;
         }
 
-        [Obsolete("Use this method need only for migration!")]
-        public void CreateAccountDetails(int id, string password)
-        {
-            AccountDetails accountDetails = new AccountDetails { Id = id, Password = password };
-            string json = JsonConvert.SerializeObject(accountDetails);
-            File.WriteAllText(FilePathHelper.AccountConfig, json);
-        }
-
         private async void List_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems == null)
@@ -121,8 +113,16 @@ namespace FastFileSend.Program
             }
 
             HistoryModel historyModel = HistoryModelAdd(filePath, target);
-            FileItem uploadedFile = await UploadFile(filePath, historyModel);
-            await SendFile(target, uploadedFile, historyModel);
+
+            try
+            {
+                FileItem uploadedFile = await UploadFile(filePath, historyModel);
+                await SendFile(target, uploadedFile, historyModel);
+            }
+            catch (IOException)
+            {
+                HistoryViewModel.List.Remove(historyModel);
+            }
         }
 
         public async Task Send(FileItem fileItem)
