@@ -28,12 +28,6 @@ namespace FastFileSend.WPF
             base.OnStartup(e);
 
             FastFileSendProgramWindows = new FastFileSendProgramWindows();
-
-            if (!File.Exists(FilePathHelper.AccountConfig))
-            {
-                FastFileSendProgramWindows.CreateAccountDetails(FastFileSend.WPF.Properties.Settings.Default.id, FastFileSend.WPF.Properties.Settings.Default.password);
-            }
-
             FastFileSendProgramWindows.Login(new HttpClientHandler()).Wait();
         }
     }
