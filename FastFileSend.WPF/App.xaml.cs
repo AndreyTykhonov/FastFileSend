@@ -23,12 +23,12 @@ namespace FastFileSend.WPF
             return Current as App;
         }
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
             FastFileSendProgramWindows = new FastFileSendProgramWindows();
-            FastFileSendProgramWindows.Login(new HttpClientHandler()).Wait();
+            await FastFileSendProgramWindows.Login(new HttpClientHandler());
         }
     }
 }

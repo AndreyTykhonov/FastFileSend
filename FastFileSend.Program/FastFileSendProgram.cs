@@ -14,6 +14,8 @@ namespace FastFileSend.Program
         public UserViewModel UserViewModel { get; set; }
         public ApiServer ApiServer { get; set; }
 
+        public bool Ready { get; set; } = false;
+
         public async Task Login(HttpClientHandler httpClientHandler)
         {
             if (File.Exists(FilePathHelper.AccountConfig))
@@ -34,6 +36,8 @@ namespace FastFileSend.Program
             UserViewModel = new UserViewModel(ApiServer, HistoryViewModel);
 
             HistoryViewModel.List.CollectionChanged += List_CollectionChanged;
+
+            Ready = true;
         }
 
         private async void List_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

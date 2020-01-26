@@ -60,6 +60,8 @@ namespace FastFileSend.Main
 
         public static async Task<ApiServer> CreateNewAccount(HttpMessageHandler httpClientHandler)
         {
+            HttpMessageHandler = httpClientHandler;
+
             JObject jObject = await SendQuery<JObject>("register", "");
 
             int Id = (int)jObject["user_idx"];
