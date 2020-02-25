@@ -30,6 +30,7 @@ namespace FastFileSend.WebCore
             AddAuthentication(services);
 
             services.AddControllers();
+            services.AddRazorPages();
         }
 
         private static void AddAuthentication(IServiceCollection services)
@@ -78,6 +79,7 @@ namespace FastFileSend.WebCore
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapRazorPages();
             });
         }
     }
