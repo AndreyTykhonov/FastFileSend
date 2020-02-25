@@ -4,7 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using FastFileSend.WebCore.Model;
+using FastFileSend.Database;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -13,14 +13,17 @@ namespace FastFileSend.WebCore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : Controller
+    public class AccountController : ControllerBase
     {
-        // тестовые данные вместо использования базы данных
-        private List<Person> people = new List<Person>
+        private List<users> users = new List<users>();
+
+        public AccountController()
         {
-            new Person { Login="admin@gmail.com", Password="12345", Role = "admin" },
-            new Person { Login="qwerty@gmail.com", Password="55555", Role = "user" }
-        };
+            using (fastfilesendEntities db = new fastfilesendEntities())
+            {
+                users = db.users.ToList();
+            }
+        }
 
         [HttpPost("/token")]
         public IActionResult Token(string username, string password)
@@ -48,18 +51,55 @@ namespace FastFileSend.WebCore.Controllers
                 username = identity.Name
             };
 
-            return Json(response);
+            return Ok(response);
+        }
+
+        [Route("Register")]
+        public IActionResult Register()
+        {
+            using (fastfilesendEntities db = new fastfilesendEntities())
+            {
+                int emptyId = FindEmptpyUserId();
+                int randomPassword = new Random().Next(int.MaxValue);
+                users newAccount = new users();
+
+                newAccount.user_idx = emptyId;
+                newAccount.user_friendlyname = newAccount.user_idx.ToString();
+                newAccount.user_registerdate = DateTime.Now;
+                newAccount.user_password = randomPassword.ToString();
+
+                db.users.Add(newAccount);
+                db.SaveChanges();
+
+                return Ok(newAccount);
+            }
+        }
+
+        private int FindEmptpyUserId()
+        {
+            using (fastfilesendEntities db = new fastfilesendEntities())
+            {
+                do
+                {
+                    int newId = new Random().Next(999999);
+                    if (!db.users.Any(x => x.user_idx == newId))
+                    {
+                        return newId;
+                    }
+                }
+                while (true);
+            }
         }
 
         private ClaimsIdentity GetIdentity(string username, string password)
         {
-            Person person = people.FirstOrDefault(x => x.Login == username && x.Password == password);
-            if (person != null)
+            users user = users.FirstOrDefault(x => x.user_idx.ToString() == username && x.user_password == password);
+            if (user != null)
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, person.Login),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role)
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.user_idx.ToString()),
+                    //new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role)
                 };
                 ClaimsIdentity claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
