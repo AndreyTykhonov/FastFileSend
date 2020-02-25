@@ -15,13 +15,15 @@ namespace FastFileSend.Web.Controllers
     {
         [Authorize]
         [Route("SetStatus")]
-        public void SetStatus(int download_idx, int status)
+        public IActionResult SetStatus(int download_idx, int status)
         {
             using (fastfilesendEntities db = new fastfilesendEntities())
             {
                 db.transactions.First(x => x.download_idx == download_idx).status = status;
                 db.SaveChanges();
             }
+
+            return Ok();
         }
 
         [Authorize]
