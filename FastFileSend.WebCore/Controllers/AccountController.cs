@@ -25,7 +25,7 @@ namespace FastFileSend.WebCore.Controllers
             }
         }
 
-        [HttpPost("/token")]
+        [Route("Token")]
         public IActionResult Token(string username, string password)
         {
             var identity = GetIdentity(username, password);
