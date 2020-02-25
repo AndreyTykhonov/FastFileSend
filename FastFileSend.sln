@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastFileSend.Main", "FastFi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Tests", "FastFileSend.Tests\FastFileSend.Tests.csproj", "{16A4B409-6CD6-4214-91AA-92B96741931F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Web", "FastFileSend.Web\FastFileSend.Web.csproj", "{BB7AA224-8986-492F-A4F0-8C7BD3F48B47}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.WPF", "FastFileSend.WPF\FastFileSend.WPF.csproj", "{A9F3CE32-D54C-468E-8859-8E7C8FC7B005}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Android", "FastFileSend\FastFileSend.Android\FastFileSend.Android.csproj", "{86A87AA5-A1DC-4D49-9B44-6B546879778A}"
@@ -21,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastFileSend.Program", "Fas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Database", "FastFileSend.Database\FastFileSend.Database.csproj", "{EFCD1F8D-92F5-41C1-8222-6D18F49CBCE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.WebCore", "FastFileSend.WebCore\FastFileSend.WebCore.csproj", "{B035C6C7-4721-4187-8832-A6A0EA15FE44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastFileSend.WebCore", "FastFileSend.WebCore\FastFileSend.WebCore.csproj", "{B035C6C7-4721-4187-8832-A6A0EA15FE44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +35,6 @@ Global
 		{16A4B409-6CD6-4214-91AA-92B96741931F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16A4B409-6CD6-4214-91AA-92B96741931F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16A4B409-6CD6-4214-91AA-92B96741931F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BB7AA224-8986-492F-A4F0-8C7BD3F48B47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BB7AA224-8986-492F-A4F0-8C7BD3F48B47}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BB7AA224-8986-492F-A4F0-8C7BD3F48B47}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BB7AA224-8986-492F-A4F0-8C7BD3F48B47}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A9F3CE32-D54C-468E-8859-8E7C8FC7B005}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A9F3CE32-D54C-468E-8859-8E7C8FC7B005}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9F3CE32-D54C-468E-8859-8E7C8FC7B005}.Release|Any CPU.ActiveCfg = Release|Any CPU
