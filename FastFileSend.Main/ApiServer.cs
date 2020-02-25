@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -19,6 +20,7 @@ namespace FastFileSend.Main
         public string FriendlyName { get; set; }
 
         readonly static string ServerHost = "http://fastfilesend.somee.com/api/";
+        //readonly static string ServerHost = "https://localhost:44342/api/";
 
         Timer TimerHeartbeat { get; set; }
 
@@ -31,6 +33,18 @@ namespace FastFileSend.Main
             Id = id;
             Password = password;
             FriendlyName = id.ToString();
+        }
+
+        private static string AccessToken { get; set; } = string.Empty;
+
+        public async Task Login()
+        {
+            var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
+            nameValueCollection["username"] = Id.ToString();
+            nameValueCollection["password"] = Password;
+
+            JObject response = await SendQuery<JObject>("account/token", nameValueCollection.ToString());
+            AccessToken = (string)response["access_token"];
 
             StartHeartbeatTimer();
         }
@@ -49,6 +63,8 @@ namespace FastFileSend.Main
             using (HttpClient httpClient = new HttpClient(HttpMessageHandler, false))
             {
                 httpClient.BaseAddress = new Uri(ServerHost);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
+
                 HttpResponseMessage response = await httpClient.GetAsync($"{api}?{query}");
 
                 response.EnsureSuccessStatusCode();
@@ -62,7 +78,7 @@ namespace FastFileSend.Main
         {
             HttpMessageHandler = httpClientHandler;
 
-            JObject jObject = await SendQuery<JObject>("register", "");
+            JObject jObject = await SendQuery<JObject>("account/register", "");
 
             int Id = (int)jObject["user_idx"];
             string Password = (string)jObject["user_password"];
@@ -81,16 +97,14 @@ namespace FastFileSend.Main
         {
             var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
             nameValueCollection["download"] = download.ToString();
+            nameValueCollection["status"] = "1";
 
-            await SendQuery<object>("downloaded", nameValueCollection.ToString());
+            await SendQuery<object>("file/setstatus", nameValueCollection.ToString());
         }
 
         public async Task NotifyOnline()
         {
-            var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
-            nameValueCollection["id"] = Id.ToString();
-
-            await SendQuery<object>("online", nameValueCollection.ToString());
+            await SendQuery<object>("online/update", "");
         }
 
         public async Task<DateTime> GetLastOnline(int id)
@@ -100,7 +114,7 @@ namespace FastFileSend.Main
                 var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
                 nameValueCollection["id"] = id.ToString();
 
-                return await SendQuery<DateTime>("lastonline", nameValueCollection.ToString());
+                return await SendQuery<DateTime>("online/get", nameValueCollection.ToString());
             }
             catch (HttpRequestException)
             {
@@ -110,11 +124,7 @@ namespace FastFileSend.Main
 
         public async Task<List<HistoryItem>> GetHistory()
         {
-            var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
-            nameValueCollection["id"] = Id.ToString();
-            nameValueCollection["password"] = Password.ToString();
-
-            List<HistoryItem> historyItems = await SendQuery<List<HistoryItem>>("history", nameValueCollection.ToString());
+            List<HistoryItem> historyItems = await SendQuery<List<HistoryItem>>("history/get", "");
 
             foreach (HistoryItem item in historyItems)
             {
@@ -132,7 +142,7 @@ namespace FastFileSend.Main
             query["crc32"] = fileItem.CRC32.ToString();
             query["url"] = fileItem.Url;
 
-            fileItem.Id = await SendQuery<int>("upload", query.ToString());
+            fileItem.Id = await SendQuery<int>("file/upload", query.ToString());
 
             return fileItem;
         }
@@ -145,7 +155,7 @@ namespace FastFileSend.Main
             nameValueCollection["target"] = targetId.ToString();
             nameValueCollection["file"] = fileItem.Id.ToString();
 
-            return await SendQuery<int>("send", nameValueCollection.ToString());
+            return await SendQuery<int>("file/send", nameValueCollection.ToString());
         }
     }
 }

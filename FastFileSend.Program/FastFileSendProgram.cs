@@ -31,6 +31,8 @@ namespace FastFileSend.Program
                 File.WriteAllText(FilePathHelper.AccountConfig, json);
             }
 
+            await ApiServer.Login();
+
             HistoryViewModel = new HistoryViewModel(ApiServer);
 
             UserViewModel = new UserViewModel(ApiServer, HistoryViewModel);
