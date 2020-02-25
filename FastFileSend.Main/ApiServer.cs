@@ -46,7 +46,17 @@ namespace FastFileSend.Main
             JObject response = await SendQuery<JObject>("account/token", nameValueCollection.ToString());
             AccessToken = (string)response["access_token"];
 
+            await FakePageVisit();
+
             StartHeartbeatTimer();
+        }
+
+        private async Task FakePageVisit()
+        {
+            using (HttpClient httpClient = new HttpClient(HttpMessageHandler, false))
+            {
+                await httpClient.GetStringAsync("http://fastfilesend.somee.com/");
+            }
         }
 
         private void StartHeartbeatTimer()
