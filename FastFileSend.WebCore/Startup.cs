@@ -1,13 +1,19 @@
-ï»¿using FastFileSend.WebCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
-namespace FastFileSend.WebCore2
+namespace FastFileSend.WebCore
 {
     public class Startup
     {
@@ -22,7 +28,8 @@ namespace FastFileSend.WebCore2
         public void ConfigureServices(IServiceCollection services)
         {
             AddAuthentication(services);
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddControllers();
         }
 
         private static void AddAuthentication(IServiceCollection services)
@@ -33,40 +40,45 @@ namespace FastFileSend.WebCore2
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        // ÑƒÐºÐ·Ñ‹Ð²Ð°ÐµÑ‚, Ð±ÑƒÐ´ÐµÑ‚ Ð»Ð¸ Ð²Ð°Ð»Ð¸Ð´Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒÑÑ Ð¸Ð·Ð´Ð°Ñ‚ÐµÐ»ÑŒ Ð¿Ñ€Ð¸ Ð²Ð°Ð»Ð¸Ð´Ð°Ñ†Ð¸Ð¸ Ñ‚Ð¾ÐºÐµÐ½Ð°
+                        // óêçûâàåò, áóäåò ëè âàëèäèðîâàòüñÿ èçäàòåëü ïðè âàëèäàöèè òîêåíà
                         ValidateIssuer = true,
-                        // ÑÑ‚Ñ€Ð¾ÐºÐ°, Ð¿Ñ€ÐµÐ´ÑÑ‚Ð°Ð²Ð»ÑÑŽÑ‰Ð°Ñ Ð¸Ð·Ð´Ð°Ñ‚ÐµÐ»Ñ
+                        // ñòðîêà, ïðåäñòàâëÿþùàÿ èçäàòåëÿ
                         ValidIssuer = AuthOptions.ISSUER,
 
-                        // Ð±ÑƒÐ´ÐµÑ‚ Ð»Ð¸ Ð²Ð°Ð»Ð¸Ð´Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒÑÑ Ð¿Ð¾Ñ‚Ñ€ÐµÐ±Ð¸Ñ‚ÐµÐ»ÑŒ Ñ‚Ð¾ÐºÐµÐ½Ð°
+                        // áóäåò ëè âàëèäèðîâàòüñÿ ïîòðåáèòåëü òîêåíà
                         ValidateAudience = true,
-                        // ÑƒÑÑ‚Ð°Ð½Ð¾Ð²ÐºÐ° Ð¿Ð¾Ñ‚Ñ€ÐµÐ±Ð¸Ñ‚ÐµÐ»Ñ Ñ‚Ð¾ÐºÐµÐ½Ð°
+                        // óñòàíîâêà ïîòðåáèòåëÿ òîêåíà
                         ValidAudience = AuthOptions.AUDIENCE,
-                        // Ð±ÑƒÐ´ÐµÑ‚ Ð»Ð¸ Ð²Ð°Ð»Ð¸Ð´Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒÑÑ Ð²Ñ€ÐµÐ¼Ñ ÑÑƒÑ‰ÐµÑÑ‚Ð²Ð¾Ð²Ð°Ð½Ð¸Ñ
+                        // áóäåò ëè âàëèäèðîâàòüñÿ âðåìÿ ñóùåñòâîâàíèÿ
                         ValidateLifetime = true,
 
-                        // ÑƒÑÑ‚Ð°Ð½Ð¾Ð²ÐºÐ° ÐºÐ»ÑŽÑ‡Ð° Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑ‚Ð¸
+                        // óñòàíîâêà êëþ÷à áåçîïàñíîñòè
                         IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                        // Ð²Ð°Ð»Ð¸Ð´Ð°Ñ†Ð¸Ñ ÐºÐ»ÑŽÑ‡Ð° Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑ‚Ð¸
+                        // âàëèäàöèÿ êëþ÷à áåçîïàñíîñòè
                         ValidateIssuerSigningKey = true,
                     };
                 });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseHsts();
-            }
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
