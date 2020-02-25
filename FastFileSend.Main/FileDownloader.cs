@@ -35,7 +35,6 @@ namespace FastFileSend.Main
             FileStream fs = new FileStream(path, FileMode.Create);
 
             string token = await GetUploadTokenAsync();
-            File.WriteAllText("token.log", $"Download token: {token}");
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             Uri fileUri = new Uri(fileItem.Url.Trim());
