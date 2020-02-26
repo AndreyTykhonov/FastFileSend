@@ -12,6 +12,7 @@ using Android.Support.V4.App;
 using Android;
 using Xamarin.Forms;
 using Android.Support.V4.Content;
+using Android.Content;
 
 namespace FastFileSend.Droid
 {
@@ -32,28 +33,41 @@ namespace FastFileSend.Droid
             Permission permission_storage = ContextCompat.CheckSelfPermission(this, Manifest.Permission.WriteExternalStorage);
             if (permission_storage != Permission.Granted)
             {
-                AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                alert.SetTitle("Permissions");
-                alert.SetMessage("You need to grant read-write permissions to use this app!");
-                alert.SetPositiveButton("Okay", (senderAlert, args) => { });
-                Dialog dialog = alert.Create();
-                dialog.Show();
-                
-                ActivityCompat.RequestPermissions(this, new String[] { Manifest.Permission.ReadExternalStorage, Manifest.Permission.WriteExternalStorage }, 1000);
-
-                permission_storage = ContextCompat.CheckSelfPermission(this, Manifest.Permission.WriteExternalStorage);
-
-                if (permission_storage != Permission.Granted)
-                {
-                    Finish();
-                    return;
-                }
+                ActivityCompat.RequestPermissions(this, new string[] { Manifest.Permission.ReadExternalStorage, Manifest.Permission.WriteExternalStorage }, 1000);
             }
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            Forms.Init(this, savedInstanceState);
 
             LoadApplication(new App());
+        }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
+        {
+            if (requestCode != 1000)
+            {
+                return;
+            }
+
+            if (grantResults[0] == Permission.Granted)
+            {
+                Restart();
+            }
+            else
+            {
+                Finish();
+            }
+        }
+
+        private void Restart()
+        {
+            Intent intent = new Intent(ApplicationContext, typeof(MainActivity));
+            // Schedule start after 1 second
+            PendingIntent pi = PendingIntent.GetActivity(this, 0, intent, PendingIntentFlags.CancelCurrent);
+            AlarmManager am = (AlarmManager)GetSystemService(Context.AlarmService);
+            am.Set(AlarmType.Rtc, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + 100, pi);
+
+            Finish();
         }
 
         private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
@@ -87,13 +101,6 @@ namespace FastFileSend.Droid
             {
                 // just suppress any error logging exceptions
             }
-        }
-
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
-        {
-            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-
-            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 }
