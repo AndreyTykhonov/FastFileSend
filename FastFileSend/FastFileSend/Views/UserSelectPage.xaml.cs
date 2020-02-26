@@ -18,6 +18,18 @@ namespace FastFileSend.Views
             InitializeComponent();
 
             TaskCompletionSource = taskCompletionSource;
+            (Application.Current as App).ModalPopping += UserSelectPage_ModalPopping;
+        }
+
+        private void UserSelectPage_ModalPopping(object sender, ModalPoppingEventArgs e)
+        {
+            if ((e.Modal as NavigationPage).CurrentPage != this)
+            {
+                return;
+            }
+
+            (Application.Current as App).ModalPopping -= UserSelectPage_ModalPopping;
+            TaskCompletionSource.TrySetResult(null);
         }
 
         protected override void OnAppearing()
@@ -54,11 +66,6 @@ namespace FastFileSend.Views
             }
 
             CanAddUser = true;
-        }
-
-        protected override void OnDisappearing()
-        {
-            TaskCompletionSource.TrySetResult(null);
         }
 
         UserModel Selected()
