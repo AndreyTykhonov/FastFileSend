@@ -46,7 +46,7 @@ namespace FastFileSend.Main
             {
                 if (Environment.OSVersion.Platform == PlatformID.Unix)
                 {
-                    return "/storage/emulated/0/Download";
+                    return "/sdcard/Download";
                 }
 
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
