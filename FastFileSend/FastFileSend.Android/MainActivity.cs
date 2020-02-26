@@ -65,7 +65,7 @@ namespace FastFileSend.Droid
             // Schedule start after 1 second
             PendingIntent pi = PendingIntent.GetActivity(this, 0, intent, PendingIntentFlags.CancelCurrent);
             AlarmManager am = (AlarmManager)GetSystemService(Context.AlarmService);
-            am.Set(AlarmType.Rtc, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + 100, pi);
+            am.Set(AlarmType.Rtc, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + 500, pi);
 
             Finish();
         }
