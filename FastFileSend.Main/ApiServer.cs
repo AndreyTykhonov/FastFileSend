@@ -70,6 +70,9 @@ namespace FastFileSend.Main
 
        static async Task<T> SendQuery<T>(string api, string query)
         {
+            // unicode support
+            query = Uri.EscapeUriString(HttpUtility.UrlDecode(query));
+
             using (HttpClient httpClient = new HttpClient(HttpMessageHandler, false))
             {
                 httpClient.BaseAddress = new Uri(ServerHost);

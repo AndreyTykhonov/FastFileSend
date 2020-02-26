@@ -74,7 +74,6 @@ namespace FastFileSend.Web.Controllers
         {
             using (fastfilesendEntities db = new fastfilesendEntities())
             {
-
                 int newId = FindEmptpyFileId();
 
                 files newFile = new files()
