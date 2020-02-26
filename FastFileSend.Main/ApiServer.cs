@@ -75,12 +75,22 @@ namespace FastFileSend.Main
                 httpClient.BaseAddress = new Uri(ServerHost);
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
 
-                HttpResponseMessage response = await httpClient.GetAsync($"{api}?{query}");
+                // 5 times retry
+                for (int i = 0; i < 5; i++)
+                {
+                    HttpResponseMessage response = await httpClient.GetAsync($"{api}?{query}");
 
-                response.EnsureSuccessStatusCode();
-                string content = await response.Content.ReadAsStringAsync();
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        await Task.Delay(1000);
+                        continue;
+                    }
 
-                return JsonConvert.DeserializeObject<T>(content);
+                    string content = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<T>(content);
+                }
+
+                throw new HttpRequestException($"{api} failed after 5 retry!");
             }
         }
 
