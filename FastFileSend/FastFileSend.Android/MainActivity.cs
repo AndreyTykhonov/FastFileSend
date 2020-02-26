@@ -11,6 +11,7 @@ using System.IO;
 using Android.Support.V4.App;
 using Android;
 using Xamarin.Forms;
+using Android.Support.V4.Content;
 
 namespace FastFileSend.Droid
 {
@@ -28,8 +29,7 @@ namespace FastFileSend.Droid
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
             DependencyService.Register<IHttpClientService, HttpClientService>();
-
-            Permission permission_storage = CheckSelfPermission(Manifest.Permission.WriteExternalStorage);
+            Permission permission_storage = ContextCompat.CheckSelfPermission(this, Manifest.Permission.WriteExternalStorage);
             if (permission_storage != Permission.Granted)
             {
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -38,10 +38,10 @@ namespace FastFileSend.Droid
                 alert.SetPositiveButton("Okay", (senderAlert, args) => { });
                 Dialog dialog = alert.Create();
                 dialog.Show();
-
+                
                 ActivityCompat.RequestPermissions(this, new String[] { Manifest.Permission.ReadExternalStorage, Manifest.Permission.WriteExternalStorage }, 1000);
 
-                permission_storage = CheckSelfPermission(Manifest.Permission.WriteExternalStorage);
+                permission_storage = ContextCompat.CheckSelfPermission(this, Manifest.Permission.WriteExternalStorage);
 
                 if (permission_storage != Permission.Granted)
                 {
