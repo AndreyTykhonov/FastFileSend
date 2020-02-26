@@ -32,10 +32,10 @@ namespace FastFileSend.Main
             return JsonConvert.DeserializeObject<UploadDataInfo>(response_str);
         }
 
-        public async Task<FileItem> UploadAsync(string path)
+        public async Task<FileItem> UploadAsync(string filename, Stream stream)
         {
-            string fileName = Path.GetFileName(path);
-            Size = new FileInfo(path).Length;
+            string fileName = filename;
+            Size = stream.Length;
 
             await PrepareAuthorizedHttpClient(fileName, Size);
 
@@ -58,7 +58,7 @@ namespace FastFileSend.Main
                 }
             } while (true);
 
-            JObject uploadedFileInfo = await StartUploadAsync(path, uploadUri);
+            JObject uploadedFileInfo = await StartUploadAsync(stream, uploadUri);
 
             FileItem uploadedFile = UploadedInfoToFileItem(uploadedFileInfo);
 
@@ -75,19 +75,17 @@ namespace FastFileSend.Main
             return uploadedFile;
         }
 
-        private async Task<JObject> StartUploadAsync(string path, Uri uploadUri)
+        private async Task<JObject> StartUploadAsync(Stream stream, Uri uploadUri)
         {
-            FileStream fs = File.Open(path, FileMode.Open, FileAccess.Read);
-
             int bufferSize = 4 * 1024 * 1024;
             do
             {
-                long sendPosition = fs.Position;
-                long readUntil = Math.Min(fs.Length, fs.Position + bufferSize);
-                int readSize = (int)(readUntil - fs.Position);
+                long sendPosition = stream.Position;
+                long readUntil = Math.Min(stream.Length, stream.Position + bufferSize);
+                int readSize = (int)(readUntil - stream.Position);
 
                 byte[] buffer = new byte[readSize];
-                fs.Read(buffer, 0, readSize);
+                stream.Read(buffer, 0, readSize);
 
                 Stream bufferStream = new MemoryStream();
                 bufferStream.Write(buffer, 0, readSize);
@@ -98,11 +96,11 @@ namespace FastFileSend.Main
 
                 HttpResponseMessage response = await HttpClient.PatchAsync(uploadUri, streamContent, sendPosition);
 
-                bool finalPush = fs.Position == fs.Length;
+                bool finalPush = stream.Position == stream.Length;
 
                 if (finalPush)
                 {
-                    fs.Close();
+                    stream.Close();
                     response.EnsureSuccessStatusCode();
 
                     string response_str = await response.Content.ReadAsStringAsync();
@@ -111,7 +109,7 @@ namespace FastFileSend.Main
                     return uploadedFileInfo;
                 }
 
-                Position = fs.Position;
+                Position = stream.Position;
             } while (true);
         }
 

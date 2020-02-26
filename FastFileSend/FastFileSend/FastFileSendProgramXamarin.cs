@@ -14,17 +14,24 @@ namespace FastFileSend
 {
     class FastFileSendProgramXamarin : FastFileSendProgram
     {
-        public override async Task<string> SelectFileAsync()
+        public override async Task<FileInfo> SelectFileAsync()
         {
             FileData fileData = await CrossFilePicker.Current.PickFile();
 
             if (fileData == null)
-                return string.Empty;
+                return null;
 
             //string fileName = fileData.FileName;
             //string contents = System.Text.Encoding.UTF8.GetString(fileData.DataArray);
 
-            return fileData.FilePath;
+            FileInfo fileInfo = new FileInfo
+            { 
+                Name = System.IO.Path.GetFileName(fileData.FileName),
+                Content = fileData.GetStream(),
+            };
+
+
+            return fileInfo;
         }
 
         public override async Task<UserModel> SelectUserAsync()

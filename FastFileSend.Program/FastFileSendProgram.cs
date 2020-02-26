@@ -15,6 +15,7 @@ namespace FastFileSend.Program
         public ApiServer ApiServer { get; set; }
 
         public bool Ready { get; set; } = false;
+        public FileInfo FileInfo { get; private set; }
 
         public async Task Login(HttpClientHandler httpClientHandler)
         {
@@ -91,9 +92,9 @@ namespace FastFileSend.Program
             return new UserModel();
         }
 
-        public virtual async Task<string> SelectFileAsync()
+        public virtual async Task<FileInfo> SelectFileAsync()
         {
-            return string.Empty;
+            return new FileInfo();
         }
 
         public async Task Send()
@@ -105,15 +106,14 @@ namespace FastFileSend.Program
                 return;
             }
 
-            string filePath = await SelectFileAsync();
+            FileInfo fileInfo  = await SelectFileAsync();
 
-            if (string.IsNullOrEmpty(filePath))
+            if (fileInfo == null)
             {
                 return;
             }
 
-            string filename = Path.GetFileName(filePath);
-            if (filename.Length >= 300)
+            if (fileInfo.Name.Length >= 300)
             {
                 return;
             }
@@ -122,8 +122,8 @@ namespace FastFileSend.Program
 
             try
             {
-                historyModel = HistoryModelAdd(filePath, target);
-                FileItem uploadedFile = await UploadFile(filePath, historyModel);
+                historyModel = HistoryModelAdd(fileInfo.Name, fileInfo.Content.Length, target);
+                FileItem uploadedFile = await UploadFile(fileInfo, historyModel);
                 await SendFile(target, uploadedFile, historyModel);
             }
             catch (IOException)
@@ -148,21 +148,19 @@ namespace FastFileSend.Program
             await SendFile(target, fileItem, historyModel);
         }
 
-        HistoryModel HistoryModelAdd(string path, UserModel target)
+        HistoryModel HistoryModelAdd(string filename, long size, UserModel target)
         {
-            FileStream fs = new FileStream(path, FileMode.Open);
             HistoryModel downloadModel = new HistoryModel
             {
-                Name = System.IO.Path.GetFileName(path),
+                Name = filename,
                 Status = HistoryModelStatus.Uploading,
                 ETA = "",
                 Receiver = target.Id,
                 Sender = ApiServer.Id,
                 Fake = true,
-                Size = fs.Length,
+                Size = size,
                 Date = DateTime.Now
             };
-            fs.Close();
 
             HistoryViewModel.List.Insert(0, downloadModel);
 
@@ -188,7 +186,7 @@ namespace FastFileSend.Program
             return downloadModel;
         }
 
-        async Task<FileItem> UploadFile(string path, HistoryModel downloadModel)
+        async Task<FileItem> UploadFile(FileInfo fileInfo, HistoryModel downloadModel)
         {
             //IFileUploader fileUploader = new DummyFileUploader();
             FexFileUploader fileUploader = new FexFileUploader();
@@ -198,7 +196,7 @@ namespace FastFileSend.Program
                 downloadModel.ETA = SizeUtils.BytesToString(Convert.ToInt32(speed), "/s");
             };
 
-            FileItem fileItem = await fileUploader.UploadAsync(path);
+            FileItem fileItem = await fileUploader.UploadAsync(fileInfo.Name, fileInfo.Content);
 
             downloadModel.Progress = 100;
             downloadModel.Status = HistoryModelStatus.UsingAPI;
