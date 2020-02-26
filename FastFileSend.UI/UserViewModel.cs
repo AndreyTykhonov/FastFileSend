@@ -106,8 +106,15 @@ namespace FastFileSend.UI
 
         private void Save()
         {
-            string json = JsonConvert.SerializeObject(List);
-            File.WriteAllText(FilePathHelper.UsersConfig, json);
+            try
+            {
+                string json = JsonConvert.SerializeObject(List);
+                File.WriteAllText(FilePathHelper.UsersConfig, json);
+            }
+            catch (IOException)
+            {
+                // ok?
+            }
         }
 
         private void Load()
