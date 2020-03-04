@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FastFileSend.UI
+namespace FastFileSend.Main
 {
     [Flags]
     public enum HistoryModelStatus

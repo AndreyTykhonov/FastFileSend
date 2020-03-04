@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Timers;
 
-namespace FastFileSend.UI
+namespace FastFileSend.Main
 {
     class HistoryViewModelUpdater
     {

@@ -27,8 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\FastFileSend.Main\FastFileSend.Main.csproj" />
-    <ProjectReference Include="..\..\FastFileSend.Program\FastFileSend.Program.csproj" />
-    <ProjectReference Include="..\..\FastFileSend.UI\FastFileSend.UI.csproj" />
   </ItemGroup>
 
   <ItemGroup>

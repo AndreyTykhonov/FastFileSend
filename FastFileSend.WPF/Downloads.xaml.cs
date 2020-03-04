@@ -1,5 +1,4 @@
 ﻿using FastFileSend.Main;
-using FastFileSend.UI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

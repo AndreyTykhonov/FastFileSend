@@ -1,5 +1,4 @@
-﻿using FastFileSend.Program;
-using FastFileSend.UI;
+﻿using FastFileSend.Main;
 using FastFileSend.WPF;
 using Microsoft.Win32;
 using System;
@@ -12,7 +11,7 @@ namespace FastFileSend.WPF
 {
     public class FastFileSendProgramWindows : FastFileSendProgram
     {
-        public override async Task<Program.FileInfo> SelectFileAsync()
+        public override async Task<Main.FileInfo> SelectFileAsync()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
@@ -22,7 +21,7 @@ namespace FastFileSend.WPF
             }
 
             FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open);
-            Program.FileInfo fileInfo = new Program.FileInfo
+            Main.FileInfo fileInfo = new Main.FileInfo
             {
                 Name = Path.GetFileName(openFileDialog.FileName),
                 Content = fs,

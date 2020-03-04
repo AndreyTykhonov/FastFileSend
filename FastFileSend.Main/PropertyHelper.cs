@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FastFileSend.UI
+namespace FastFileSend.Main
 {
     static class PropertyHelper
     {

@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace FastFileSend.UI
+namespace FastFileSend.Main
 {
     public class HistoryModel : INotifyPropertyChanged
     {

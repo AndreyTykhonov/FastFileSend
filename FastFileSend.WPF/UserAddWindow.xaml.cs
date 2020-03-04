@@ -1,4 +1,4 @@
-﻿using FastFileSend.UI;
+﻿using FastFileSend.Main;
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
