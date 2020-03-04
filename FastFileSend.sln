@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastFileSend.Main", "FastFileSend.Main\FastFileSend.Main.csproj", "{43C92482-7A7B-41AB-9414-E950D814ECDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Tests", "FastFileSend.Tests\FastFileSend.Tests.csproj", "{16A4B409-6CD6-4214-91AA-92B96741931F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.WPF", "FastFileSend.WPF\FastFileSend.WPF.csproj", "{A9F3CE32-D54C-468E-8859-8E7C8FC7B005}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFileSend.Android", "FastFileSend\FastFileSend.Android\FastFileSend.Android.csproj", "{86A87AA5-A1DC-4D49-9B44-6B546879778A}"
@@ -27,10 +25,6 @@ Global
 		{43C92482-7A7B-41AB-9414-E950D814ECDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43C92482-7A7B-41AB-9414-E950D814ECDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43C92482-7A7B-41AB-9414-E950D814ECDD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{16A4B409-6CD6-4214-91AA-92B96741931F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{16A4B409-6CD6-4214-91AA-92B96741931F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{16A4B409-6CD6-4214-91AA-92B96741931F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{16A4B409-6CD6-4214-91AA-92B96741931F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A9F3CE32-D54C-468E-8859-8E7C8FC7B005}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A9F3CE32-D54C-468E-8859-8E7C8FC7B005}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9F3CE32-D54C-468E-8859-8E7C8FC7B005}.Release|Any CPU.ActiveCfg = Release|Any CPU
