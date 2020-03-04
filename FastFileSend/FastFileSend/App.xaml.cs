@@ -7,12 +7,12 @@ using Xamarin.Essentials;
 using System.IO;
 using FastFileSend.Main;
 using System.Net.Http;
+using FastFileSend.Main.Interfaces;
 
 namespace FastFileSend
 {
     public partial class App : Application
     {
-
         public App()
         {
             InitializeComponent();
@@ -20,19 +20,21 @@ namespace FastFileSend
             MainPage = new MainPage();
         }
 
+        public static FastFileSendApp FastFileSendApp { get; private set; }
+
         protected override async void OnStart()
         {
-            HttpClientHandler httpClientHandler = DependencyService.Get<IHttpClientService>().Handler;
+            IPathResolver pathResolver = DependencyService.Get<IPathResolver>();
 
-            await Global.FastFileSendProgramXamarin.Login(httpClientHandler);
+            FastFileSendApp = await FastFileSendApp.Create(pathResolver, new FastFileSendPlatformDialogsXamarin());
 
-            Preferences.Set("id", Global.FastFileSendProgramXamarin.ApiServer.Id);
-            Preferences.Set("password", Global.FastFileSendProgramXamarin.ApiServer.Password);
+            Preferences.Set("id", FastFileSendApp.AccountDetails.Id);
+            Preferences.Set("password", FastFileSendApp.AccountDetails.Password);
 
             MasterDetailPage masterDetailPage = MainPage as MasterDetailPage;
             MenuPage menu = masterDetailPage.Master as MenuPage;
 
-            menu.EntryId.Text = Global.FastFileSendProgramXamarin.ApiServer.Id.ToString();
+            menu.EntryId.Text = FastFileSendApp.AccountDetails.Id.ToString();
         }
 
         protected override void OnSleep()

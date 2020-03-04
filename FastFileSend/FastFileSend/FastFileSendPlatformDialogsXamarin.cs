@@ -1,20 +1,20 @@
-﻿using FastFileSend.Program;
-using FastFileSend.UI;
+﻿using FastFileSend.Main.Interfaces;
+using FastFileSend.Main.Models;
+using FastFileSend.Main.ViewModel;
 using FastFileSend.Views;
 using Plugin.FilePicker;
 using Plugin.FilePicker.Abstractions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace FastFileSend
 {
-    class FastFileSendProgramXamarin : FastFileSendProgram
+    class FastFileSendPlatformDialogsXamarin : IFastFileSendPlatformDialogs
     {
-        public override async Task<FileInfo> SelectFileAsync()
+        public async Task<FileInfo> SelectFileAsync()
         {
             FileData fileData = await CrossFilePicker.Current.PickFile();
 
@@ -25,7 +25,7 @@ namespace FastFileSend
             //string contents = System.Text.Encoding.UTF8.GetString(fileData.DataArray);
 
             FileInfo fileInfo = new FileInfo
-            { 
+            {
                 Name = System.IO.Path.GetFileName(fileData.FileName),
                 Content = fileData.GetStream(),
             };
@@ -34,9 +34,9 @@ namespace FastFileSend
             return fileInfo;
         }
 
-        public override async Task<UserModel> SelectUserAsync()
+        public async Task<UserViewModel> SelectUserAsync(UserListViewModel userListViewModel)
         {
-            TaskCompletionSource<UserModel> taskCompletionSource = new TaskCompletionSource<UserModel>();
+            TaskCompletionSource<UserViewModel> taskCompletionSource = new TaskCompletionSource<UserViewModel>();
             UserSelectPage userSelectPage = new UserSelectPage(taskCompletionSource);
             await Application.Current.MainPage.Navigation.PushModalAsync(new NavigationPage(userSelectPage) { Title = "Choose user" });
 

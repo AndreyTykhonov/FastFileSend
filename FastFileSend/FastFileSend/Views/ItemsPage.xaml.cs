@@ -1,15 +1,11 @@
-﻿using System;
+﻿using FastFileSend.Main.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
-
-using FastFileSend.Models;
-using FastFileSend.Views;
-using FastFileSend.UI;
 
 namespace FastFileSend.Views
 {
@@ -27,19 +23,19 @@ namespace FastFileSend.Views
         {
             base.OnAppearing();
 
-            ItemsListView.BindingContext = Global.FastFileSendProgramXamarin.HistoryViewModel;
+            ItemsListView.BindingContext = App.FastFileSendApp.HistoryListViewModel;
         }
 
         private async void MenuItem_Clicked(object sender, EventArgs e)
         {
-            HistoryModel selected = (sender as MenuItem).CommandParameter as HistoryModel;
+            HistoryViewModel selected = (sender as MenuItem).CommandParameter as HistoryViewModel;
 
             if (selected == null)
             {
                 return;
             }
 
-            await Global.FastFileSendProgramXamarin.Send(selected.File);
+            await App.FastFileSendApp.Send(selected.File);
         }
     }
 }

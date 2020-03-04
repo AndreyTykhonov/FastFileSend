@@ -4,12 +4,6 @@ using System.Text;
 
 namespace FastFileSend.Models
 {
-    public enum MenuItemType
-    {
-        Downloads,
-        About,
-        Send
-    }
     public class HomeMenuItem
     {
         public MenuItemType Id { get; set; }

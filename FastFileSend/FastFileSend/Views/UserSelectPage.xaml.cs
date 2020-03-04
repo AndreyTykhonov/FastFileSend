@@ -1,4 +1,4 @@
-﻿using FastFileSend.UI;
+﻿using FastFileSend.Main.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +12,8 @@ namespace FastFileSend.Views
 {
     public partial class UserSelectPage : ContentPage
     {
-        TaskCompletionSource<UserModel> TaskCompletionSource { get; set; }
-        public UserSelectPage(TaskCompletionSource<UserModel> taskCompletionSource)
+        TaskCompletionSource<UserViewModel> TaskCompletionSource { get; set; }
+        public UserSelectPage(TaskCompletionSource<UserViewModel> taskCompletionSource)
         {
             InitializeComponent();
 
@@ -36,7 +36,7 @@ namespace FastFileSend.Views
         {
             base.OnAppearing();
 
-            ListViewUsers.BindingContext = Global.FastFileSendProgramXamarin.UserViewModel;
+            ListViewUsers.BindingContext = App.FastFileSendApp;
         }
 
         bool CanAddUser = true;
@@ -50,7 +50,7 @@ namespace FastFileSend.Views
 
             CanAddUser = false;
 
-            UserModel newUser = new UserModel();
+            UserViewModel newUser = new UserViewModel();
             UserEditPage userEditPage = new UserEditPage(newUser);
             userEditPage.Disappearing += UserEditPage_Disappearing;
 
@@ -62,28 +62,28 @@ namespace FastFileSend.Views
             if ((sender as UserEditPage).OkPressed)
             {
                 var userModel = (sender as UserEditPage).BindingContext;
-                Global.FastFileSendProgramXamarin.UserViewModel.List.Add(userModel as UserModel);
+                App.FastFileSendApp.UserListViewModel.List.Add(userModel as UserViewModel);
             }
 
             CanAddUser = true;
         }
 
-        UserModel Selected()
+        UserViewModel Selected()
         {
-            return (UserModel)ListViewUsers.SelectedItem;
+            return (UserViewModel)ListViewUsers.SelectedItem;
         }
 
         private async void MenuItemEdit_Clicked(object sender, EventArgs e)
         {
-            UserModel selected = (sender as MenuItem).CommandParameter as UserModel;
+            UserViewModel selected = (sender as MenuItem).CommandParameter as UserViewModel;
 
             UserEditPage userEditPage = new UserEditPage(selected);
             await Navigation.PushModalAsync(userEditPage);
         }
         private void MenuItemRemove_Clicked(object sender, EventArgs e)
         {
-            UserModel selected = (sender as MenuItem).CommandParameter as UserModel;
-            Global.FastFileSendProgramXamarin.UserViewModel.List.Remove(selected);
+            UserViewModel selected = (sender as MenuItem).CommandParameter as UserViewModel;
+            App.FastFileSendApp.UserListViewModel.List.Remove(selected);
         }
 
         private void ToolbarItemSelect_Clicked(object sender, EventArgs e)

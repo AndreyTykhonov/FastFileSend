@@ -35,7 +35,7 @@ namespace FastFileSend.Views
                     IsPresented = false;
                     break;
                 case (int)MenuItemType.Send:
-                    await Global.FastFileSendProgramXamarin.Send();
+                    await App.FastFileSendApp.Send();
                     break;
             }
         }

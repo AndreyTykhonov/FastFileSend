@@ -1,4 +1,4 @@
-﻿using FastFileSend.UI;
+﻿using FastFileSend.Main.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +12,10 @@ namespace FastFileSend.Views
 {
     public partial class UserEditPage : ContentPage
     {
-        UserModel UserModel { get; set; }
+        UserViewModel UserModel { get; set; }
         public bool OkPressed { get; set; } = false;
 
-        public UserEditPage(UserModel userModel)
+        public UserEditPage(UserViewModel userModel)
         {
             InitializeComponent();
 

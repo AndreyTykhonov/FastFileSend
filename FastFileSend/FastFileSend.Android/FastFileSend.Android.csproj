@@ -75,8 +75,8 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.4.0" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HttpClientHandler.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="PathResolver.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -93,6 +93,10 @@
     <AndroidResource Include="Resources\mipmap\icon_main.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\FastFileSend.Main\FastFileSend.Main.csproj">
+      <Project>{43C92482-7A7B-41AB-9414-E950D814ECDD}</Project>
+      <Name>FastFileSend.Main</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FastFileSend\FastFileSend.csproj">
       <Project>{F9F1EEBB-BFA5-4ECA-8DFA-F3884328A06B}</Project>
       <Name>FastFileSend</Name>
