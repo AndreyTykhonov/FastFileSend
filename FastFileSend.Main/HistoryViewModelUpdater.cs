@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FastFileSend.Main;
+using FastFileSend.Main.Enum;
 using FastFileSend.Main.Models;
 using FastFileSend.Main.ViewModel;
 using System;
@@ -45,9 +46,15 @@ namespace FastFileSend.Main
         /// <param name="e"></param>
         private async void TimerUpdateHistory_Elapsed(object sender, ElapsedEventArgs e)
         {
-            DateTime minimumDate = HistoryListViewModel.List.Max(x => x.Date);
+            DateTime minimumDate = DateTime.MinValue;
+
+            if (HistoryListViewModel.List.Count() > 0)
+            {
+                minimumDate = HistoryListViewModel.List.Max(x => x.Date);
+            }
+
             List<HistoryModel> historyList = await ApiServer.GetHistory(minimumDate);
-            List<HistoryViewModel> historyViewModels = historyList.Select(x => x as HistoryViewModel).ToList();
+            List<HistoryViewModel> historyViewModels = historyList.Select(x => new HistoryViewModel(x)).ToList();
 
             foreach (HistoryViewModel model in historyViewModels)
             {
@@ -68,7 +75,20 @@ namespace FastFileSend.Main
                     continue;
                 }
 
+                model.Progress = model.Id == ApiServer.AccountDetails.Id ? 0 : 100;
+
                 uiContext.Send(x => HistoryListViewModel.List.Insert(0, model), null);
+            }
+
+            // Update statuses
+            var statusNoOk = HistoryListViewModel.List.Where(x => x.Status != HistoryModelStatus.Ok);
+            foreach (HistoryViewModel model in statusNoOk)
+            {
+                HistoryModelStatus modelStatus = await ApiServer.GetFileStatus(model.Id);
+                if (model.Status != modelStatus)
+                {
+                    model.Status = modelStatus;
+                }
             }
 
             // Restart timer after update.

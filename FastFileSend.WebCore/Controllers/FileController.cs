@@ -27,6 +27,16 @@ namespace FastFileSend.Web.Controllers
         }
 
         [Authorize]
+        [Route("GetStatus")]
+        public IActionResult GetStatus(int download)
+        {
+            using (fastfilesendEntities db = new fastfilesendEntities())
+            {
+                return Ok(db.transactions.First(x => x.download_idx == download).status);
+            }
+        }
+
+        [Authorize]
         [Route("Send")]
         public IActionResult Send(int target, int file)
         {

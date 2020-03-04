@@ -56,7 +56,7 @@ namespace FastFileSend.WPF
                     HamburgerMenu.Content = e.InvokedItem;
                     break;
                 case "Send file":
-                    FastFileSendApp ffsWindows = App.GetInstance().FastFileSenApp;
+                    FastFileSendApp ffsWindows = App.GetFFSInstance();
                     await ffsWindows.Send();
                     break;
                 case "Downloads":                    
@@ -75,9 +75,16 @@ namespace FastFileSend.WPF
             return fvi.FileVersion;
         }
 
-        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            FastFileSendApp ffsWindows = App.GetInstance().FastFileSenApp;
+            // TODO: Some progress here
+            
+            while (App.GetFFSInstance() is null)
+            {
+                await Task.Delay(100);
+            }
+
+            FastFileSendApp ffsWindows = App.GetFFSInstance();
             HamburgerItemId.Label = ffsWindows.AccountDetails.Id.ToString();
 
             Title = $"Fast File Send {GetAppVersion()}";

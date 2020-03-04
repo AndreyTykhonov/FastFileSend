@@ -18,9 +18,9 @@ namespace FastFileSend.WPF
     {
         public FastFileSendApp FastFileSenApp { get; set; }
 
-        public static App GetInstance()
+        public static FastFileSendApp GetFFSInstance()
         {
-            return Current as App;
+            return (Current as App).FastFileSenApp;
         }
 
         protected override async void OnStartup(StartupEventArgs e)

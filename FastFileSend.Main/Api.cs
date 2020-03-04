@@ -1,4 +1,5 @@
-﻿using FastFileSend.Main.Models;
+﻿using FastFileSend.Main.Enum;
+using FastFileSend.Main.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -30,10 +31,8 @@ namespace FastFileSend.Main
         private int Id { get; set; }
         private string Password { get; set; }
 
-        readonly static string ServerHost = "http://fastfilesend.somee.com/api/";
-        //readonly static string ServerHost = "https://localhost:44342/api/";
-
-        Timer TimerHeartbeat { get; set; }
+        //readonly static string ServerHost = "http://fastfilesend.somee.com/api/";
+        readonly static string ServerHost = "https://localhost:44342/api/";
 
         private Api(AccountDetails accountDetails)
         {
@@ -157,6 +156,19 @@ namespace FastFileSend.Main
         }
 
         /// <summary>
+        /// Gets status of File by id.
+        /// </summary>
+        /// <param name="download">File id.</param>
+        /// <returns></returns>
+        public async Task<HistoryModelStatus> GetFileStatus(int download)
+        {
+            var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
+            nameValueCollection["download"] = download.ToString();
+
+            return await SendQuery<HistoryModelStatus>("file/getstatus", nameValueCollection.ToString());
+        }
+
+        /// <summary>
         /// Get last user online by id. Throws exception if this user not exists.
         /// </summary>
         /// <param name="id">Target user Id.</param>
@@ -178,7 +190,7 @@ namespace FastFileSend.Main
         public async Task<List<HistoryModel>> GetHistory(DateTime minimumDate)
         {
             var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
-            nameValueCollection["minimum"] = minimumDate.ToString();
+            nameValueCollection["minimum"] = minimumDate.Ticks.ToString();
 
             return await SendQuery<List<HistoryModel>>("history/get", nameValueCollection.ToString());
         }

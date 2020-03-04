@@ -21,11 +21,11 @@
             </ListView.ContextMenu>
             <ListView.View>
                 <GridView x:Name="GridViewHistory">
-                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding File.Name}"/>
                     <GridViewColumn Header="Sender" DisplayMemberBinding="{Binding Sender}"/>
                     <GridViewColumn Header="Receiver" DisplayMemberBinding="{Binding Receiver}"/>
                     <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}"/>
-                    <GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size,Converter={StaticResource mySizeConverter}}"/>
+                    <GridViewColumn Header="Size" DisplayMemberBinding="{Binding File.Size,Converter={StaticResource mySizeConverter}}"/>
                     <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status,Converter={StaticResource myStatusConverter}}"/>
                     <GridViewColumn Header="Speed" DisplayMemberBinding="{Binding ETA}"/>
                     <GridViewColumn Header="Progress">

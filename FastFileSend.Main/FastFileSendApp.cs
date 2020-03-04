@@ -106,7 +106,7 @@ namespace FastFileSend.Main
         {
             FileDownloader fileDownloader = new FileDownloader(PathResolver.Downloads);
 
-            FileItem fileItem = new FileItem(0, model.Name, model.Size, 0, model.Date, model.Url);
+            FileItem fileItem = model.File;
 
             model.Status = HistoryModelStatus.Downloading;
 
@@ -176,7 +176,7 @@ namespace FastFileSend.Main
         {
             HistoryViewModel downloadModel = new HistoryViewModel
             {
-                Name = filename,
+                File = new FileItem(0, filename, size, 0, DateTime.Now, string.Empty),
                 Status = HistoryModelStatus.Uploading,
                 ETA = "",
                 Receiver = target.Id,
@@ -232,6 +232,7 @@ namespace FastFileSend.Main
             downloadModel.Id = download_index;
 
             downloadModel.Status = HistoryModelStatus.Awaiting;
+            downloadModel.Progress = 100;
         }
     }
 }

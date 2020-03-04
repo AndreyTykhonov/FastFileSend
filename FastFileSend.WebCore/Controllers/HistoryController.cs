@@ -18,7 +18,7 @@ namespace FastFileSend.Web.Controllers
     {
         [Authorize]
         [Route("Get")]
-        public IActionResult Get(DateTime minimum)
+        public IActionResult Get(long ticks)
         {
             int myId = Convert.ToInt32(User.Identity.Name);
             using (fastfilesendEntities db = new fastfilesendEntities())
@@ -26,7 +26,7 @@ namespace FastFileSend.Web.Controllers
                 var containsMyId = db.transactions.Where(x => x.sender_id == myId || x.receiver_id == myId).ToList();
 
                 List<HistoryModel> historyList = new List<HistoryModel>();
-
+                DateTime minimum = new DateTime(ticks);
                 foreach (var item in containsMyId.Where(x => x.date > DateTime.UtcNow.AddDays(-7)).Where(x => x.date > minimum))
                 {
                     HistoryModel historyItem = new HistoryModel();
@@ -43,8 +43,9 @@ namespace FastFileSend.Web.Controllers
                     historyList.Add(historyItem);
                 }
 
-                OnlineController onlineController = new OnlineController();
-                onlineController.Update();
+                // online update
+                db.users.First(x => x.user_idx == myId).user_lastonline = DateTime.UtcNow;
+                db.SaveChanges();
 
                 return Ok(historyList);
             }
