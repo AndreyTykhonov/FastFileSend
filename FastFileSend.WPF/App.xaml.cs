@@ -16,7 +16,7 @@ namespace FastFileSend.WPF
     /// </summary>
     public partial class App : Application
     {
-        public FastFileSendProgramWindows FastFileSendProgramWindows { get; set; }
+        public FastFileSendApp FastFileSenApp { get; set; }
 
         public static App GetInstance()
         {
@@ -27,8 +27,7 @@ namespace FastFileSend.WPF
         {
             base.OnStartup(e);
 
-            FastFileSendProgramWindows = new FastFileSendProgramWindows();
-            await FastFileSendProgramWindows.Login(new HttpClientHandler());
+            FastFileSenApp = await FastFileSendApp.Create(new FastFileSendPathResolverWin(), new FastFileSendDialogsWin());
         }
     }
 }

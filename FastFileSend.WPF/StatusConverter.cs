@@ -1,4 +1,5 @@
 ﻿using FastFileSend.Main;
+using FastFileSend.Main.Enum;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

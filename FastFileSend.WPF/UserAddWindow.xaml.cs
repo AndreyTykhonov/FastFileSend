@@ -1,4 +1,5 @@
 ﻿using FastFileSend.Main;
+using FastFileSend.Main.ViewModel;
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
@@ -21,8 +22,8 @@ namespace FastFileSend.WPF
     /// </summary>
     public partial class UserAddWindow : MetroWindow
     {
-        UserModel UserModel { get; set; }
-        public UserAddWindow(UserModel userModel)
+        UserViewModel UserModel { get; set; }
+        public UserAddWindow(UserViewModel userModel)
         {
             InitializeComponent();
 

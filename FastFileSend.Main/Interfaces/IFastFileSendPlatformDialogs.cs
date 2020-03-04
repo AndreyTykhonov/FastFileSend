@@ -1,4 +1,5 @@
 ﻿using FastFileSend.Main.Models;
+using FastFileSend.Main.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ namespace FastFileSend.Main.Interfaces
 {
     public interface IFastFileSendPlatformDialogs
     {
-        Task<UserModel> SelectUserAsync();
+        Task<UserViewModel> SelectUserAsync(UserListViewModel userListViewModel);
 
         Task<FileInfo> SelectFileAsync();
     }

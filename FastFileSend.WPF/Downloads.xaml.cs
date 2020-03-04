@@ -1,4 +1,5 @@
 ﻿using FastFileSend.Main;
+using FastFileSend.Main.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,25 +32,20 @@ namespace FastFileSend.WPF
 
         private async void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            HistoryModel historyModel = ListViewHistory.SelectedItem as HistoryModel;
+            HistoryViewModel historyModel = ListViewHistory.SelectedItem as HistoryViewModel;
             if (historyModel == null)
             {
                 return;
             }
 
-            FastFileSendProgramWindows ffsWindows = App.GetInstance().FastFileSendProgramWindows;
+            FastFileSendApp ffsWindows = App.GetInstance().FastFileSenApp;
 
             await ffsWindows.Send(historyModel.File);
         }
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            FastFileSendProgramWindows ffsWindows = App.GetInstance().FastFileSendProgramWindows;
-
-            while (!ffsWindows.Ready)
-            {
-                await Task.Delay(100);
-            }
+            FastFileSendApp ffsWindows = App.GetInstance().FastFileSenApp;
 
             ListViewHistory.DataContext = ffsWindows.HistoryListViewModel;
             ListViewHistory.ItemsSource = ffsWindows.HistoryListViewModel.List;

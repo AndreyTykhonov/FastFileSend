@@ -1,17 +1,19 @@
-﻿using FastFileSend.Main;
-using FastFileSend.WPF;
+﻿using FastFileSend.Main.Interfaces;
+using FastFileSend.Main.Models;
+using FastFileSend.Main.ViewModel;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FastFileSend.WPF
 {
-    public class FastFileSendProgramWindows : FastFileSendApp
+    class FastFileSendDialogsWin : IFastFileSendPlatformDialogs
     {
-        public override async Task<Main.FileInfo> SelectFileAsync()
+        public async Task<Main.Models.FileInfo> SelectFileAsync()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
@@ -21,7 +23,7 @@ namespace FastFileSend.WPF
             }
 
             FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open);
-            Main.FileInfo fileInfo = new Main.FileInfo
+            Main.Models.FileInfo fileInfo = new Main.Models.FileInfo
             {
                 Name = Path.GetFileName(openFileDialog.FileName),
                 Content = fs,
@@ -30,12 +32,12 @@ namespace FastFileSend.WPF
             return fileInfo;
         }
 
-        public override async Task<UserModel> SelectUserAsync()
+        public async Task<UserViewModel> SelectUserAsync(UserListViewModel userListViewModel)
         {
-            UsersWindow usersWindow = new UsersWindow(UseristViewModel);
+            UsersWindow usersWindow = new UsersWindow(userListViewModel);
             usersWindow.ShowDialog();
 
-            return UseristViewModel.Selected;
+            return userListViewModel.Selected;
         }
     }
 }

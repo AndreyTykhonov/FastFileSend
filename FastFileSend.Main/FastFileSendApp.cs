@@ -18,12 +18,11 @@ namespace FastFileSend.Main
     public class FastFileSendApp
     {
         public HistoryListViewModel HistoryListViewModel { get; private set; }
-        public UserListViewModel UseristViewModel { get; private set; }
-
-        public event Action OnLoaded = delegate {};
-        public event Action<HistoryViewModel> OnDownloaded = delegate { }; 
+        public UserListViewModel UserListViewModel { get; private set; }
 
         private Api ApiServer { get; set; }
+
+        public AccountDetails AccountDetails { get => ApiServer.AccountDetails; }
 
         private HistoryViewModelUpdater HistoryViewModelUpdater { get; set; }
         private UserListViewModelUpdater UserListViewModelUpdateStatus { get; set; }
@@ -31,10 +30,20 @@ namespace FastFileSend.Main
         private IPathResolver PathResolver { get; set; }
         private IFastFileSendPlatformDialogs FileSendPlatformDialogs { get; set; }
 
-        private FastFileSendApp(IPathResolver pathResolver, IFastFileSendPlatformDialogs fileSendPlatformDialogs)
+        private FastFileSendApp(IPathResolver pathResolver, IFastFileSendPlatformDialogs fileSendPlatformDialogs, Api api)
         {
             PathResolver = pathResolver;
             FileSendPlatformDialogs = fileSendPlatformDialogs;
+
+            ApiServer = api;
+
+            HistoryListViewModel = new HistoryListViewModel();
+            UserListViewModel = new UserListViewModel(ApiServer, PathResolver.UsersConfig);
+
+            HistoryListViewModel.List.CollectionChanged += HistoryListView_CollectionChanged;
+
+            HistoryViewModelUpdater = new HistoryViewModelUpdater(ApiServer, HistoryListViewModel);
+            UserListViewModelUpdateStatus = new UserListViewModelUpdater(ApiServer, UserListViewModel);
         }
 
         /// <summary>
@@ -43,31 +52,22 @@ namespace FastFileSend.Main
         /// <param name="pathResolver">Platform path resolver.</param>
         /// <param name="fileSendPlatformDialogs">Platform dialogs resolver.</param>
         /// <returns></returns>
-        public async Task<FastFileSendApp> Create(IPathResolver pathResolver, IFastFileSendPlatformDialogs fileSendPlatformDialogs)
+        public static async Task<FastFileSendApp> Create(IPathResolver pathResolver, IFastFileSendPlatformDialogs fileSendPlatformDialogs)
         {
+            Api api;
             if (File.Exists(pathResolver.AccountConfig))
             {
                 AccountDetails accountDetails = JsonConvert.DeserializeObject<AccountDetails>(File.ReadAllText(pathResolver.AccountConfig));
-                ApiServer = await Api.Login(accountDetails);
+                api = await Api.Login(accountDetails);
             }
             else
             {
-                ApiServer = await Api.CreateNewAccount();
-                string json = JsonConvert.SerializeObject(ApiServer.AccountDetails);
+                api = await Api.CreateNewAccount();
+                string json = JsonConvert.SerializeObject(api.AccountDetails);
                 File.WriteAllText(pathResolver.AccountConfig, json);
             }
 
-            HistoryListViewModel = new HistoryListViewModel();
-            UseristViewModel = new UserListViewModel(ApiServer, PathResolver.UsersConfig);
-
-            HistoryListViewModel.List.CollectionChanged += HistoryListView_CollectionChanged;
-
-            HistoryViewModelUpdater = new HistoryViewModelUpdater(ApiServer, HistoryListViewModel);
-            UserListViewModelUpdateStatus = new UserListViewModelUpdater(ApiServer, UseristViewModel);
-
-            OnLoaded();
-
-            return new FastFileSendApp(pathResolver, fileSendPlatformDialogs);
+            return new FastFileSendApp(pathResolver, fileSendPlatformDialogs, api);
         }
 
         /// <summary>
@@ -122,8 +122,6 @@ namespace FastFileSend.Main
             model.ETA = "";
 
             await ApiServer.NotifyDownloadedAsync(model.Id);
-
-            OnDownloaded(model);
         }
 
         /// <summary>
@@ -132,7 +130,7 @@ namespace FastFileSend.Main
         /// <returns></returns>
         public async Task Send()
         {
-            UserModel target = await FileSendPlatformDialogs.SelectUserAsync();
+            UserModel target = await FileSendPlatformDialogs.SelectUserAsync(UserListViewModel);
 
             if (target == null)
             {
@@ -163,7 +161,7 @@ namespace FastFileSend.Main
         /// <returns></returns>
         public async Task Send(FileItem fileItem)
         {
-            UserModel target = await FileSendPlatformDialogs.SelectUserAsync();
+            UserModel target = await FileSendPlatformDialogs.SelectUserAsync(UserListViewModel);
 
             if (target == null)
             {

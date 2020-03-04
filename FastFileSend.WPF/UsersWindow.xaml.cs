@@ -1,4 +1,5 @@
 ﻿using FastFileSend.Main;
+using FastFileSend.Main.ViewModel;
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ namespace FastFileSend.WPF
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
-            UserModel newUser = new UserModel();
+            UserViewModel newUser = new UserViewModel();
             UserAddWindow userAddWindow = new UserAddWindow(newUser);
             userAddWindow.ShowDialog();
 
