@@ -32,7 +32,7 @@ namespace FastFileSend.WPF
             return fileInfo;
         }
 
-        public async Task<UserViewModel> SelectUserAsync(UserListViewModel userListViewModel)
+        public async Task<UserModel> SelectUserAsync(UserListViewModel userListViewModel)
         {
             UsersWindow usersWindow = new UsersWindow(userListViewModel);
             usersWindow.ShowDialog();

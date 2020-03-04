@@ -34,7 +34,7 @@ namespace FastFileSend
             return fileInfo;
         }
 
-        public async Task<UserViewModel> SelectUserAsync(UserListViewModel userListViewModel)
+        public async Task<UserModel> SelectUserAsync(UserListViewModel userListViewModel)
         {
             TaskCompletionSource<UserViewModel> taskCompletionSource = new TaskCompletionSource<UserViewModel>();
             UserSelectPage userSelectPage = new UserSelectPage(taskCompletionSource);

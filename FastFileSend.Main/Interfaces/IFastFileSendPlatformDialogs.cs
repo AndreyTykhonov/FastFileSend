@@ -9,7 +9,7 @@ namespace FastFileSend.Main.Interfaces
 {
     public interface IFastFileSendPlatformDialogs
     {
-        Task<UserViewModel> SelectUserAsync(UserListViewModel userListViewModel);
+        Task<UserModel> SelectUserAsync(UserListViewModel userListViewModel);
 
         Task<FileInfo> SelectFileAsync();
     }

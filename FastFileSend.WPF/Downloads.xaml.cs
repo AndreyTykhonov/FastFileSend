@@ -38,7 +38,7 @@ namespace FastFileSend.WPF
                 return;
             }
 
-            FastFileSendApp ffsWindows = App.GetFFSInstance();
+            FastFileSendApp ffsWindows = App.FastFileSenApp;
 
             await ffsWindows.Send(historyModel.File);
         }
@@ -47,12 +47,12 @@ namespace FastFileSend.WPF
         {
             // TODO: Some progress here
 
-            while (App.GetFFSInstance() is null)
+            while (App.FastFileSenApp is null)
             {
                 await Task.Delay(100);
             }
 
-            FastFileSendApp ffsWindows = App.GetFFSInstance();
+            FastFileSendApp ffsWindows = App.FastFileSenApp;
 
             ListViewHistory.DataContext = ffsWindows.HistoryListViewModel;
             ListViewHistory.ItemsSource = ffsWindows.HistoryListViewModel.List;
