@@ -19,9 +19,16 @@ namespace FastFileSend.Views
             InitializeComponent();
         }
 
-        protected override void OnAppearing()
+        protected async override void OnAppearing()
         {
             base.OnAppearing();
+
+            // TODO: Some loading progress
+
+            while (App.FastFileSendApp is null)
+            {
+                await Task.Delay(100);
+            }
 
             ItemsListView.BindingContext = App.FastFileSendApp.HistoryListViewModel;
         }

@@ -29,7 +29,6 @@ namespace FastFileSend.Droid
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
-            DependencyService.Register<IHttpClientService, HttpClientService>();
             Permission permission_storage = ContextCompat.CheckSelfPermission(this, Manifest.Permission.WriteExternalStorage);
             if (permission_storage != Permission.Granted)
             {
