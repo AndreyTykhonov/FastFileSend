@@ -21,9 +21,9 @@ namespace FastFileSend.WPF
     /// </summary>
     public partial class UsersWindow : MetroWindow
     {
-        UserViewModel UserViewModel { get; set; }
+        UserListViewModel UserViewModel { get; set; }
 
-        public UsersWindow(UserViewModel userViewModel)
+        public UsersWindow(UserListViewModel userViewModel)
         {
             InitializeComponent();
 

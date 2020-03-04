@@ -1,4 +1,5 @@
 ﻿using FastFileSend.Main;
+using FastFileSend.Main.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,27 +8,37 @@ using System.Timers;
 
 namespace FastFileSend.Main
 {
-    class UserViewModelUpdateStatus
+    /// <summary>
+    /// Updates users online status on timer.
+    /// </summary>
+    class UserListViewModelUpdater
     {
-        UserViewModel UserViewModel { get; set; }
-        ApiServer ApiServer { get; set; }
+        UserListViewModel UserListViewModel { get; set; }
+        Api ApiServer { get; set; }
         Timer TimerUserStatusCheck { get; set; }
 
-        public UserViewModelUpdateStatus(ApiServer apiServer, UserViewModel userViewModel)
+        const double UserOnlineUpdateInterval = 15000;
+
+        public UserListViewModelUpdater(Api apiServer, UserListViewModel userViewModel)
         {
-            UserViewModel = userViewModel;
+            UserListViewModel = userViewModel;
             ApiServer = apiServer;
 
-            TimerUserStatusCheck = new Timer(15000);
+            TimerUserStatusCheck = new Timer(UserOnlineUpdateInterval);
             TimerUserStatusCheck.Elapsed += TimerUserStatusCheck_Elapsed;
             TimerUserStatusCheck.Start();
 
             TimerUserStatusCheck_Elapsed(this, null);
         }
 
+        /// <summary>
+        /// Updates all users last online.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void TimerUserStatusCheck_Elapsed(object sender, ElapsedEventArgs e)
         {
-            foreach (UserModel user in UserViewModel.List.ToArray())
+            foreach (UserViewModel user in UserListViewModel.List.ToArray())
             {
                 DateTime lastOnline = await ApiServer.GetLastOnline(user.Id);
                 

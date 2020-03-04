@@ -1,7 +1,10 @@
 ﻿using System;
 
-namespace FastFileSend.Main
+namespace FastFileSend.Main.Enum
 {
+    /// <summary>
+    /// Represent HistoryModel possible status.
+    /// </summary>
     [Flags]
     public enum HistoryModelStatus
     {

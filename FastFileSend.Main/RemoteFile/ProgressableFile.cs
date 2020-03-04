@@ -4,8 +4,11 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FastFileSend.Main
+namespace FastFileSend.Main.RemoteFile
 {
+    /// <summary>
+    /// Represents RemoteFile that have progress before it ready. Used by FileUploader and FileDownloader. As well reports speed on progress.
+    /// </summary>
     public class ProgressableFile
     {
         protected HttpClient HttpClient { get; set; } = new HttpClient();
@@ -31,6 +34,11 @@ namespace FastFileSend.Main
             if (!DownloadStartedTime.HasValue)
             {
                 DownloadStartedTime = DateTime.Now;
+            }
+
+            if (downloaded % 2000 != 0 && downloaded != Size)
+            {
+                return;
             }
 
             TimeSpan elapsedTime = DateTime.Now.Subtract((DateTime)DownloadStartedTime);

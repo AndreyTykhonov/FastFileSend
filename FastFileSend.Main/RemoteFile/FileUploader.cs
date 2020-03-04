@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FastFileSend.Main.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -9,10 +10,12 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FastFileSend.Main
+namespace FastFileSend.Main.RemoteFile
 {
-
-    public class FexFileUploader : ProgressableFile
+    /// <summary>
+    /// Uploads file to Fex.net.
+    /// </summary>
+    public class FileUploader : ProgressableFile
     {
         async Task<string> GetUploadTokenAsync()
         {
@@ -21,7 +24,7 @@ namespace FastFileSend.Main
             return (string) JObject.Parse(json)["token"];
         }
 
-        async Task<UploadDataInfo> GetUploadDataInfoAsync(JObject json_payload)
+        async Task<FexFileUploadDataInfo> GetUploadDataInfoAsync(JObject json_payload)
         {
             HttpContent postData = new StringContent(json_payload.ToString(), Encoding.Unicode, "application/json");
 
@@ -29,7 +32,7 @@ namespace FastFileSend.Main
             HttpResponseMessage response = await HttpClient.PostAsync(fexFileUri, postData);
 
             string response_str = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<UploadDataInfo>(response_str);
+            return JsonConvert.DeserializeObject<FexFileUploadDataInfo>(response_str);
         }
 
         public async Task<FileItem> UploadAsync(string filename, Stream stream)
@@ -40,11 +43,12 @@ namespace FastFileSend.Main
             await PrepareAuthorizedHttpClient(fileName, Size);
 
             JObject json_payload = GenerateJsonPayload(fileName, Size);
-            UploadDataInfo uploadDataInfo = await GetUploadDataInfoAsync(json_payload);
+            FexFileUploadDataInfo uploadDataInfo = await GetUploadDataInfoAsync(json_payload);
 
             Uri uploadUri = new Uri(uploadDataInfo.location);
 
-            do
+            // 5 times retry.
+            for (int i = 0; i < 5; i++)
             {
                 try
                 {
@@ -53,10 +57,9 @@ namespace FastFileSend.Main
                 }
                 catch (HttpRequestException)
                 {
-                    // Retry delay
                     await Task.Delay(500);
                 }
-            } while (true);
+            }
 
             JObject uploadedFileInfo = await StartUploadAsync(stream, uploadUri);
 

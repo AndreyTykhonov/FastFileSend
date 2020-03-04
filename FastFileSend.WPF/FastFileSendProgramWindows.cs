@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FastFileSend.WPF
 {
-    public class FastFileSendProgramWindows : FastFileSendProgram
+    public class FastFileSendProgramWindows : FastFileSendApp
     {
         public override async Task<Main.FileInfo> SelectFileAsync()
         {
@@ -32,10 +32,10 @@ namespace FastFileSend.WPF
 
         public override async Task<UserModel> SelectUserAsync()
         {
-            UsersWindow usersWindow = new UsersWindow(UserViewModel);
+            UsersWindow usersWindow = new UsersWindow(UseristViewModel);
             usersWindow.ShowDialog();
 
-            return UserViewModel.Selected;
+            return UseristViewModel.Selected;
         }
     }
 }

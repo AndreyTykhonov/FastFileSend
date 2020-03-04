@@ -1,7 +1,10 @@
 ﻿using System;
 
-namespace FastFileSend.Main
+namespace FastFileSend.Main.Models
 {
+    /// <summary>
+    /// Represents model of file that uploaded to API server.
+    /// </summary>
     public class FileItem
     {
         public FileItem(int id, string name, long size, int cRC32, DateTime creationDate, string url)
@@ -18,7 +21,7 @@ namespace FastFileSend.Main
         public string Name { get; set; }
         public long Size { get; set; }
         public int CRC32 { get; set; }
-        public System.DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; set; }
         public string Url { get; set; }
     }
 }

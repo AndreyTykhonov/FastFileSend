@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using FastFileSend.Main.Models;
+using FastFileSend.Main.Utils;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,8 +12,11 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FastFileSend.Main
+namespace FastFileSend.Main.RemoteFile
 {
+    /// <summary>
+    /// Downloads FileItem from Fex.net.
+    /// </summary>
     public class FileDownloader : ProgressableFile
     {
         async Task<string> GetUploadTokenAsync()
@@ -21,9 +26,16 @@ namespace FastFileSend.Main
             return (string)JObject.Parse(json)["token"];
         }
 
+        private string Folder { get; set; }
+
+        public FileDownloader(string folder)
+        {
+            Folder = folder;
+        }
+
         public async Task DownloadAsync(FileItem fileItem)
         {
-            string path = Path.Combine(FilePathHelper.Downloads, fileItem.Name);
+            string path = Path.Combine(Folder, fileItem.Name);
 
             if (File.Exists(path))
             {
@@ -64,13 +76,6 @@ namespace FastFileSend.Main
                     totalReads += 1;
 
                     Position = totalRead;
-
-                    /*
-                    if (totalReads % 2000 == 0)
-                    {
-                        Report(totalRead);
-                    }
-                    */
                 }
             }
             while (isMoreToRead);
@@ -85,7 +90,7 @@ namespace FastFileSend.Main
                 string name = Path.GetFileNameWithoutExtension(fileItem.Name);
                 string ext = Path.GetExtension(fileItem.Name);
 
-                string path = Path.Combine(FilePathHelper.Downloads, $"{name} ({i}){ext}");
+                string path = Path.Combine(Folder, $"{name} ({i}){ext}");
                 if (!File.Exists(path))
                 {
                     return path;

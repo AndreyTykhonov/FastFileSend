@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace FastFileSend.Main
+namespace FastFileSend.Main.Utils
 {
-    public static class FilePathHelper
+    public static class PathUtils
     {
         static string GetFFSSettingsFolder()
         {

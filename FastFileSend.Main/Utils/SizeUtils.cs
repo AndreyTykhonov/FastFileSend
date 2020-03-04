@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FastFileSend.Main
+namespace FastFileSend.Main.Utils
 {
+    /// <summary>
+    /// Contains some utils for file sizes.
+    /// </summary>
     public static class SizeUtils
     {
         public static string BytesToString(long byteCount, string suffix = "")

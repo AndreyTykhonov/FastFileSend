@@ -51,8 +51,8 @@ namespace FastFileSend.WPF
                 await Task.Delay(100);
             }
 
-            ListViewHistory.DataContext = ffsWindows.HistoryViewModel;
-            ListViewHistory.ItemsSource = ffsWindows.HistoryViewModel.List;
+            ListViewHistory.DataContext = ffsWindows.HistoryListViewModel;
+            ListViewHistory.ItemsSource = ffsWindows.HistoryListViewModel.List;
 
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewHistory.ItemsSource);
             view.SortDescriptions.Add(new SortDescription("Date", ListSortDirection.Descending));

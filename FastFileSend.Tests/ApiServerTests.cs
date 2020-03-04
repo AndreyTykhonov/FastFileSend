@@ -75,16 +75,16 @@ namespace FastFileSend.Tests
     [TestClass]
     public class ApiServerTests
     {
-        ApiServer ApiServer { get; set; }
+        Api ApiServer { get; set; }
         public ApiServerTests()
         {
-            ApiServer = new ApiServer(406028, "520568373", new HttpMessageHandlerApiTests());
+            ApiServer = new Api(406028, "520568373", new HttpMessageHandlerApiTests());
         }
 
         [TestMethod]
         public async Task CreateAccountTest()
         {
-            ApiServer apiServerDebug = await ApiServer.CreateNewAccount(new HttpMessageHandlerApiTests());
+            Api apiServerDebug = await Api.CreateNewAccount(new HttpMessageHandlerApiTests());
 
             Assert.IsTrue(apiServerDebug.Id == 406028, "Wrong id!");
             Assert.IsTrue(apiServerDebug.Password == "520568373", "Wrong password!");

@@ -1,5 +1,7 @@
 ﻿using FastFileSend.Database;
 using FastFileSend.Main;
+using FastFileSend.Main.Enum;
+using FastFileSend.Main.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,28 +18,33 @@ namespace FastFileSend.Web.Controllers
     {
         [Authorize]
         [Route("Get")]
-        public IActionResult Get()
+        public IActionResult Get(DateTime minimum)
         {
             int myId = Convert.ToInt32(User.Identity.Name);
             using (fastfilesendEntities db = new fastfilesendEntities())
             {
                 var containsMyId = db.transactions.Where(x => x.sender_id == myId || x.receiver_id == myId).ToList();
 
-                List<HistoryItem> historyList = new List<HistoryItem>();
+                List<HistoryModel> historyList = new List<HistoryModel>();
 
-                foreach (var item in containsMyId.Where(x => x.date > DateTime.UtcNow.AddDays(-7)))
+                foreach (var item in containsMyId.Where(x => x.date > DateTime.UtcNow.AddDays(-7)).Where(x => x.date > minimum))
                 {
-                    HistoryItem historyItem = new HistoryItem();
+                    HistoryModel historyItem = new HistoryModel();
                     historyItem.Receiver = item.receiver_id;
                     historyItem.Sender = item.sender_id;
                     historyItem.Id = item.download_idx;
                     FileItem fileItem = FilesToFileItem(item.file_id);
                     historyItem.File = fileItem;
-                    historyItem.Status = item.status;
+                    historyItem.Status = (HistoryModelStatus)item.status;
                     historyItem.Date = item.date;
+
+                    historyItem.File.Name = historyItem.File.Name.Trim();
 
                     historyList.Add(historyItem);
                 }
+
+                OnlineController onlineController = new OnlineController();
+                onlineController.Update();
 
                 return Ok(historyList);
             }

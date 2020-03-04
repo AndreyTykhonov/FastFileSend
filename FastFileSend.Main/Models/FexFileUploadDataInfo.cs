@@ -1,6 +1,9 @@
-﻿namespace FastFileSend.Main
+﻿namespace FastFileSend.Main.Models
 {
-    class UploadDataInfo
+    /// <summary>
+    /// Used by FileUploader. Contains Fex.net information.
+    /// </summary>
+    class FexFileUploadDataInfo
     {
         public string anon_upload_link { get; set; }
         public long anon_upload_root_id { get; set; }

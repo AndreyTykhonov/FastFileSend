@@ -5,8 +5,11 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FastFileSend.Main
+namespace FastFileSend.Main.RemoteFile
 {
+    /// <summary>
+    /// Fex.net requires PATCH method to upload files.
+    /// </summary>
     public static class HttpClientExtensions
     {
         public static async Task<HttpResponseMessage> PatchAsync(this HttpClient client, Uri requestUri, HttpContent iContent, long position)

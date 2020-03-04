@@ -60,7 +60,7 @@ namespace FastFileSend.WPF
                     await ffsWindows.Send();
                     break;
                 case "Downloads":                    
-                    Process.Start(FilePathHelper.Downloads);
+                    Process.Start(PathUtils.Downloads);
                     break;
             }
 

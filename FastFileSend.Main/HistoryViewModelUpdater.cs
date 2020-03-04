@@ -1,4 +1,7 @@
-﻿using FastFileSend.Main;
+﻿using AutoMapper;
+using FastFileSend.Main;
+using FastFileSend.Main.Models;
+using FastFileSend.Main.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,42 +11,53 @@ using System.Timers;
 
 namespace FastFileSend.Main
 {
+    /// <summary>
+    /// Gathering actual HistoryListView from the API server.
+    /// </summary>
     class HistoryViewModelUpdater
     {
-        HistoryViewModel HistoryViewModel { get; set; }
-        ApiServer ApiServer { get; set; }
+        HistoryListViewModel HistoryListViewModel { get; set; }
+        Api ApiServer { get; set; }
         
         System.Timers.Timer TimerUpdateHistory { get; set; }
         SynchronizationContext uiContext;
 
-        public HistoryViewModelUpdater(ApiServer apiServer, HistoryViewModel historyViewModel)
+        const double HistoryUpdateInterval = 1000;
+
+        public HistoryViewModelUpdater(Api apiServer, HistoryListViewModel historyViewModel)
         {
             ApiServer = apiServer;
-            HistoryViewModel = historyViewModel;
+            HistoryListViewModel = historyViewModel;
 
             uiContext = SynchronizationContext.Current;
 
-            TimerUpdateHistory = new System.Timers.Timer(1000);
+            TimerUpdateHistory = new System.Timers.Timer(HistoryUpdateInterval);
             TimerUpdateHistory.Elapsed += TimerUpdateHistory_Elapsed;
             TimerUpdateHistory.AutoReset = false;
 
             TimerUpdateHistory_Elapsed(this, null);
         }
 
+        /// <summary>
+        /// Triggers history update.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void TimerUpdateHistory_Elapsed(object sender, ElapsedEventArgs e)
         {
-            List<HistoryItem> historyList = await ApiServer.GetHistory();
-            var historyModel = historyList.Select(x => HistoryItemToHistoryModel(x));
+            DateTime minimumDate = HistoryListViewModel.List.Max(x => x.Date);
+            List<HistoryModel> historyList = await ApiServer.GetHistory(minimumDate);
+            List<HistoryViewModel> historyViewModels = historyList.Select(x => x as HistoryViewModel).ToList();
 
-            foreach (HistoryModel model in historyModel.ToArray())
+            foreach (HistoryViewModel model in historyViewModels)
             {
-                var duplicate = HistoryViewModel.List.ToArray().FirstOrDefault(x => x.Id == model.Id);
+                var duplicate = HistoryListViewModel.List.FirstOrDefault(x => x.Id == model.Id);
 
                 if (duplicate != null)
                 {
                     if (duplicate.Fake)
                     {
-                        PropertyHelper.CopyPropertiesTo(model, duplicate);
+                        DynamicMapper.Map(model, duplicate);
                         //uiContext.Send(x => HistoryViewModel.List.Remove(duplicate), null);
                     }
                     if (duplicate.Status != model.Status)
@@ -54,34 +68,11 @@ namespace FastFileSend.Main
                     continue;
                 }
 
-                uiContext.Send(x => HistoryViewModel.List.Insert(0, model), null);
+                uiContext.Send(x => HistoryListViewModel.List.Insert(0, model), null);
             }
 
+            // Restart timer after update.
             TimerUpdateHistory.Start();
-        }
-
-        HistoryModel HistoryItemToHistoryModel(HistoryItem historyItem)
-        {
-            bool imReceiver = historyItem.Receiver == ApiServer.Id;
-            bool imAwaitingDownload = historyItem.Status == 0;
-            bool timeToDownload = imReceiver && imAwaitingDownload;
-
-            HistoryModel historyModel = new HistoryModel()
-            {
-                ETA = "",
-                Id = historyItem.Id,
-                Name = historyItem.File.Name,
-                Receiver = historyItem.Receiver,
-                Sender = historyItem.Sender,
-                Size = historyItem.File.Size,
-                Url = historyItem.File.Url,
-                Status = (HistoryModelStatus)historyItem.Status,
-                Progress = timeToDownload ? 0 : 100,
-                Date = historyItem.Date.ToLocalTime(),
-                File = historyItem.File
-            };
-
-            return historyModel;
         }
     }
 }

@@ -63,6 +63,7 @@
       <DependentUpon>Downloads.xaml</DependentUpon>
     </Compile>
     <Compile Include="FastFileSendProgramWindows.cs" />
+    <Compile Include="PathUtils.cs" />
     <Compile Include="SizeConverter.cs" />
     <Compile Include="StatusConverter.cs" />
     <Compile Include="UserAddWindow.xaml.cs">
