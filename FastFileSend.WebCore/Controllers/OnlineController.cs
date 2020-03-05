@@ -1,5 +1,4 @@
-﻿using FastFileSend.Database;
-using FastFileSend.WebCore.DataBase;
+﻿using FastFileSend.WebCore.DataBase;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;

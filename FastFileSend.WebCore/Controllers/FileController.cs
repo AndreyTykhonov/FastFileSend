@@ -1,5 +1,4 @@
-﻿using FastFileSend.Database;
-using FastFileSend.Main.Enum;
+﻿using FastFileSend.Main.Enum;
 using FastFileSend.Main.Models;
 using FastFileSend.WebCore.DataBase;
 using Microsoft.AspNetCore.Authorization;
@@ -68,12 +67,12 @@ namespace FastFileSend.Web.Controllers
 
         private int FindEmptpyTransactionId()
         {
-            using (fastfilesendEntities db = new fastfilesendEntities())
+            using (MyDbContext db = new MyDbContext())
             {
                 do
                 {
                     int newId = new Random().Next(999999);
-                    if (!db.transactions.Any(x => x.download_idx == newId))
+                    if (db.History.Find(newId) is null)
                     {
                         return newId;
                     }
@@ -101,12 +100,12 @@ namespace FastFileSend.Web.Controllers
 
         private int FindEmptpyFileId()
         {
-            using (fastfilesendEntities db = new fastfilesendEntities())
+            using (MyDbContext db = new MyDbContext())
             {
                 do
                 {
                     int newId = new Random().Next(999999);
-                    if (!db.files.Any(x => x.file_idx == newId))
+                    if (db.Files.Find(newId) is null)
                     {
                         return newId;
                     }

@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FastFileSend.Database\FastFileSend.Database.csproj" />
     <ProjectReference Include="..\FastFileSend.Main\FastFileSend.Main.csproj" />
   </ItemGroup>
 

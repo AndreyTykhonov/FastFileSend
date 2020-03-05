@@ -4,7 +4,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using FastFileSend.Database;
 using FastFileSend.WebCore.DataBase;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -73,7 +72,7 @@ namespace FastFileSend.WebCore.Controllers
                 do
                 {
                     int newId = new Random().Next(999999);
-                    if (!db.Users.Any(x => x.Id == newId))
+                    if (db.Users.Find(newId) is null)
                     {
                         return newId;
                     }

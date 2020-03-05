@@ -1,5 +1,4 @@
-﻿using FastFileSend.Database;
-using FastFileSend.Main;
+﻿using FastFileSend.Main;
 using FastFileSend.Main.Enum;
 using FastFileSend.Main.Models;
 using FastFileSend.WebCore.DataBase;
@@ -25,8 +24,7 @@ namespace FastFileSend.Web.Controllers
             int myId = Convert.ToInt32(User.Identity.Name);
             using (MyDbContext db = new MyDbContext())
             {
-                //var containsMyId = db.History.Include(x => x.File).Where(x => x.Sender == myId || x.Receiver == myId).ToList();
-                var containsMyId = db.History.Include(x => x.File).ToList();
+                var containsMyId = db.History.Include(x => x.File).Where(x => x.Sender == myId || x.Receiver == myId).ToList();
                 DateTime minimum = new DateTime(ticks);
                 var upToDate = containsMyId.Where(x => x.Date > DateTime.UtcNow.AddDays(-7)).Where(x => x.Date > minimum).ToList();
 
