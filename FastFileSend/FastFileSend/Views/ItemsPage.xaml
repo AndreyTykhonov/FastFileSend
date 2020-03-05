@@ -33,12 +33,12 @@
                                 <Label Text="{Binding Receiver}" HorizontalOptions="EndAndExpand"></Label>
                             </StackLayout>
                             <StackLayout Orientation="Horizontal">
-                                <Label Text="{Binding Size, Converter={StaticResource mySizeConverter}}"></Label>
+                                <Label Text="{Binding File.Size, Converter={StaticResource mySizeConverter}}"></Label>
                                 <ProgressBar Progress="{Binding Progress}" HorizontalOptions="FillAndExpand"></ProgressBar>
                                 <Label Text="{Binding ETA}"></Label>
                             </StackLayout>
                             <StackLayout Orientation="Horizontal">
-                                <Label Text="{Binding Name}" HorizontalOptions="StartAndExpand"></Label>
+                                <Label Text="{Binding File.Name}" HorizontalOptions="StartAndExpand"></Label>
                                 <Label Text="{Binding Status,Converter={StaticResource myStatusConverter}}" HorizontalOptions="EndAndExpand"></Label>
                             </StackLayout>
                             <StackLayout Orientation="Horizontal">
