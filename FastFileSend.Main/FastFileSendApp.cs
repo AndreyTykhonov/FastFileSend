@@ -69,11 +69,11 @@ namespace FastFileSend.Main
             if (File.Exists(pathResolver.AccountConfig))
             {
                 AccountDetails accountDetails = JsonConvert.DeserializeObject<AccountDetails>(File.ReadAllText(pathResolver.AccountConfig));
-                api = await Api.Login(accountDetails).ConfigureAwait(false);
+                api = await Api.Login(accountDetails).ConfigureAwait(true);
             }
             else
             {
-                api = await Api.CreateNewAccount().ConfigureAwait(false);
+                api = await Api.CreateNewAccount().ConfigureAwait(true);
                 string json = JsonConvert.SerializeObject(api.AccountDetails);
                 File.WriteAllText(pathResolver.AccountConfig, json);
             }

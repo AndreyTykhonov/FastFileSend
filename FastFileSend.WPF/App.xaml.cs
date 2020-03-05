@@ -22,7 +22,7 @@ namespace FastFileSend.WPF
         {
             base.OnStartup(e);
 
-            FastFileSendApp = await FastFileSendApp.Create(new FastFileSendPathResolverWin(), new FastFileSendDialogsWin());
+            FastFileSendApp = await FastFileSendApp.Create(new FastFileSendPathResolverWin(), new FastFileSendDialogsWin()).ConfigureAwait(true);
         }
     }
 }
