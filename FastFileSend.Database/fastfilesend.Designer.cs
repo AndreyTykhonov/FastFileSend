@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\Users\KoBRa\source\repos\FastFileSend\FastFileSend.Database\fastfilesend.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Users\KoBRa\Source\Repos\AndreyTykhonov\FastFileSend\FastFileSend.Database\fastfilesend.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

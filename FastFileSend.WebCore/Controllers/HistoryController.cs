@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -23,17 +24,19 @@ namespace FastFileSend.Web.Controllers
             int myId = Convert.ToInt32(User.Identity.Name);
             using (fastfilesendEntities db = new fastfilesendEntities())
             {
-                var containsMyId = db.transactions.Where(x => x.sender_id == myId || x.receiver_id == myId).ToList();
+                var containsMyId = db.transactions.Include("files_idx").Where(x => x.sender_id == myId || x.receiver_id == myId).ToList();
+                DateTime minimum = new DateTime(ticks);
+                var upToDate = containsMyId.Where(x => x.date > DateTime.UtcNow.AddDays(-7)).Where(x => x.date > minimum).ToList();
 
                 List<HistoryModel> historyList = new List<HistoryModel>();
-                DateTime minimum = new DateTime(ticks);
-                foreach (var item in containsMyId.Where(x => x.date > DateTime.UtcNow.AddDays(-7)).Where(x => x.date > minimum))
+                foreach (var item in upToDate)
                 {
                     HistoryModel historyItem = new HistoryModel();
                     historyItem.Receiver = item.receiver_id;
                     historyItem.Sender = item.sender_id;
                     historyItem.Id = item.download_idx;
-                    FileItem fileItem = FilesToFileItem(item.file_id);
+                    files file = item.files_idx;
+                    FileItem fileItem = new FileItem(file.file_idx, file.file_name, file.file_size, file.file_crc32, file.file_creationdate, new Uri(file.file_url));
                     historyItem.File = fileItem;
                     historyItem.Status = (HistoryModelStatus)item.status;
                     historyItem.Date = item.date;
@@ -44,21 +47,10 @@ namespace FastFileSend.Web.Controllers
                 }
 
                 // online update
-                db.users.First(x => x.user_idx == myId).user_lastonline = DateTime.UtcNow;
-                db.SaveChanges();
+                db.users.Find(myId).user_lastonline = DateTime.UtcNow;
+                db.SaveChangesAsync();
 
                 return Ok(historyList);
-            }
-        }
-
-        private FileItem FilesToFileItem(int file_id)
-        {
-            using (fastfilesendEntities db = new fastfilesendEntities())
-            {
-                files file = db.files.First(x => x.file_idx == file_id);
-
-                FileItem fileItem = new FileItem(file.file_idx, file.file_name, file.file_size, file.file_crc32, file.file_creationdate, file.file_url);
-                return fileItem;
             }
         }
     }
