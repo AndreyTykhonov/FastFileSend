@@ -40,7 +40,7 @@ namespace FastFileSend.Main
         {
             foreach (UserViewModel user in UserListViewModel.List.ToArray())
             {
-                DateTime lastOnline = await ApiServer.GetLastOnline(user.Id);
+                DateTime lastOnline = await ApiServer.GetLastOnline(user.Id).ConfigureAwait(false);
                 
                 user.Online = DateTime.UtcNow.AddSeconds(-30) < lastOnline;
             }

@@ -5,7 +5,6 @@ namespace FastFileSend.Main.Enum
     /// <summary>
     /// Represent HistoryModel possible status.
     /// </summary>
-    [Flags]
     public enum HistoryModelStatus
     {
         Awaiting = 0,

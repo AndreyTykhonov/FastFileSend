@@ -7,7 +7,7 @@ namespace FastFileSend.Main.Models
     /// </summary>
     public class FileItem
     {
-        public FileItem(int id, string name, long size, int cRC32, DateTime creationDate, string url)
+        public FileItem(int id, string name, long size, int cRC32, DateTime creationDate, Uri url)
         {
             Id = id;
             Name = name;
@@ -22,6 +22,6 @@ namespace FastFileSend.Main.Models
         public long Size { get; set; }
         public int CRC32 { get; set; }
         public DateTime CreationDate { get; set; }
-        public string Url { get; set; }
+        public Uri Url { get; set; }
     }
 }

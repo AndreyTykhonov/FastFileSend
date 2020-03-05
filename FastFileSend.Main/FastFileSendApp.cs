@@ -24,6 +24,7 @@ namespace FastFileSend.Main
 
         public AccountDetails AccountDetails { get => ApiServer.AccountDetails; }
 
+        #pragma warning disable IDE0052
         private HistoryViewModelUpdater HistoryViewModelUpdater { get; set; }
         private UserListViewModelUpdater UserListViewModelUpdateStatus { get; set; }
 
@@ -54,15 +55,25 @@ namespace FastFileSend.Main
         /// <returns></returns>
         public static async Task<FastFileSendApp> Create(IPathResolver pathResolver, IFastFileSendPlatformDialogs fileSendPlatformDialogs)
         {
+            if (pathResolver is null)
+            {
+                throw new ArgumentNullException(nameof(pathResolver));
+            }
+
+            if (fileSendPlatformDialogs is null)
+            {
+                throw new ArgumentNullException(nameof(fileSendPlatformDialogs));
+            }
+
             Api api;
             if (File.Exists(pathResolver.AccountConfig))
             {
                 AccountDetails accountDetails = JsonConvert.DeserializeObject<AccountDetails>(File.ReadAllText(pathResolver.AccountConfig));
-                api = await Api.Login(accountDetails);
+                api = await Api.Login(accountDetails).ConfigureAwait(false);
             }
             else
             {
-                api = await Api.CreateNewAccount();
+                api = await Api.CreateNewAccount().ConfigureAwait(false);
                 string json = JsonConvert.SerializeObject(api.AccountDetails);
                 File.WriteAllText(pathResolver.AccountConfig, json);
             }
@@ -99,7 +110,7 @@ namespace FastFileSend.Main
                 return;
             }
 
-            await Download(model);
+            await Download(model).ConfigureAwait(false);
         }
 
         private async Task Download(HistoryViewModel model)
@@ -116,12 +127,12 @@ namespace FastFileSend.Main
                 model.ETA = SizeUtils.BytesToString(Convert.ToInt32(speed), "/s");
             };
 
-            await fileDownloader.DownloadAsync(fileItem);
+            await fileDownloader.DownloadAsync(fileItem).ConfigureAwait(false);
 
             model.Status = HistoryModelStatus.Ok;
             model.ETA = "";
 
-            await ApiServer.NotifyDownloadedAsync(model.Id);
+            await ApiServer.NotifyDownloadedAsync(model.Id).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -130,14 +141,14 @@ namespace FastFileSend.Main
         /// <returns></returns>
         public async Task Send()
         {
-            UserModel target = await FileSendPlatformDialogs.SelectUserAsync(UserListViewModel);
+            UserModel target = await FileSendPlatformDialogs.SelectUserAsync(UserListViewModel).ConfigureAwait(false);
 
             if (target == null)
             {
                 return;
             }
 
-            Models.FileInfo fileInfo = await FileSendPlatformDialogs.SelectFileAsync();
+            Models.FileInfo fileInfo = await FileSendPlatformDialogs.SelectFileAsync().ConfigureAwait(false);
 
             if (fileInfo == null)
             {
@@ -150,8 +161,8 @@ namespace FastFileSend.Main
             }
 
             HistoryViewModel historyModel = HistoryModelAdd(fileInfo.Name, fileInfo.Content.Length, target);
-            FileItem uploadedFile = await UploadFile(fileInfo, historyModel);
-            await SendFile(target, uploadedFile, historyModel);
+            FileItem uploadedFile = await UploadFile(fileInfo, historyModel).ConfigureAwait(false);
+            await SendFile(target, uploadedFile, historyModel).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -161,7 +172,12 @@ namespace FastFileSend.Main
         /// <returns></returns>
         public async Task Send(FileItem fileItem)
         {
-            UserModel target = await FileSendPlatformDialogs.SelectUserAsync(UserListViewModel);
+            if (fileItem is null)
+            {
+                throw new ArgumentNullException(nameof(fileItem));
+            }
+
+            UserModel target = await FileSendPlatformDialogs.SelectUserAsync(UserListViewModel).ConfigureAwait(false);
 
             if (target == null)
             {
@@ -169,14 +185,14 @@ namespace FastFileSend.Main
             }
 
             HistoryViewModel historyModel = HistoryModelAdd(fileItem, target);
-            await SendFile(target, fileItem, historyModel);
+            await SendFile(target, fileItem, historyModel).ConfigureAwait(false);
         }
 
         HistoryViewModel HistoryModelAdd(string filename, long size, UserModel target)
         {
             HistoryViewModel downloadModel = new HistoryViewModel
             {
-                File = new FileItem(0, filename, size, 0, DateTime.Now, string.Empty),
+                File = new FileItem(0, filename, size, 0, DateTime.Now, null),
                 Status = HistoryModelStatus.Uploading,
                 ETA = "",
                 Receiver = target.Id,
@@ -211,12 +227,12 @@ namespace FastFileSend.Main
                 downloadModel.ETA = SizeUtils.BytesToString(Convert.ToInt32(speed), "/s");
             };
 
-            FileItem fileItem = await fileUploader.UploadAsync(fileInfo.Name, fileInfo.Content);
+            FileItem fileItem = await fileUploader.UploadAsync(fileInfo.Name, fileInfo.Content).ConfigureAwait(false);
 
             downloadModel.Progress = 100;
             downloadModel.Status = HistoryModelStatus.UsingAPI;
 
-            return await ApiServer.Upload(fileItem);
+            return await ApiServer.Upload(fileItem).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -228,7 +244,7 @@ namespace FastFileSend.Main
         /// <returns></returns>
         private async Task SendFile(UserModel target, FileItem uploadedFile, HistoryViewModel downloadModel)
         {
-            int download_index = await ApiServer.Send(uploadedFile, target.Id);
+            int download_index = await ApiServer.Send(uploadedFile, target.Id).ConfigureAwait(false);
             downloadModel.Id = download_index;
 
             downloadModel.Status = HistoryModelStatus.Awaiting;

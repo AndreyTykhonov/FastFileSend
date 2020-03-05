@@ -48,12 +48,12 @@ namespace FastFileSend.Main
         {
             DateTime minimumDate = DateTime.MinValue;
 
-            if (HistoryListViewModel.List.Count() > 0)
+            if (HistoryListViewModel.List.Count > 0)
             {
                 minimumDate = HistoryListViewModel.List.Max(x => x.Date);
             }
 
-            List<HistoryModel> historyList = await ApiServer.GetHistory(minimumDate);
+            List<HistoryModel> historyList = await ApiServer.GetHistory(minimumDate).ConfigureAwait(false);
             List<HistoryViewModel> historyViewModels = historyList.Select(x => new HistoryViewModel(x)).ToList();
 
             foreach (HistoryViewModel model in historyViewModels)
@@ -84,7 +84,7 @@ namespace FastFileSend.Main
             var statusNoOk = HistoryListViewModel.List.Where(x => x.Status != HistoryModelStatus.Ok);
             foreach (HistoryViewModel model in statusNoOk)
             {
-                HistoryModelStatus modelStatus = await ApiServer.GetFileStatus(model.Id);
+                HistoryModelStatus modelStatus = await ApiServer.GetFileStatus(model.Id).ConfigureAwait(false);
                 if (model.Status != modelStatus)
                 {
                     model.Status = modelStatus;

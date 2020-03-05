@@ -3,6 +3,7 @@
     /// <summary>
     /// Used by FileUploader. Contains Fex.net information.
     /// </summary>
+    #pragma warning disable CA1812 // used by newtonsoft
     class FexFileUploadDataInfo
     {
         public string anon_upload_link { get; set; }

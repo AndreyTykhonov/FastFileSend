@@ -22,7 +22,7 @@ namespace FastFileSend.Main.RemoteFile
         async Task<string> GetUploadTokenAsync()
         {
             Uri fexGetUploadTokenUri = new Uri("https://api.fex.net/api/v1/anonymous/upload-token");
-            string json = await HttpClient.GetStringAsync(fexGetUploadTokenUri);
+            string json = await HttpClient.GetStringAsync(fexGetUploadTokenUri).ConfigureAwait(false);
             return (string)JObject.Parse(json)["token"];
         }
 
@@ -35,6 +35,11 @@ namespace FastFileSend.Main.RemoteFile
 
         public async Task DownloadAsync(FileItem fileItem)
         {
+            if (fileItem is null)
+            {
+                throw new ArgumentNullException(nameof(fileItem));
+            }
+
             string path = Path.Combine(Folder, fileItem.Name);
 
             if (File.Exists(path))
@@ -46,13 +51,11 @@ namespace FastFileSend.Main.RemoteFile
 
             FileStream fs = new FileStream(path, FileMode.Create);
 
-            string token = await GetUploadTokenAsync();
+            string token = await GetUploadTokenAsync().ConfigureAwait(false);
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            Uri fileUri = new Uri(fileItem.Url.Trim());
-
-            HttpResponseMessage response = await HttpClient.GetAsync(fileUri, HttpCompletionOption.ResponseHeadersRead);
-            Stream stream = await response.Content.ReadAsStreamAsync();
+            HttpResponseMessage response = await HttpClient.GetAsync(fileItem.Url, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
             Size = fileItem.Size;
 
@@ -63,14 +66,14 @@ namespace FastFileSend.Main.RemoteFile
 
             do
             {
-                var read = await stream.ReadAsync(buffer, 0, buffer.Length);
+                var read = await stream.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false);
                 if (read == 0)
                 {
                     isMoreToRead = false;
                 }
                 else
                 {
-                    await fs.WriteAsync(buffer, 0, read);
+                    await fs.WriteAsync(buffer, 0, read).ConfigureAwait(false);
 
                     totalRead += read;
                     totalReads += 1;
@@ -97,6 +100,7 @@ namespace FastFileSend.Main.RemoteFile
                 }
             }
 
+            #pragma warning disable CA1303
             throw new IOException("100 duplicates?!");
         }
     }

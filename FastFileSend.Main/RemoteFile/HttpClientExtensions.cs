@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,17 +15,30 @@ namespace FastFileSend.Main.RemoteFile
     {
         public static async Task<HttpResponseMessage> PatchAsync(this HttpClient client, Uri requestUri, HttpContent iContent, long position)
         {
-            var method = new HttpMethod("PATCH");
-            var request = new HttpRequestMessage(method, requestUri)
+            if (client is null)
             {
-                Content = iContent
-            };
+                throw new ArgumentNullException(nameof(client));
+            }
 
-            request.Headers.Add("fsp-offset", position.ToString());
+            if (requestUri is null)
+            {
+                throw new ArgumentNullException(nameof(requestUri));
+            }
 
-            HttpResponseMessage response = await client.SendAsync(request);
+            if (iContent is null)
+            {
+                throw new ArgumentNullException(nameof(iContent));
+            }
 
-            return response;
+            var method = new HttpMethod("PATCH");
+            using (var request = new HttpRequestMessage(method, requestUri) { Content = iContent })
+            {
+                request.Headers.Add("fsp-offset", position.ToString(CultureInfo.InvariantCulture));
+
+                HttpResponseMessage response = await client.SendAsync(request).ConfigureAwait(false);
+
+                return response;
+            }
         }
     }
 }

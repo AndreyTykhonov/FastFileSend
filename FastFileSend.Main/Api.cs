@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -20,6 +21,9 @@ namespace FastFileSend.Main
     /// </summary>
     public class Api
     {
+        /// <summary>
+        /// Giving acces to user account details.
+        /// </summary>
         public AccountDetails AccountDetails
         {
             get
@@ -31,13 +35,14 @@ namespace FastFileSend.Main
         private int Id { get; set; }
         private string Password { get; set; }
 
-        //readonly static string ServerHost = "http://fastfilesend.somee.com/api/";
-        readonly static string ServerHost = "https://localhost:44342/api/";
+        //const string ServerHost = "http://fastfilesend.somee.com/api/";
+        const string ServerHost = "https://localhost:44342/api/";
 
-        private Api(AccountDetails accountDetails)
+        private Api(AccountDetails accountDetails, string accessToken)
         {
             Id = accountDetails.Id;
             Password = accountDetails.Password;
+            AccessToken = accessToken;
         }
 
         /// <summary>
@@ -47,9 +52,13 @@ namespace FastFileSend.Main
         /// <returns>New authorized API server.</returns>
         public static async Task<Api> Login(AccountDetails accountDetails)
         {
-            Api api = new Api(accountDetails);
-            await Authorize(accountDetails);
-            return api;
+            if (accountDetails is null)
+            {
+                throw new ArgumentNullException(nameof(accountDetails));
+            }
+
+            string accessToken = await Authorize(accountDetails).ConfigureAwait(false);
+            return new Api(accountDetails, accessToken);
         }
 
         /// <summary>
@@ -58,32 +67,36 @@ namespace FastFileSend.Main
         /// <returns>Authorized API with randomly created account.</returns>
         public static async Task<Api> CreateNewAccount()
         {
-            JObject jObject = await SendQuery<JObject>("account/register", "");
+            JObject jObject = await SendQueryAnonymous<JObject>("account/register", "").ConfigureAwait(false);
 
             int Id = (int)jObject["user_idx"];
             string Password = (string)jObject["user_password"];
 
             AccountDetails accountDetails = new AccountDetails(Id, Password);
+            string accessToken = await Authorize(accountDetails).ConfigureAwait(false);
 
-            return new Api(accountDetails);
+            return new Api(accountDetails, accessToken);
         }
 
-        private static string AccessToken { get; set; } = string.Empty;
+        private string AccessToken { get; set; } = string.Empty;
 
         /// <summary>
         /// Trying to authorize on server. Setting AccessToken variable to JWT token.
         /// </summary>
-        /// <returns></returns>
-        private static async Task Authorize(AccountDetails accountDetails)
+        /// <param name="accountDetails">Account details to authorize.</param>
+        /// <returns>JWT token that need to API constructor.</returns>
+        private static async Task<string> Authorize(AccountDetails accountDetails)
         {
             var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
-            nameValueCollection["username"] = accountDetails.Id.ToString();
+            nameValueCollection["username"] = accountDetails.Id.ToString(CultureInfo.InvariantCulture);
             nameValueCollection["password"] = accountDetails.Password;
 
-            JObject response = await SendQuery<JObject>("account/token", nameValueCollection.ToString());
-            AccessToken = (string)response["access_token"];
+            JObject response = await SendQueryAnonymous<JObject>("account/token", nameValueCollection.ToString()).ConfigureAwait(false);
+            //AccessToken = (string)response["access_token"];
 
-            await FakePageVisit();
+            await FakePageVisit().ConfigureAwait(false);
+
+            return (string)response["access_token"];
         }
 
         /// <summary>
@@ -94,7 +107,7 @@ namespace FastFileSend.Main
         {
             using (HttpClient httpClient = new HttpClient())
             {
-                await httpClient.GetStringAsync("http://fastfilesend.somee.com/");
+                await httpClient.GetStringAsync("http://fastfilesend.somee.com/").ConfigureAwait(false);
             }
         }
 
@@ -105,7 +118,7 @@ namespace FastFileSend.Main
         /// <param name="api">Target API.</param>
         /// <param name="query">Target API params.</param>
         /// <returns>API response as T.</returns>
-        static async Task<T> SendQuery<T>(string api, string query)
+        async Task<T> SendQuery<T>(string api, string query)
         {
             // Unicode query fix
             query = Uri.EscapeUriString(HttpUtility.UrlDecode(query));
@@ -115,29 +128,61 @@ namespace FastFileSend.Main
                 httpClient.BaseAddress = new Uri(ServerHost);
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
 
-                // Retry for 5 times.
-                for (int i = 0; i < 5; i++)
+                return await RetryGetAsync<T>(httpClient, api, query).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Universal API query sender. Creates new HttpClient for every call (better for threaded usage). Anonymous version.
+        /// </summary>
+        /// <typeparam name="T">Server response type.</typeparam>
+        /// <param name="api">Target API.</param>
+        /// <param name="query">Target API params.</param>
+        /// <returns>API response as T.</returns>
+        static async Task<T> SendQueryAnonymous<T>(string api, string query)
+        {
+            // Unicode query fix
+            query = Uri.EscapeUriString(HttpUtility.UrlDecode(query));
+
+            using (HttpClient httpClient = new HttpClient())
+            {
+                httpClient.BaseAddress = new Uri(ServerHost);
+                return await RetryGetAsync<T>(httpClient, api, query).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Retry GetAsync for X times.
+        /// </summary>
+        /// <typeparam name="T">Response target.</typeparam>
+        /// <param name="httpClient">Input HttpClient.</param>
+        /// <param name="api">API.</param>
+        /// <param name="query">Query.</param>
+        /// <param name="retryCount">Times to retry.</param>
+        /// <returns></returns>
+        private static async Task<T> RetryGetAsync<T>(HttpClient httpClient, string api, string query, int retryCount = 5)
+        {
+            // Retry for 5 times.
+            for (int i = 0; i < retryCount; i++)
+            {
+                HttpResponseMessage response = await httpClient.GetAsync($"{api}?{query}").ConfigureAwait(false);
+
+                // Last try. Throw exception if not success.
+                if (i == retryCount - 1)
                 {
-                    HttpResponseMessage response = await httpClient.GetAsync($"{api}?{query}");
-
-                    // Last try. Throw exception if not success.
-                    if (i == 4)
-                    {
-                        response.EnsureSuccessStatusCode();
-                    }
-
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        await Task.Delay(1000);
-                        continue;
-                    }
-
-                    string content = await response.Content.ReadAsStringAsync();
-                    return JsonConvert.DeserializeObject<T>(content);
+                    response.EnsureSuccessStatusCode();
                 }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    await Task.Delay(1000).ConfigureAwait(false);
+                    continue;
+                }
+
+                string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return JsonConvert.DeserializeObject<T>(content);
             }
 
-            // Will be never executed.
             return default;
         }
 
@@ -149,10 +194,10 @@ namespace FastFileSend.Main
         public async Task NotifyDownloadedAsync(int download)
         {
             var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
-            nameValueCollection["download"] = download.ToString();
+            nameValueCollection["download"] = download.ToString(CultureInfo.InvariantCulture);
             nameValueCollection["status"] = "1";
 
-            await SendQuery<object>("file/setstatus", nameValueCollection.ToString());
+            await SendQuery<object>("file/setstatus", nameValueCollection.ToString()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -163,9 +208,9 @@ namespace FastFileSend.Main
         public async Task<HistoryModelStatus> GetFileStatus(int download)
         {
             var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
-            nameValueCollection["download"] = download.ToString();
+            nameValueCollection["download"] = download.ToString(CultureInfo.InvariantCulture);
 
-            return await SendQuery<HistoryModelStatus>("file/getstatus", nameValueCollection.ToString());
+            return await SendQuery<HistoryModelStatus>("file/getstatus", nameValueCollection.ToString()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -177,9 +222,9 @@ namespace FastFileSend.Main
         public async Task<DateTime> GetLastOnline(int id)
         {
             var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
-            nameValueCollection["id"] = id.ToString();
+            nameValueCollection["id"] = id.ToString(CultureInfo.InvariantCulture);
 
-            return await SendQuery<DateTime>("online/get", nameValueCollection.ToString());
+            return await SendQuery<DateTime>("online/get", nameValueCollection.ToString()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -190,9 +235,9 @@ namespace FastFileSend.Main
         public async Task<List<HistoryModel>> GetHistory(DateTime minimumDate)
         {
             var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
-            nameValueCollection["minimum"] = minimumDate.Ticks.ToString();
+            nameValueCollection["minimum"] = minimumDate.Ticks.ToString(CultureInfo.InvariantCulture);
 
-            return await SendQuery<List<HistoryModel>>("history/get", nameValueCollection.ToString());
+            return await SendQuery<List<HistoryModel>>("history/get", nameValueCollection.ToString()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -202,13 +247,18 @@ namespace FastFileSend.Main
         /// <returns>Same as input but now with Id.</returns>
         public async Task<FileItem> Upload(FileItem fileItem)
         {
+            if (fileItem is null)
+            {
+                throw new ArgumentNullException(nameof(fileItem));
+            }
+
             var query = HttpUtility.ParseQueryString(string.Empty);
             query["name"] = fileItem.Name;
-            query["size"] = fileItem.Size.ToString();
-            query["crc32"] = fileItem.CRC32.ToString();
-            query["url"] = fileItem.Url;
+            query["size"] = fileItem.Size.ToString(CultureInfo.InvariantCulture);
+            query["crc32"] = fileItem.CRC32.ToString(CultureInfo.InvariantCulture);
+            query["url"] = fileItem.Url.ToString();
 
-            fileItem.Id = await SendQuery<int>("file/upload", query.ToString());
+            fileItem.Id = await SendQuery<int>("file/upload", query.ToString()).ConfigureAwait(false);
 
             return fileItem;
         }
@@ -221,13 +271,18 @@ namespace FastFileSend.Main
         /// <returns>Returns transaction id.</returns>
         public async Task<int> Send(FileItem fileItem, int targetId)
         {
-            var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
-            nameValueCollection["id"] = Id.ToString();
-            nameValueCollection["password"] = Password.ToString();
-            nameValueCollection["target"] = targetId.ToString();
-            nameValueCollection["file"] = fileItem.Id.ToString();
+            if (fileItem is null)
+            {
+                throw new ArgumentNullException(nameof(fileItem));
+            }
 
-            return await SendQuery<int>("file/send", nameValueCollection.ToString());
+            var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
+            nameValueCollection["id"] = Id.ToString(CultureInfo.InvariantCulture);
+            nameValueCollection["password"] = Password.ToString(CultureInfo.InvariantCulture);
+            nameValueCollection["target"] = targetId.ToString(CultureInfo.InvariantCulture);
+            nameValueCollection["file"] = fileItem.Id.ToString(CultureInfo.InvariantCulture);
+
+            return await SendQuery<int>("file/send", nameValueCollection.ToString()).ConfigureAwait(false);
         }
     }
 }

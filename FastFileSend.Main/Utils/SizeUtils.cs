@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace FastFileSend.Main.Utils
@@ -17,7 +18,7 @@ namespace FastFileSend.Main.Utils
             long bytes = Math.Abs(byteCount);
             int place = System.Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
             double num = Math.Round(bytes / Math.Pow(1024, place), 1);
-            return (Math.Sign(byteCount) * num).ToString() + " " + suf[place] + suffix;
+            return (Math.Sign(byteCount) * num).ToString(CultureInfo.InvariantCulture) + " " + suf[place] + suffix;
         }
     }
 }

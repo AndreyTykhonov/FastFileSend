@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -37,7 +38,7 @@ namespace FastFileSend.Main.ViewModel
 
             if (target == null || string.IsNullOrEmpty(target.LocalName))
             {
-                return id.ToString();
+                return id.ToString(CultureInfo.InvariantCulture);
             }
 
             return target.LocalName;

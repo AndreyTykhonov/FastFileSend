@@ -30,7 +30,7 @@ namespace FastFileSend.WPF
                 Content = fs,
             };
 
-            return fileInfo;
+            return await Task.FromResult(fileInfo).ConfigureAwait(false);
         }
 
         public async Task<UserModel> SelectUserAsync(UserListViewModel userListViewModel)
@@ -38,7 +38,7 @@ namespace FastFileSend.WPF
             UsersWindow usersWindow = new UsersWindow(userListViewModel);
             usersWindow.ShowDialog();
 
-            return userListViewModel.Selected;
+            return await Task.FromResult(userListViewModel.Selected).ConfigureAwait(false);
         }
     }
 }

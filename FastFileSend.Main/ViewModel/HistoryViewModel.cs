@@ -9,6 +9,7 @@ namespace FastFileSend.Main.ViewModel
 {
     public class HistoryViewModel : HistoryModel, INotifyPropertyChanged
     {
+        #pragma warning disable CS0067 // fody
         public event PropertyChangedEventHandler PropertyChanged;
 
         public double Progress { get; set; }
