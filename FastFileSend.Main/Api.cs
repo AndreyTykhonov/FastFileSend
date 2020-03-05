@@ -35,8 +35,8 @@ namespace FastFileSend.Main
         private int Id { get; set; }
         private string Password { get; set; }
 
-        //const string ServerHost = "http://fastfilesend.somee.com/api/";
-        const string ServerHost = "https://localhost:44342/api/";
+        const string ServerHost = "http://fastfilesend.somee.com/api/";
+        //const string ServerHost = "https://localhost:44342/api/";
 
         private Api(AccountDetails accountDetails, string accessToken)
         {
