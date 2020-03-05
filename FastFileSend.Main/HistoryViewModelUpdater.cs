@@ -81,7 +81,7 @@ namespace FastFileSend.Main
             }
 
             // Update statuses
-            var statusNoOk = HistoryListViewModel.List.Where(x => x.Status != HistoryModelStatus.Ok);
+            var statusNoOk = HistoryListViewModel.List.Where(x => x.Status != HistoryModelStatus.Ok).Where(x => !x.Fake);
             foreach (HistoryViewModel model in statusNoOk)
             {
                 HistoryModelStatus modelStatus = await ApiServer.GetFileStatus(model.Id).ConfigureAwait(false);
