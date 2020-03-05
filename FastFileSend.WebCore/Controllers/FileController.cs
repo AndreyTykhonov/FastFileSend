@@ -1,4 +1,7 @@
 ﻿using FastFileSend.Database;
+using FastFileSend.Main.Enum;
+using FastFileSend.Main.Models;
+using FastFileSend.WebCore.DataBase;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,9 +20,9 @@ namespace FastFileSend.Web.Controllers
         [Route("SetStatus")]
         public IActionResult SetStatus(int download, int status)
         {
-            using (fastfilesendEntities db = new fastfilesendEntities())
+            using (MyDbContext db = new MyDbContext())
             {
-                db.transactions.First(x => x.download_idx == download).status = status;
+                db.History.First(x => x.Id == download).Status = (HistoryModelStatus)status;
                 db.SaveChanges();
             }
 
@@ -30,9 +33,9 @@ namespace FastFileSend.Web.Controllers
         [Route("GetStatus")]
         public IActionResult GetStatus(int download)
         {
-            using (fastfilesendEntities db = new fastfilesendEntities())
+            using (MyDbContext db = new MyDbContext())
             {
-                return Ok(db.transactions.First(x => x.download_idx == download).status);
+                return Ok(db.History.First(x => x.Id == download).Status);
             }
         }
 
@@ -42,23 +45,24 @@ namespace FastFileSend.Web.Controllers
         {
             int myId = Convert.ToInt32(User.Identity.Name);
 
-            using (fastfilesendEntities db = new fastfilesendEntities())
+            using (MyDbContext db = new MyDbContext())
             {
 
-                transactions newSend = new transactions()
+                HistoryModel newSend = new HistoryModel()
                 {
-                    file_id = file,
-                    sender_id = myId,
-                    receiver_id = target,
-                    status = 0,
-                    download_idx = FindEmptpyTransactionId(),
-                    date = DateTime.UtcNow
+                    Sender = myId,
+                    Receiver = target,
+                    Status = 0,
+                    Id = FindEmptpyTransactionId(),
+                    Date = DateTime.UtcNow
                 };
 
-                db.transactions.Add(newSend);
+                newSend.File = db.Files.Find(file);
+
+                db.History.Add(newSend);
                 db.SaveChanges();
 
-                return Ok(newSend.download_idx);
+                return Ok(newSend.Id);
             }
         }
 
@@ -82,21 +86,13 @@ namespace FastFileSend.Web.Controllers
         [Route("Upload")]
         public IActionResult Upload(string name, long size, int crc32, string url)
         {
-            using (fastfilesendEntities db = new fastfilesendEntities())
+            using (MyDbContext db = new MyDbContext())
             {
                 int newId = FindEmptpyFileId();
 
-                files newFile = new files()
-                {
-                    file_idx = newId,
-                    file_name = name,
-                    file_size = size,
-                    file_crc32 = crc32,
-                    file_creationdate = DateTime.Now,
-                    file_url = url
-                };
+                FileItem newFile = new FileItem(newId, name, size, crc32, DateTime.Now, new Uri(url));
 
-                db.files.Add(newFile);
+                db.Files.Add(newFile);
                 db.SaveChanges();
 
                 return Ok(newId);

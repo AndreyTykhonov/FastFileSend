@@ -2,6 +2,7 @@
 using FastFileSend.Main;
 using FastFileSend.Main.Enum;
 using FastFileSend.Main.Models;
+using FastFileSend.WebCore.DataBase;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -22,35 +23,24 @@ namespace FastFileSend.Web.Controllers
         public IActionResult Get(long ticks)
         {
             int myId = Convert.ToInt32(User.Identity.Name);
-            using (fastfilesendEntities db = new fastfilesendEntities())
+            using (MyDbContext db = new MyDbContext())
             {
-                var containsMyId = db.transactions.Include("files_idx").Where(x => x.sender_id == myId || x.receiver_id == myId).ToList();
+                //var containsMyId = db.History.Include(x => x.File).Where(x => x.Sender == myId || x.Receiver == myId).ToList();
+                var containsMyId = db.History.Include(x => x.File).ToList();
                 DateTime minimum = new DateTime(ticks);
-                var upToDate = containsMyId.Where(x => x.date > DateTime.UtcNow.AddDays(-7)).Where(x => x.date > minimum).ToList();
+                var upToDate = containsMyId.Where(x => x.Date > DateTime.UtcNow.AddDays(-7)).Where(x => x.Date > minimum).ToList();
 
-                List<HistoryModel> historyList = new List<HistoryModel>();
-                foreach (var item in upToDate)
+                // TODO: Fix Include loading
+                foreach (HistoryModel historyModel in upToDate)
                 {
-                    HistoryModel historyItem = new HistoryModel();
-                    historyItem.Receiver = item.receiver_id;
-                    historyItem.Sender = item.sender_id;
-                    historyItem.Id = item.download_idx;
-                    files file = item.files_idx;
-                    FileItem fileItem = new FileItem(file.file_idx, file.file_name, file.file_size, file.file_crc32, file.file_creationdate, new Uri(file.file_url));
-                    historyItem.File = fileItem;
-                    historyItem.Status = (HistoryModelStatus)item.status;
-                    historyItem.Date = item.date;
-
-                    historyItem.File.Name = historyItem.File.Name.Trim();
-
-                    historyList.Add(historyItem);
+                    db.Entry(historyModel).Reference(x => x.File).Load();
                 }
 
                 // online update
-                db.users.Find(myId).user_lastonline = DateTime.UtcNow;
-                db.SaveChangesAsync();
+                db.Users.Find(myId).LastOnline = DateTime.UtcNow;
+                db.SaveChanges();
 
-                return Ok(historyList);
+                return Ok(upToDate);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using FastFileSend.Database;
+using FastFileSend.WebCore.DataBase;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,9 +17,9 @@ namespace FastFileSend.Web.Controllers
         [Route("Get")]
         public IActionResult Get(int id)
         {
-            using (fastfilesendEntities db = new fastfilesendEntities())
+            using (MyDbContext db = new MyDbContext())
             {
-                return Ok(db.users.First(x => x.user_idx == id).user_lastonline);
+                return Ok(db.Users.Find(id).LastOnline);
             }
         }
 
@@ -27,9 +28,9 @@ namespace FastFileSend.Web.Controllers
         public void Update()
         {
             int myId = Convert.ToInt32(User.Identity.Name);
-            using (fastfilesendEntities db = new fastfilesendEntities())
+            using (MyDbContext db = new MyDbContext())
             {
-                db.users.First(x => x.user_idx == myId).user_lastonline = DateTime.UtcNow;
+                db.Users.Find(myId).LastOnline = DateTime.UtcNow;
                 db.SaveChanges();
             }
         }

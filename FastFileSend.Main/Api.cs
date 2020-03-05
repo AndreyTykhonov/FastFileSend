@@ -69,8 +69,8 @@ namespace FastFileSend.Main
         {
             JObject jObject = await SendQueryAnonymous<JObject>("account/register", "").ConfigureAwait(false);
 
-            int Id = (int)jObject["user_idx"];
-            string Password = (string)jObject["user_password"];
+            int Id = (int)jObject["id"];
+            string Password = (string)jObject["password"];
 
             AccountDetails accountDetails = new AccountDetails(Id, Password);
             string accessToken = await Authorize(accountDetails).ConfigureAwait(false);

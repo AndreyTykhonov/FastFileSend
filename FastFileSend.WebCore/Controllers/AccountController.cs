@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FastFileSend.Database;
+using FastFileSend.WebCore.DataBase;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -15,16 +16,6 @@ namespace FastFileSend.WebCore.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private List<users> users = new List<users>();
-
-        public AccountController()
-        {
-            using (fastfilesendEntities db = new fastfilesendEntities())
-            {
-                users = db.users.ToList();
-            }
-        }
-
         [Route("Token")]
         public IActionResult Token(string username, string password)
         {
@@ -57,18 +48,18 @@ namespace FastFileSend.WebCore.Controllers
         [Route("Register")]
         public IActionResult Register()
         {
-            using (fastfilesendEntities db = new fastfilesendEntities())
+            using (MyDbContext db = new MyDbContext())
             {
                 int emptyId = FindEmptpyUserId();
                 int randomPassword = new Random().Next(int.MaxValue);
-                users newAccount = new users();
+                User newAccount = new User
+                {
+                    Id = emptyId,
+                    RegisterDate = DateTime.Now,
+                    Password = randomPassword.ToString()
+                };
 
-                newAccount.user_idx = emptyId;
-                newAccount.user_friendlyname = newAccount.user_idx.ToString();
-                newAccount.user_registerdate = DateTime.Now;
-                newAccount.user_password = randomPassword.ToString();
-
-                db.users.Add(newAccount);
+                db.Users.Add(newAccount);
                 db.SaveChanges();
 
                 return Ok(newAccount);
@@ -77,12 +68,12 @@ namespace FastFileSend.WebCore.Controllers
 
         private int FindEmptpyUserId()
         {
-            using (fastfilesendEntities db = new fastfilesendEntities())
+            using (MyDbContext db = new MyDbContext())
             {
                 do
                 {
                     int newId = new Random().Next(999999);
-                    if (!db.users.Any(x => x.user_idx == newId))
+                    if (!db.Users.Any(x => x.Id == newId))
                     {
                         return newId;
                     }
@@ -93,22 +84,25 @@ namespace FastFileSend.WebCore.Controllers
 
         private ClaimsIdentity GetIdentity(string username, string password)
         {
-            users user = users.FirstOrDefault(x => x.user_idx.ToString() == username && x.user_password == password);
-            if (user != null)
+            using (MyDbContext db = new MyDbContext())
             {
-                var claims = new List<Claim>
+                User user = db.Users.FirstOrDefault(x => x.Id.ToString() == username && x.Password == password);
+                if (user != null)
                 {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.user_idx.ToString()),
+                    var claims = new List<Claim>
+                {
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.Id.ToString()),
                     //new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role)
                 };
-                ClaimsIdentity claimsIdentity =
-                new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
-                    ClaimsIdentity.DefaultRoleClaimType);
-                return claimsIdentity;
-            }
+                    ClaimsIdentity claimsIdentity =
+                    new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
+                        ClaimsIdentity.DefaultRoleClaimType);
+                    return claimsIdentity;
+                }
 
-            // если пользователя не найдено
-            return null;
+                // если пользователя не найдено
+                return null;
+            }
         }
     }
 }

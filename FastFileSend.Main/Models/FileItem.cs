@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FastFileSend.Main.Models
 {
@@ -16,7 +17,7 @@ namespace FastFileSend.Main.Models
             CreationDate = creationDate;
             Url = url;
         }
-
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public string Name { get; set; }
         public long Size { get; set; }
