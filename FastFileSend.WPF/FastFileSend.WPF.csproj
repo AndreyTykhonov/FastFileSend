@@ -59,14 +59,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Downloads.xaml.cs">
+    <Compile Include="Pages\Downloads.xaml.cs">
       <DependentUpon>Downloads.xaml</DependentUpon>
     </Compile>
     <Compile Include="FastFileSendDialogsWin.cs" />
     <Compile Include="FastFileSendPathResolverWin.cs" />
     <Compile Include="SizeConverter.cs" />
     <Compile Include="StatusConverter.cs" />
-    <Compile Include="UserAddWindow.xaml.cs">
+    <Compile Include="Pages\UserAddWindow.xaml.cs">
       <DependentUpon>UserAddWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserOnlineImageConverter.cs" />
@@ -75,14 +75,14 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="UsersWindow.xaml.cs">
+    <Compile Include="Pages\UsersWindow.xaml.cs">
       <DependentUpon>UsersWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="Downloads.xaml">
+    <Page Include="Pages\Downloads.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Pages\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -90,15 +90,15 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Pages\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="UserAddWindow.xaml">
+    <Page Include="Pages\UserAddWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UsersWindow.xaml">
+    <Page Include="Pages\UsersWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

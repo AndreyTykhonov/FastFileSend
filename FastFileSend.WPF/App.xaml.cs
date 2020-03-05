@@ -16,13 +16,13 @@ namespace FastFileSend.WPF
     /// </summary>
     public partial class App : Application
     {
-        public static FastFileSendApp FastFileSenApp { get; private set; }
+        public static FastFileSendApp FastFileSendApp { get; private set; }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
-            FastFileSenApp = await FastFileSendApp.Create(new FastFileSendPathResolverWin(), new FastFileSendDialogsWin());
+            FastFileSendApp = await FastFileSendApp.Create(new FastFileSendPathResolverWin(), new FastFileSendDialogsWin());
         }
     }
 }

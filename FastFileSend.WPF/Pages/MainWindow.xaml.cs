@@ -21,7 +21,7 @@ using System.Diagnostics;
 using System.ComponentModel;
 using MahApps.Metro.Controls.Dialogs;
 
-namespace FastFileSend.WPF
+namespace FastFileSend.WPF.Pages
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -56,7 +56,7 @@ namespace FastFileSend.WPF
                     HamburgerMenu.Content = e.InvokedItem;
                     break;
                 case "Send file":
-                    FastFileSendApp ffsWindows = App.FastFileSenApp;
+                    FastFileSendApp ffsWindows = App.FastFileSendApp;
                     await ffsWindows.Send();
                     break;
                 case "Downloads":                    
@@ -79,12 +79,12 @@ namespace FastFileSend.WPF
         {
             // TODO: Some progress here
             
-            while (App.FastFileSenApp is null)
+            while (App.FastFileSendApp is null)
             {
                 await Task.Delay(100);
             }
 
-            FastFileSendApp ffsWindows = App.FastFileSenApp;
+            FastFileSendApp ffsWindows = App.FastFileSendApp;
             HamburgerItemId.Label = ffsWindows.AccountDetails.Id.ToString();
 
             Title = $"Fast File Send {GetAppVersion()}";

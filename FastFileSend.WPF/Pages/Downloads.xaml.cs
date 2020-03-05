@@ -17,7 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FastFileSend.WPF
+namespace FastFileSend.WPF.Pages
 {
     /// <summary>
     /// Interaction logic for Downloads.xaml
@@ -38,7 +38,7 @@ namespace FastFileSend.WPF
                 return;
             }
 
-            FastFileSendApp ffsWindows = App.FastFileSenApp;
+            FastFileSendApp ffsWindows = App.FastFileSendApp;
 
             await ffsWindows.Send(historyModel.File);
         }
@@ -47,12 +47,12 @@ namespace FastFileSend.WPF
         {
             // TODO: Some progress here
 
-            while (App.FastFileSenApp is null)
+            while (App.FastFileSendApp is null)
             {
                 await Task.Delay(100);
             }
 
-            FastFileSendApp ffsWindows = App.FastFileSenApp;
+            FastFileSendApp ffsWindows = App.FastFileSendApp;
 
             ListViewHistory.DataContext = ffsWindows.HistoryListViewModel;
             ListViewHistory.ItemsSource = ffsWindows.HistoryListViewModel.List;
