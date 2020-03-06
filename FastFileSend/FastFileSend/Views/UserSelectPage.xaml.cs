@@ -36,7 +36,7 @@ namespace FastFileSend.Views
         {
             base.OnAppearing();
 
-            ListViewUsers.BindingContext = App.FastFileSendApp;
+            ListViewUsers.BindingContext = App.FastFileSendApp.UserListViewModel;
         }
 
         bool CanAddUser = true;
