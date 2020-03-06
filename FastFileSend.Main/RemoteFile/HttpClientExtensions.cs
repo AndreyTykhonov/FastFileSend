@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,15 +33,35 @@ namespace FastFileSend.Main.RemoteFile
                 throw new ArgumentNullException(nameof(iContent));
             }
 
-            var method = new HttpMethod("PATCH");
-            using (var request = new HttpRequestMessage(method, requestUri) { Content = iContent })
+            var request = (HttpWebRequest)WebRequest.Create(requestUri);
+            request.Method = "PATCH";
+
+            foreach (var header in client.DefaultRequestHeaders)
             {
-                request.Headers.Add("fsp-offset", position.ToString(CultureInfo.InvariantCulture));
-
-                HttpResponseMessage response = await client.SendAsync(request).ConfigureAwait(false);
-
-                return response;
+                request.Headers.Add(header.Key, header.Value.First());
             }
+
+            request.Headers.Add("fsp-offset", position.ToString(CultureInfo.InvariantCulture));
+
+            using (var stream = await request.GetRequestStreamAsync().ConfigureAwait(false))
+            {
+                await iContent.CopyToAsync(stream).ConfigureAwait(false);
+            }
+
+            // Send the request to the server and wait for the response:  
+            using (var response = await request.GetResponseAsync().ConfigureAwait(false))
+            {
+                // Get a stream representation of the HTTP web response:  
+                using (var stream = response.GetResponseStream())
+                {
+                    using (var reader = new StreamReader(stream))
+                    {
+                        var message = reader.ReadToEnd();
+                        return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(message) };
+                    }
+                }
+            }
+
         }
     }
 }
