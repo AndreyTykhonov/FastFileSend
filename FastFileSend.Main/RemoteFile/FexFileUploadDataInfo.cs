@@ -1,4 +1,4 @@
-﻿namespace FastFileSend.Main.Models
+﻿namespace FastFileSend.Main.RemoteFile
 {
     /// <summary>
     /// Used by FileUploader. Contains Fex.net information.
