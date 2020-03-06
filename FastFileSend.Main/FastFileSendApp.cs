@@ -188,6 +188,36 @@ namespace FastFileSend.Main
             await SendFile(target, fileItem, historyModel).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Launch user select dialog. Send if success. File path as input.
+        /// </summary>
+        /// <returns></returns>
+        public async Task Send(string filePath)
+        {
+            UserModel target = await FileSendPlatformDialogs.SelectUserAsync(UserListViewModel).ConfigureAwait(false);
+
+            if (target == null)
+            {
+                return;
+            }
+
+            FileStream fs = new FileStream(filePath, FileMode.Open);
+            Models.FileInfo fileInfo = new Models.FileInfo
+            {
+                Name = Path.GetFileName(filePath),
+                Content = fs
+            };
+
+            if (fileInfo.Name.Length >= 300)
+            {
+                return;
+            }
+
+            HistoryViewModel historyModel = HistoryModelAdd(fileInfo.Name, fileInfo.Content.Length, target);
+            FileItem uploadedFile = await UploadFile(fileInfo, historyModel).ConfigureAwait(false);
+            await SendFile(target, uploadedFile, historyModel).ConfigureAwait(false);
+        }
+
         HistoryViewModel HistoryModelAdd(string filename, long size, UserModel target)
         {
             HistoryViewModel downloadModel = new HistoryViewModel

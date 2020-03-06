@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:FastFileSend.WPF.Pages"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d"
-        Title="Fast File Send" Height="450" Width="800" MinHeight="450" MinWidth="800" SizeToContent="WidthAndHeight"  WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded">
+        Title="Fast File Send" Height="450" Width="800" MinHeight="450" MinWidth="800" SizeToContent="WidthAndHeight"  WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" Loaded="MetroWindow_Loaded" Drop="MetroWindow_Drop" AllowDrop="True">
 
     <Controls:MetroWindow.Resources>
         <ResourceDictionary>

@@ -89,5 +89,14 @@ namespace FastFileSend.WPF.Pages
 
             Title = $"Fast File Send {GetAppVersion()}";
         }
+
+        private async void MetroWindow_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                await App.FastFileSendApp.Send(files.First());
+            }
+        }
     }
 }
