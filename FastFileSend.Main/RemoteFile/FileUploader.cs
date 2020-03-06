@@ -106,22 +106,24 @@ namespace FastFileSend.Main.RemoteFile
                 {
                     streamContent.Headers.Add("Content-Type", "application/octet-stream");
 
-                    HttpResponseMessage response = await HttpClient.PatchAsync(uploadUri, streamContent, sendPosition).ConfigureAwait(false);
-
-                    bool finalPush = stream.Position == stream.Length;
-
-                    if (finalPush)
+                    using (HttpResponseMessage response = await HttpClient.PatchAsync(uploadUri, streamContent, sendPosition).ConfigureAwait(false))
                     {
-                        stream.Close();
-                        response.EnsureSuccessStatusCode();
 
-                        string response_str = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        bool finalPush = stream.Position == stream.Length;
 
-                        JObject uploadedFileInfo = JObject.Parse(response_str);
-                        return uploadedFileInfo;
+                        if (finalPush)
+                        {
+                            stream.Close();
+                            response.EnsureSuccessStatusCode();
+
+                            string response_str = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                            JObject uploadedFileInfo = JObject.Parse(response_str);
+                            return uploadedFileInfo;
+                        }
+
+                        Position = stream.Position;
                     }
-
-                    Position = stream.Position;
                 }
             } while (true);
         }

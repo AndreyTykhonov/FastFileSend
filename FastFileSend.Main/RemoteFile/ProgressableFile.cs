@@ -29,6 +29,8 @@ namespace FastFileSend.Main.RemoteFile
 
         public event Action<double, double> OnProgress = delegate { };
 
+        DateTime PreviousReport = DateTime.MinValue;
+
         void Report(long downloaded)
         {
             if (!DownloadStartedTime.HasValue)
@@ -36,11 +38,12 @@ namespace FastFileSend.Main.RemoteFile
                 DownloadStartedTime = DateTime.Now;
             }
 
-            if (downloaded % 2000 != 0 && downloaded != Size)
+            if (Position != Size && DateTime.Now.Subtract(PreviousReport).TotalMilliseconds < 100)
             {
                 return;
             }
 
+            PreviousReport = DateTime.Now;
             TimeSpan elapsedTime = DateTime.Now.Subtract((DateTime)DownloadStartedTime);
             double speedMB = downloaded / Math.Max(elapsedTime.TotalSeconds, 1);
             OnProgress((double)downloaded / Size, speedMB);
