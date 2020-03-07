@@ -10,5 +10,8 @@ namespace FastFileSend.Main.ViewModel
     {
         #pragma warning disable CS0067 // fody
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public override int Id { get; set; }
+        public override bool Online { get; set; }
     }
 }

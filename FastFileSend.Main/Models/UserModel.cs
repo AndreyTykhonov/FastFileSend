@@ -9,8 +9,8 @@ namespace FastFileSend.Main.Models
     /// </summary>
     public class UserModel
     {
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
         public string LocalName { get; set; } 
-        public bool Online { get; set; }
+        public virtual bool Online { get; set; }
     }
 }
