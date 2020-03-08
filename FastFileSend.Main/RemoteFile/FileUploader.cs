@@ -113,7 +113,7 @@ namespace FastFileSend.Main.RemoteFile
 
                         if (finalPush)
                         {
-                            stream.Close();
+                            //stream.Close();
                             response.EnsureSuccessStatusCode();
 
                             string response_str = await response.Content.ReadAsStringAsync().ConfigureAwait(false);

@@ -130,6 +130,7 @@ namespace FastFileSend.Main
                 model.ETA = SizeUtils.BytesToString(Convert.ToInt32(speed), "/s");
             };
 
+
             await fileDownloader.DownloadAsync(fileItem).ConfigureAwait(false);
 
             model.Status = HistoryModelStatus.Ok;
@@ -256,7 +257,7 @@ namespace FastFileSend.Main
             long size = fileInfo.Content.Length;
             if (size > Settings.FileSegmentSize)
             {
-                return await UploadFileSegmented(fileInfo, downloadModel);
+                return await UploadFileSegmented(fileInfo, downloadModel).ConfigureAwait(false);
             }
 
             FileUploader fileUploader = new FileUploader();
@@ -282,61 +283,38 @@ namespace FastFileSend.Main
         /// <returns></returns>
         async Task<FileItem> UploadFileSegmented(Models.FileInfo fileInfo, HistoryViewModel downloadModel)
         {
-            using (ZipFile zip = new ZipFile())
+            FileItem segmentedFile = new FileItem(0, fileInfo.Name, fileInfo.Content.Length, 0, DateTime.Now, null);
+
+            int segmentsCount = (int)Math.Ceiling((double)fileInfo.Content.Length / Settings.FileSegmentSize);
+            downloadModel.Status = HistoryModelStatus.Uploading;
+
+            double oneSegmentItemProgress = 1f / segmentsCount;
+
+            List<Uri> segmentsUri = new List<Uri>();
+
+            FileUploader fileUploader = new FileUploader();
+            fileUploader.OnProgress += (double progress, double speed) =>
             {
-                FileItem segmentedFile = new FileItem(0, fileInfo.Name, fileInfo.Content.Length, 0, DateTime.Now, null);
+                int itemsUploaded = segmentsUri.Count;
+                double uploadedProgress = itemsUploaded * oneSegmentItemProgress;
+                downloadModel.Progress = uploadedProgress + (oneSegmentItemProgress * progress);
+                downloadModel.ETA = SizeUtils.BytesToString(Convert.ToInt32(speed), "/s");
+            };
 
-                zip.AddEntry("data", fileInfo.Content);
-                zip.CompressionLevel = Ionic.Zlib.CompressionLevel.BestSpeed;
-                zip.MaxOutputSegmentSize64 = Settings.FileSegmentSize;
-
-                downloadModel.Status = HistoryModelStatus.Archiving;
-                zip.SaveProgress += (object sender, SaveProgressEventArgs e) =>
+            for (int i = 0; i < segmentsCount; i++)
+            {
+                using (SegmentedStream segmentedStream = new SegmentedStream(fileInfo.Content, i * Settings.FileSegmentSize, Settings.FileSegmentSize))
                 {
-                    if (e.TotalBytesToTransfer > 0)
-                    {
-                        downloadModel.Progress = (double)e.BytesTransferred / e.TotalBytesToTransfer;
-                    }
-                };
-
-                string zipPath = Path.Combine(PathResolver.Temp, fileInfo.Name);
-                await zip.SaveAsync(zipPath + ".zip").ConfigureAwait(false);
-
-                int segmentsCount = zip.NumberOfSegmentsForMostRecentSave;
-                List<string> segmentPathes = Enumerable.Range(1, segmentsCount - 1).Select(x => $"{zipPath}.z{x:D2}").ToList();
-                segmentPathes.Insert(0, zipPath + ".zip");
-
-                downloadModel.Status = HistoryModelStatus.Uploading;
-
-                double oneSegmentItemProgress = 1f / segmentsCount;
-
-                List<Uri> segmentsUri = new List<Uri>();
-
-                FileUploader fileUploader = new FileUploader();
-                fileUploader.OnProgress += (double progress, double speed) =>
-                {
-                    int itemsUploaded = segmentsUri.Count;
-                    double uploadedProgress = itemsUploaded * oneSegmentItemProgress;
-                    downloadModel.Progress = uploadedProgress + (oneSegmentItemProgress * progress);
-                    downloadModel.ETA = SizeUtils.BytesToString(Convert.ToInt32(speed), "/s");
-                };
-
-                foreach (string segmentPath in segmentPathes)
-                {
-                    using (FileStream segmentStream = new FileStream(segmentPath, FileMode.Open))
-                    {
-                        FileItem uploadedSegment = await fileUploader.UploadAsync(Path.GetFileName(segmentPath), segmentStream).ConfigureAwait(false);
-                        segmentsUri.Add(uploadedSegment.Url.First());
-                    }
-                    File.Delete(segmentPath);
+                    FileItem uploadedSegment = await fileUploader.UploadAsync(fileInfo.Name, segmentedStream).ConfigureAwait(false);
+                    segmentsUri.Add(uploadedSegment.Url.First());
                 }
-
-                downloadModel.Status = HistoryModelStatus.UsingAPI;
-                downloadModel.ETA = "";
-
-                segmentedFile.Url = segmentsUri;
-                return await ApiServer.Upload(segmentedFile).ConfigureAwait(false);
             }
+
+            downloadModel.Status = HistoryModelStatus.UsingAPI;
+            downloadModel.ETA = "";
+
+            segmentedFile.Url = segmentsUri;
+            return await ApiServer.Upload(segmentedFile).ConfigureAwait(false);
         }
 
         /// <summary>
