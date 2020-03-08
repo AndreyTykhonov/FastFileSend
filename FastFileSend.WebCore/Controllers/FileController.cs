@@ -3,6 +3,7 @@ using FastFileSend.Main.Models;
 using FastFileSend.WebCore.DataBase;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,13 +84,13 @@ namespace FastFileSend.Web.Controllers
 
         [Authorize]
         [Route("Upload")]
-        public IActionResult Upload(string name, long size, int crc32, string url)
+        public IActionResult Upload(string file)
         {
             using (MyDbContext db = new MyDbContext())
             {
                 int newId = FindEmptpyFileId();
 
-                FileItem newFile = new FileItem(newId, name, size, crc32, DateTime.Now, new Uri(url));
+                FileItem newFile = JsonConvert.DeserializeObject<FileItem>(file);
 
                 db.Files.Add(newFile);
                 db.SaveChanges();

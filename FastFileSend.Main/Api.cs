@@ -35,8 +35,8 @@ namespace FastFileSend.Main
         private int Id { get; set; }
         private string Password { get; set; }
 
-        const string ServerHost = "http://fastfilesend.somee.com/api/";
-        //const string ServerHost = "https://localhost:44342/api/";
+        //const string ServerHost = "http://fastfilesend.somee.com/api/";
+        const string ServerHost = "https://localhost:44342/api/";
 
         private Api(AccountDetails accountDetails, string accessToken)
         {
@@ -253,10 +253,7 @@ namespace FastFileSend.Main
             }
 
             var query = HttpUtility.ParseQueryString(string.Empty);
-            query["name"] = fileItem.Name;
-            query["size"] = fileItem.Size.ToString(CultureInfo.InvariantCulture);
-            query["crc32"] = fileItem.CRC32.ToString(CultureInfo.InvariantCulture);
-            query["url"] = fileItem.Url.ToString();
+            query["file"] = JsonConvert.SerializeObject(fileItem);
 
             fileItem.Id = await SendQuery<int>("file/upload", query.ToString()).ConfigureAwait(false);
 
