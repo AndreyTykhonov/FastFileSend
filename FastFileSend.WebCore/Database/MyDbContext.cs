@@ -14,18 +14,18 @@ namespace FastFileSend.WebCore.DataBase
 
         public MyDbContext()
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //
+            modelBuilder.Entity<FileItem>().Property<string>("UriListStr").HasField("UriListStr").UsePropertyAccessMode(PropertyAccessMode.Field);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseSqlServer(@"Database=fastfilesend;MultipleActiveResultSets=true;Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-            optionsBuilder.UseSqlServer("workstation id=fastfilesend.mssql.somee.com;packet size=4096;user id=fastfilesend_SQLLogin_1;pwd=TimeShift;data source=fastfilesend.mssql.somee.com;persist security info=False;initial catalog=fastfilesend");
+            optionsBuilder.UseSqlServer(@"Database=fastfilesend;MultipleActiveResultSets=true;Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+            //optionsBuilder.UseSqlServer("workstation id=fastfilesend.mssql.somee.com;packet size=4096;user id=fastfilesend_SQLLogin_1;pwd=TimeShift;data source=fastfilesend.mssql.somee.com;persist security info=False;initial catalog=fastfilesend");
         }
     }
 }
