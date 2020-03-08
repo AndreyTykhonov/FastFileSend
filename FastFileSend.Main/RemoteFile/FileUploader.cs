@@ -82,7 +82,7 @@ namespace FastFileSend.Main.RemoteFile
             string crc32_str = (string)uploadedFileInfo["crc32"];
             int crc32 = int.Parse(crc32_str, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture);
 
-            FileItem uploadedFile = new FileItem(0, (string)uploadedFileInfo["name"], (long)uploadedFileInfo["size"], crc32, uploadedDateTime, new Uri((string)uploadedFileInfo["download_url"]));
+            FileItem uploadedFile = new FileItem(0, (string)uploadedFileInfo["name"], (long)uploadedFileInfo["size"], crc32, uploadedDateTime, new List<Uri> { new Uri((string)uploadedFileInfo["download_url"]) });
             return uploadedFile;
         }
 
