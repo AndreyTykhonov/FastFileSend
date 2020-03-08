@@ -35,12 +35,16 @@ namespace FastFileSend.Main.Models
         public DateTime CreationDate { get; set; }
 
         // To store in DB.
-        [JsonIgnore]
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [NotMapped]
         public List<Uri> Url
         {
             get
             {
+                if (UriListStr is null)
+                {
+                    return new List<Uri>();
+                }
                 return UriListStr.Split(',').Select(x => new Uri(x)).ToList();
             }
             set

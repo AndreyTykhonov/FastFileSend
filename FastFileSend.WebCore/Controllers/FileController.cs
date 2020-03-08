@@ -91,6 +91,8 @@ namespace FastFileSend.Web.Controllers
                 int newId = FindEmptpyFileId();
 
                 FileItem newFile = JsonConvert.DeserializeObject<FileItem>(file);
+                newFile.CreationDate = DateTime.Now;
+                newFile.Id = newId;
 
                 db.Files.Add(newFile);
                 db.SaveChanges();
