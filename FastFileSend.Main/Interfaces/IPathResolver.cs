@@ -12,5 +12,6 @@ namespace FastFileSend.Main.Interfaces
         string UsersConfig { get; }
         string AccountConfig { get; }
         string Downloads { get; }
+        string Temp { get; }
     }
 }

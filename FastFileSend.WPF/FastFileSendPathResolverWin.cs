@@ -29,5 +29,7 @@ namespace FastFileSend.WPF
         public string AccountConfig => Path.Combine(GetFFSSettingsFolder(), "account.json");
 
         public string Downloads => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+
+        public string Temp => Path.GetTempPath();
     }
 }
