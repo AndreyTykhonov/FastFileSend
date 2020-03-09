@@ -8,9 +8,11 @@ using Ionic.Zip;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FastFileSend.Main
@@ -119,7 +121,13 @@ namespace FastFileSend.Main
         private async Task Download(HistoryViewModel model)
         {
             FileItem file = model.File;
+
             string filePath = FindEmptyPath(PathResolver.Downloads, file.Name);
+
+            if (model.File.Folder)
+            {
+                filePath = Path.Combine(PathResolver.Temp, file.Name);
+            }
 
             model.Status = HistoryModelStatus.Downloading;
 
@@ -161,6 +169,30 @@ namespace FastFileSend.Main
                     await downloader.DownloadAsync(fs, file.Url.First(), file.Size).ConfigureAwait(false);
                 }
 
+                if (file.Folder)
+                {
+                    model.Status = HistoryModelStatus.Unpacking;
+                    using (ZipFile zip = new ZipFile(filePath))
+                    {
+                        string unpackPath = Path.Combine(PathResolver.Downloads, file.Name);
+                        unpackPath = FindEmptyFolder(unpackPath);
+
+                        zip.ExtractProgress += (object sender, ExtractProgressEventArgs e) =>
+                        {
+                            if (e.EventType == ZipProgressEventType.Extracting_AfterExtractEntry)
+                            {
+                                //Debug.WriteLine(e.CurrentEntry.FileName);
+                                model.Progress = (double)e.EntriesExtracted / e.EntriesTotal;
+                            }
+                        };
+
+                        await zip.ExtractAllAsync(unpackPath).ConfigureAwait(false);
+                    }
+
+                    fs.Close();
+                    File.Delete(filePath);
+                }
+
                 model.Status = HistoryModelStatus.Ok;
                 model.ETA = "";
 
@@ -168,6 +200,23 @@ namespace FastFileSend.Main
             }
         }
 
+        string FindEmptyFolder(string folder)
+        {
+            for (int i = 1; i < 100; i++)
+            {
+                string name = Path.GetFileName(folder);
+                folder = Path.GetDirectoryName(folder);
+
+                string path = Path.Combine(folder, $"{name} ({i})");
+                if (!Directory.Exists(path))
+                {
+                    return path;
+                }
+            }
+
+            #pragma warning disable CA1303
+            throw new IOException("100 duplicates?!");
+        }
 
         string FindEmptyPath(string folder, string filename)
         {
@@ -185,6 +234,60 @@ namespace FastFileSend.Main
 
             #pragma warning disable CA1303
             throw new IOException("100 duplicates?!");
+        }
+
+        public async Task SendFolder(string folder = "")
+        {
+            UserModel receiver = await FileSendPlatformDialogs.SelectUserAsync(UserListViewModel).ConfigureAwait(false);
+
+            if (receiver == null)
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(folder))
+            {
+                folder = await FileSendPlatformDialogs.SelectFolderAsync().ConfigureAwait(false);
+
+                if (string.IsNullOrEmpty(folder))
+                {
+                    return;
+                }
+            }
+
+            HistoryViewModel historyModel = HistoryModelAdd(Path.GetFileName(folder), 0, receiver);
+
+            string zipPath = Path.Combine(PathResolver.Temp, Path.GetFileName(folder));
+
+            using (ZipFile zip = new ZipFile())
+            {
+                zip.AlternateEncodingUsage = ZipOption.Always;
+                zip.AlternateEncoding = Encoding.UTF8;
+
+                zip.AddDirectory(folder);
+
+                historyModel.Status = HistoryModelStatus.Archiving;
+                zip.SaveProgress += (object sender, SaveProgressEventArgs e) =>
+                {
+                    if (e.EventType == ZipProgressEventType.Saving_AfterWriteEntry)
+                    {
+                        historyModel.Progress = (double)e.EntriesSaved / e.EntriesTotal;
+                    }
+                };
+
+                await zip.SaveAsync(zipPath).ConfigureAwait(false);
+            }
+
+            using (FileStream fs = new FileStream(zipPath, FileMode.Open))
+            {
+                Models.FileInfo fileInfo = new Models.FileInfo { Name = Path.GetFileName(zipPath), Content = fs };
+                historyModel.Size = fs.Length;
+                historyModel.Status = HistoryModelStatus.Uploading;
+
+                FileItem uploadedFile = await UploadFile(fileInfo, historyModel, true).ConfigureAwait(false);
+                uploadedFile.Folder = true;
+                await SendFile(receiver, uploadedFile, historyModel).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -206,6 +309,37 @@ namespace FastFileSend.Main
             {
                 return;
             }
+
+            if (fileInfo.Name.Length >= 300)
+            {
+                return;
+            }
+
+            HistoryViewModel historyModel = HistoryModelAdd(fileInfo.Name, fileInfo.Content.Length, target);
+            FileItem uploadedFile = await UploadFile(fileInfo, historyModel).ConfigureAwait(false);
+            await SendFile(target, uploadedFile, historyModel).ConfigureAwait(false);
+        }
+
+
+        /// <summary>
+        /// Launch user select dialog. Send if success. File path as input.
+        /// </summary>
+        /// <returns></returns>
+        public async Task Send(string filePath)
+        {
+            UserModel target = await FileSendPlatformDialogs.SelectUserAsync(UserListViewModel).ConfigureAwait(false);
+
+            if (target == null)
+            {
+                return;
+            }
+
+            FileStream fs = new FileStream(filePath, FileMode.Open);
+            Models.FileInfo fileInfo = new Models.FileInfo
+            {
+                Name = Path.GetFileName(filePath),
+                Content = fs
+            };
 
             if (fileInfo.Name.Length >= 300)
             {
@@ -240,36 +374,6 @@ namespace FastFileSend.Main
             await SendFile(target, fileItem, historyModel).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Launch user select dialog. Send if success. File path as input.
-        /// </summary>
-        /// <returns></returns>
-        public async Task Send(string filePath)
-        {
-            UserModel target = await FileSendPlatformDialogs.SelectUserAsync(UserListViewModel).ConfigureAwait(false);
-
-            if (target == null)
-            {
-                return;
-            }
-
-            FileStream fs = new FileStream(filePath, FileMode.Open);
-            Models.FileInfo fileInfo = new Models.FileInfo
-            {
-                Name = Path.GetFileName(filePath),
-                Content = fs
-            };
-
-            if (fileInfo.Name.Length >= 300)
-            {
-                return;
-            }
-
-            HistoryViewModel historyModel = HistoryModelAdd(fileInfo.Name, fileInfo.Content.Length, target);
-            FileItem uploadedFile = await UploadFile(fileInfo, historyModel).ConfigureAwait(false);
-            await SendFile(target, uploadedFile, historyModel).ConfigureAwait(false);
-        }
-
         HistoryViewModel HistoryModelAdd(string filename, long size, UserModel target)
         {
             HistoryViewModel downloadModel = new HistoryViewModel
@@ -300,7 +404,7 @@ namespace FastFileSend.Main
         /// <param name="fileInfo"></param>
         /// <param name="downloadModel"></param>
         /// <returns></returns>
-        async Task<FileItem> UploadFile(Models.FileInfo fileInfo, HistoryViewModel downloadModel)
+        async Task<FileItem> UploadFile(Models.FileInfo fileInfo, HistoryViewModel downloadModel, bool folder = false)
         {
             long size = fileInfo.Content.Length;
             if (size > Settings.FileSegmentSize)
@@ -320,6 +424,7 @@ namespace FastFileSend.Main
             downloadModel.Progress = 100;
             downloadModel.Status = HistoryModelStatus.UsingAPI;
 
+            fileItem.Folder = folder;
             return await ApiServer.Upload(fileItem).ConfigureAwait(false);
         }
 

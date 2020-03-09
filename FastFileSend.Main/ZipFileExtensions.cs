@@ -12,5 +12,10 @@ namespace FastFileSend.Main
         {
             await Task.Run(() => zip.Save(path)).ConfigureAwait(false);
         }
+
+        public static async Task ExtractAllAsync(this ZipFile zip, string path)
+        {
+            await Task.Run(() => zip.ExtractAll(path)).ConfigureAwait(false);
+        }
     }
 }
