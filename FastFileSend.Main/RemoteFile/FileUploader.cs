@@ -45,6 +45,8 @@ namespace FastFileSend.Main.RemoteFile
                 throw new ArgumentNullException(nameof(stream));
             }
 
+            DownloadStartedTime = null;
+
             string fileName = filename;
             Size = stream.Length;
 

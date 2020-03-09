@@ -40,6 +40,8 @@ namespace FastFileSend.Main.RemoteFile
                 throw new ArgumentNullException(nameof(fileStream));
             }
 
+            DownloadStartedTime = null;
+
             // for progress reporting
             Size = size;
 
