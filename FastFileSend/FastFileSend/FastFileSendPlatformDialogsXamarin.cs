@@ -34,6 +34,11 @@ namespace FastFileSend
             return fileInfo;
         }
 
+        public Task<string> SelectFolderAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<UserModel> SelectUserAsync(UserListViewModel userListViewModel)
         {
             TaskCompletionSource<UserViewModel> taskCompletionSource = new TaskCompletionSource<UserViewModel>();

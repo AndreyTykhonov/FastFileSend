@@ -12,5 +12,6 @@ namespace FastFileSend.Main.Interfaces
         Task<UserModel> SelectUserAsync(UserListViewModel userListViewModel);
 
         Task<FileInfo> SelectFileAsync();
+        Task<string> SelectFolderAsync();
     }
 }

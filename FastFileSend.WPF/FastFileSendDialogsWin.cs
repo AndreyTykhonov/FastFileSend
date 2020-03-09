@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace FastFileSend.WPF
 {
@@ -16,8 +17,7 @@ namespace FastFileSend.WPF
     {
         public async Task<Main.Models.FileInfo> SelectFileAsync()
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
             if (!(bool)openFileDialog.ShowDialog())
             {
                 return null;
@@ -31,6 +31,19 @@ namespace FastFileSend.WPF
             };
 
             return await Task.FromResult(fileInfo).ConfigureAwait(false);
+        }
+
+        public async Task<string> SelectFolderAsync()
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
+                {
+                    return null;
+                }
+
+                return await Task.FromResult(folderBrowserDialog.SelectedPath).ConfigureAwait(false);
+            }
         }
 
         public async Task<UserModel> SelectUserAsync(UserListViewModel userListViewModel)
