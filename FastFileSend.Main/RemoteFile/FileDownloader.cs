@@ -26,38 +26,28 @@ namespace FastFileSend.Main.RemoteFile
             return (string)JObject.Parse(json)["token"];
         }
 
-        private string Folder { get; set; }
 
-        public FileDownloader(string folder)
-        {
-            Folder = folder;
-        }
 
-        public async Task DownloadAsync(FileItem fileItem)
+        public async Task DownloadAsync(Stream fileStream, Uri uri, long size)
         {
-            if (fileItem is null)
+            if (uri is null)
             {
-                throw new ArgumentNullException(nameof(fileItem));
+                throw new ArgumentNullException(nameof(uri));
             }
 
-            string path = Path.Combine(Folder, fileItem.Name);
-
-            if (File.Exists(path))
+            if (fileStream is null)
             {
-                path = FindEmptyPath(fileItem);
+                throw new ArgumentNullException(nameof(fileStream));
             }
 
-            path = path.Trim();
-
-            FileStream fs = new FileStream(path, FileMode.Create);
+            // for progress reporting
+            Size = size;
 
             string token = await GetUploadTokenAsync().ConfigureAwait(false);
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage response = await HttpClient.GetAsync(fileItem.Url, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            HttpResponseMessage response = await HttpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
             Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-
-            Size = fileItem.Size;
 
             var totalRead = 0L;
             var totalReads = 0L;
@@ -73,7 +63,7 @@ namespace FastFileSend.Main.RemoteFile
                 }
                 else
                 {
-                    await fs.WriteAsync(buffer, 0, read).ConfigureAwait(false);
+                    await fileStream.WriteAsync(buffer, 0, read).ConfigureAwait(false);
 
                     totalRead += read;
                     totalReads += 1;
@@ -82,26 +72,6 @@ namespace FastFileSend.Main.RemoteFile
                 }
             }
             while (isMoreToRead);
-
-            fs.Close();
-        }
-
-        string FindEmptyPath(FileItem fileItem)
-        {
-            for (int i = 1; i < 100; i++)
-            {
-                string name = Path.GetFileNameWithoutExtension(fileItem.Name);
-                string ext = Path.GetExtension(fileItem.Name);
-
-                string path = Path.Combine(Folder, $"{name} ({i}){ext}");
-                if (!File.Exists(path))
-                {
-                    return path;
-                }
-            }
-
-            #pragma warning disable CA1303
-            throw new IOException("100 duplicates?!");
         }
     }
 }

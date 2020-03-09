@@ -118,25 +118,73 @@ namespace FastFileSend.Main
 
         private async Task Download(HistoryViewModel model)
         {
-            FileDownloader fileDownloader = new FileDownloader(PathResolver.Downloads);
-
-            FileItem fileItem = model.File;
+            FileItem file = model.File;
+            string filePath = FindEmptyPath(PathResolver.Downloads, file.Name);
 
             model.Status = HistoryModelStatus.Downloading;
 
-            fileDownloader.OnProgress += (double progress, double speed) =>
+            using (FileStream fs = new FileStream(filePath, FileMode.Create))
             {
-                model.Progress = progress;
-                model.ETA = SizeUtils.BytesToString(Convert.ToInt32(speed), "/s");
-            };
+                FileDownloader downloader = new FileDownloader();
+
+                if (file.Url.Count > 1)
+                {
+                    int segmentsDownloaded = 0;
+                    double segmentProgress = 1f / file.Url.Count;
+                    downloader.OnProgress += (double progress, double speed) =>
+                    {
+                        double uploadedProgress = segmentsDownloaded * segmentProgress;
+                        model.Progress = uploadedProgress + (segmentProgress * progress);
+                        model.ETA = SizeUtils.BytesToString(Convert.ToInt32(speed), "/s");
+                    };
+
+                    fs.SetLength(file.Size);
+                    for (int i = 0; i < file.Url.Count; i++)
+                    {
+                        int segmentPosition = i * Settings.FileSegmentSize;
+                        int segmentLength = (int)Math.Min(file.Size - segmentPosition, Settings.FileSegmentSize);
+                        using (SegmentedStream segmented = new SegmentedStream(fs, segmentPosition, segmentLength))
+                        {
+                            await downloader.DownloadAsync(segmented, file.Url[i], segmentLength).ConfigureAwait(false);
+                        }
+                        segmentsDownloaded++;
+                    }
+                }
+                else
+                {
+                    downloader.OnProgress += (double progress, double speed) =>
+                    {
+                        model.Progress = progress;
+                        model.ETA = SizeUtils.BytesToString(Convert.ToInt32(speed), "/s");
+                    };
+
+                    await downloader.DownloadAsync(fs, file.Url.First(), file.Size).ConfigureAwait(false);
+                }
+
+                model.Status = HistoryModelStatus.Ok;
+                model.ETA = "";
+
+                await ApiServer.NotifyDownloadedAsync(model.Id).ConfigureAwait(false);
+            }
+        }
 
 
-            await fileDownloader.DownloadAsync(fileItem).ConfigureAwait(false);
+        string FindEmptyPath(string folder, string filename)
+        {
+            for (int i = 1; i < 100; i++)
+            {
+                string name = Path.GetFileNameWithoutExtension(filename);
+                string ext = Path.GetExtension(filename);
 
-            model.Status = HistoryModelStatus.Ok;
-            model.ETA = "";
+                string path = Path.Combine(folder, $"{name} ({i}){ext}");
+                if (!File.Exists(path))
+                {
+                    return path;
+                }
+            }
 
-            await ApiServer.NotifyDownloadedAsync(model.Id).ConfigureAwait(false);
+            #pragma warning disable CA1303
+            throw new IOException("100 duplicates?!");
         }
 
         /// <summary>
