@@ -56,8 +56,10 @@ namespace FastFileSend.WPF.Pages
                     HamburgerMenu.Content = e.InvokedItem;
                     break;
                 case "Send file":
-                    FastFileSendApp ffsWindows = App.FastFileSendApp;
-                    await ffsWindows.Send();
+                    await App.FastFileSendApp.Send().ConfigureAwait(false);
+                    break;
+                case "Send folder":
+                    await App.FastFileSendApp.SendFolder().ConfigureAwait(false);
                     break;
                 case "Downloads":                    
                     Process.Start(new FastFileSendPathResolverWin().Downloads);
@@ -95,7 +97,14 @@ namespace FastFileSend.WPF.Pages
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                await App.FastFileSendApp.Send(files.First());
+                if (Directory.Exists(files.First()))
+                {
+                    await App.FastFileSendApp.SendFolder(files.First()).ConfigureAwait(false);
+                }
+                else
+                {
+                    await App.FastFileSendApp.Send(files.First()).ConfigureAwait(false);
+                }
             }
         }
     }

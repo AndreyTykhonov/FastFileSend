@@ -48,7 +48,8 @@
             <Controls:HamburgerMenu.OptionsItemsSource>
                 <Controls:HamburgerMenuItemCollection>
                     <Controls:HamburgerMenuIconItem Label="Send file" Icon="{iconPacks:Material Kind=Send}" />
-                    <Controls:HamburgerMenuIconItem Label="Downloads" Icon="{iconPacks:Material Kind=Folder}" />
+                    <Controls:HamburgerMenuIconItem Label="Send folder" Icon="{iconPacks:Material Kind=Folder}" />
+                    <Controls:HamburgerMenuIconItem Label="Downloads" Icon="{iconPacks:Material Kind=Download}" />
                     <Controls:HamburgerMenuIconItem Icon="{iconPacks:Material Kind=Identifier}" x:Name="HamburgerItemId"/>
                 </Controls:HamburgerMenuItemCollection>
             </Controls:HamburgerMenu.OptionsItemsSource>
