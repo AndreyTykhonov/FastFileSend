@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FastFileSend.WebCore.DataBase
@@ -19,7 +20,11 @@ namespace FastFileSend.WebCore.DataBase
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<FileItem>().Property<string>("UriListStr").HasField("UriListStr").UsePropertyAccessMode(PropertyAccessMode.Field);
+            modelBuilder.Entity<FileItem>()
+            .Property(e => e.Url)
+            .HasConversion(
+                v => string.Join(',', v),
+                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => new Uri(s)).ToList());
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

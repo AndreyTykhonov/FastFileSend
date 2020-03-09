@@ -33,31 +33,6 @@ namespace FastFileSend.Main.Models
         public int CRC32 { get; set; }
         [JsonIgnore]
         public DateTime CreationDate { get; set; }
-
-        // To store in DB.
-        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
-        [NotMapped]
-        public List<Uri> Url
-        {
-            get
-            {
-                if (UriListStr is null)
-                {
-                    return new List<Uri>();
-                }
-                return UriListStr.Split(',').Select(x => new Uri(x)).ToList();
-            }
-            set
-            {
-                if (value is null)
-                {
-                    return;
-                }
-
-                UriListStr = string.Join(",", value.Select(x => x.AbsoluteUri));
-            }
-        }
-
-        private string UriListStr;
+        public List<Uri> Url { get; set; }
     }
 }
