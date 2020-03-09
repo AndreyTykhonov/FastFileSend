@@ -6,6 +6,7 @@ namespace FastFileSend.Main
 {
     public static class Settings
     {
-        public const int FileSegmentSize = 5 * 1024 * 1024;
+        // 8 GB split
+        public const long FileSegmentSize = 8L * 1024 * 1024 * 1024;
     }
 }
