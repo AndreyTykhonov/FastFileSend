@@ -263,6 +263,7 @@ namespace FastFileSend.Main
             {
                 zip.AlternateEncodingUsage = ZipOption.Always;
                 zip.AlternateEncoding = Encoding.UTF8;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
 
                 zip.AddDirectory(folder);
 
