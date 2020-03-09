@@ -16,6 +16,7 @@ namespace FastFileSend.Main.ViewModel
         public string ETA { get; set; } = string.Empty;
         public bool Fake { get; set; } = false;
 
+        public override long Size { get; set; }
         public override HistoryModelStatus Status { get; set; }
 
         public HistoryViewModel(HistoryModel historyModel)

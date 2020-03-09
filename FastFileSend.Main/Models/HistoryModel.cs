@@ -18,6 +18,6 @@ namespace FastFileSend.Main.Models
         public virtual HistoryModelStatus Status { get; set; }
         public int Sender { get; set; }
         public int Receiver { get; set; }
-        public long Size { get; set; }
+        public virtual long Size { get; set; }
     }
 }
