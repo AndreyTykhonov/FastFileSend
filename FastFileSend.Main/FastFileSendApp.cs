@@ -142,7 +142,7 @@ namespace FastFileSend.Main
                     for (int i = 0; i < file.Url.Count; i++)
                     {
                         long segmentPosition = i * Settings.FileSegmentSize;
-                        long segmentLength = (int)Math.Min(file.Size - segmentPosition, Settings.FileSegmentSize);
+                        long segmentLength = (long)Math.Min(file.Size - segmentPosition, Settings.FileSegmentSize);
                         using (SegmentedStream segmented = new SegmentedStream(fs, segmentPosition, segmentLength))
                         {
                             await downloader.DownloadAsync(segmented, file.Url[i], segmentLength).ConfigureAwait(false);
