@@ -34,5 +34,6 @@ namespace FastFileSend.Main.Models
         [JsonIgnore]
         public DateTime CreationDate { get; set; }
         public List<Uri> Url { get; set; }
+        public bool Folder { get; set; } = false;
     }
 }
