@@ -29,6 +29,8 @@ namespace FastFileSend.WPF
                     return "Using API";
                 case HistoryModelStatus.Archiving:
                     return "Archiving";
+                case HistoryModelStatus.Unpacking:
+                    return "Unpacking";
                 default:
                     return "Unknown";
             }

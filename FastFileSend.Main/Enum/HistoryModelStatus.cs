@@ -12,6 +12,7 @@ namespace FastFileSend.Main.Enum
         Uploading = 2,
         UsingAPI = 3,
         Downloading = 4,
-        Archiving = 5
+        Archiving = 5,
+        Unpacking = 6
     }
 }
