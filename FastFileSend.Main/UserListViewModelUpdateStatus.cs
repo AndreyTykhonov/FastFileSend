@@ -3,6 +3,7 @@ using FastFileSend.Main.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Timers;
 
@@ -40,9 +41,16 @@ namespace FastFileSend.Main
         {
             foreach (UserViewModel user in UserListViewModel.List.ToArray())
             {
-                DateTime lastOnline = await ApiServer.GetLastOnline(user.Id).ConfigureAwait(false);
-                
-                user.Online = DateTime.UtcNow.AddSeconds(-30) < lastOnline;
+                try
+                {
+                    DateTime lastOnline = await ApiServer.GetLastOnline(user.Id).ConfigureAwait(false);
+
+                    user.Online = DateTime.UtcNow.AddSeconds(-30) < lastOnline;
+                }
+                catch (HttpRequestException)
+                {
+                    user.Online = false;
+                }
             }
         }
     }
