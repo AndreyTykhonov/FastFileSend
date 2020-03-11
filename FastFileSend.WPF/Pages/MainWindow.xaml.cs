@@ -47,7 +47,7 @@ namespace FastFileSend.WPF.Pages
                 Clipboard.SetText(HamburgerItemId.Label);
                 HamburgerMenu.SelectedOptionsItem = null;
 
-                await this.ShowMessageAsync("Fast File Send", "Your ID was copied to clipboard!");
+                await this.ShowMessageAsync("Fast File Send", "Your ID was copied to clipboard!").ConfigureAwait(true);
             }
 
             switch (hamburgerMenuItem.Label)
@@ -56,10 +56,10 @@ namespace FastFileSend.WPF.Pages
                     HamburgerMenu.Content = e.InvokedItem;
                     break;
                 case "Send file":
-                    await App.FastFileSendApp.Send().ConfigureAwait(false);
+                    await App.FastFileSendApp.Send().ConfigureAwait(true);
                     break;
                 case "Send folder":
-                    await App.FastFileSendApp.SendFolder().ConfigureAwait(false);
+                    await App.FastFileSendApp.SendFolder().ConfigureAwait(true);
                     break;
                 case "Downloads":                    
                     Process.Start(new FastFileSendPathResolverWin().Downloads);
