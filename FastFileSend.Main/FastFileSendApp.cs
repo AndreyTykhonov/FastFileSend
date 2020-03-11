@@ -281,11 +281,11 @@ namespace FastFileSend.Main
 
             using (FileStream fs = new FileStream(zipPath, FileMode.Open))
             {
-                Models.FileInfo fileInfo = new Models.FileInfo { Name = Path.GetFileName(zipPath), Content = fs };
+                Models.FileInfo fileInfo = new Models.FileInfo { Name = Path.GetFileName(zipPath), Content = fs, Folder = true };
                 historyModel.Size = fs.Length;
                 historyModel.Status = HistoryModelStatus.Uploading;
 
-                FileItem uploadedFile = await UploadFile(fileInfo, historyModel, true).ConfigureAwait(false);
+                FileItem uploadedFile = await UploadFile(fileInfo, historyModel).ConfigureAwait(false);
                 uploadedFile.Folder = true;
                 await SendFile(receiver, uploadedFile, historyModel).ConfigureAwait(false);
             }
@@ -405,7 +405,7 @@ namespace FastFileSend.Main
         /// <param name="fileInfo"></param>
         /// <param name="downloadModel"></param>
         /// <returns></returns>
-        async Task<FileItem> UploadFile(Models.FileInfo fileInfo, HistoryViewModel downloadModel, bool folder = false)
+        async Task<FileItem> UploadFile(Models.FileInfo fileInfo, HistoryViewModel downloadModel)
         {
             long size = fileInfo.Content.Length;
             if (size > Settings.FileSegmentSize)
@@ -421,11 +421,11 @@ namespace FastFileSend.Main
             };
 
             FileItem fileItem = await fileUploader.UploadAsync(fileInfo.Name, fileInfo.Content).ConfigureAwait(false);
+            fileItem.Folder = fileInfo.Folder;
 
             downloadModel.Progress = 100;
             downloadModel.Status = HistoryModelStatus.UsingAPI;
 
-            fileItem.Folder = folder;
             return await ApiServer.Upload(fileItem).ConfigureAwait(false);
         }
 
@@ -438,6 +438,7 @@ namespace FastFileSend.Main
         async Task<FileItem> UploadFileSegmented(Models.FileInfo fileInfo, HistoryViewModel downloadModel)
         {
             FileItem segmentedFile = new FileItem(0, fileInfo.Name, fileInfo.Content.Length, 0, DateTime.Now, null);
+            segmentedFile.Folder = fileInfo.Folder;
 
             int segmentsCount = (int)Math.Ceiling((double)fileInfo.Content.Length / Settings.FileSegmentSize);
             downloadModel.Status = HistoryModelStatus.Uploading;

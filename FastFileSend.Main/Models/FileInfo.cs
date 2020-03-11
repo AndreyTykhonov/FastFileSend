@@ -12,5 +12,6 @@ namespace FastFileSend.Main.Models
     {
         public string Name { get; set; }
         public Stream Content { get; set; }
+        public bool Folder { get; set; } = false;
     }
 }
