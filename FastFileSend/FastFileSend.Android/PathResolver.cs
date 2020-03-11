@@ -20,7 +20,8 @@ namespace FastFileSend.Droid
     {
         public string UsersConfig => Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "users.json");
 
-        public string AccountConfig => Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "account.json");
+        //public string AccountConfig => Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "account.json");
+        public string AccountConfig => Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath, "account.json");
 
         public string Downloads => Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
 
