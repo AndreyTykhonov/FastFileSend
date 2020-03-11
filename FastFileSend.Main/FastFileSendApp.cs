@@ -407,26 +407,29 @@ namespace FastFileSend.Main
         /// <returns></returns>
         async Task<FileItem> UploadFile(Models.FileInfo fileInfo, HistoryViewModel downloadModel)
         {
-            long size = fileInfo.Content.Length;
-            if (size > Settings.FileSegmentSize)
+            using (fileInfo.Content)
             {
-                return await UploadFileSegmented(fileInfo, downloadModel).ConfigureAwait(false);
+                long size = fileInfo.Content.Length;
+                if (size > Settings.FileSegmentSize)
+                {
+                    return await UploadFileSegmented(fileInfo, downloadModel).ConfigureAwait(false);
+                }
+
+                FileUploader fileUploader = new FileUploader();
+                fileUploader.OnProgress += (double progress, double speed) =>
+                {
+                    downloadModel.Progress = progress;
+                    downloadModel.ETA = SizeUtils.BytesToString(Convert.ToInt32(speed), "/s");
+                };
+
+                FileItem fileItem = await fileUploader.UploadAsync(fileInfo.Name, fileInfo.Content).ConfigureAwait(false);
+                fileItem.Folder = fileInfo.Folder;
+
+                downloadModel.Progress = 100;
+                downloadModel.Status = HistoryModelStatus.UsingAPI;
+
+                return await ApiServer.Upload(fileItem).ConfigureAwait(false);
             }
-
-            FileUploader fileUploader = new FileUploader();
-            fileUploader.OnProgress += (double progress, double speed) =>
-            {
-                downloadModel.Progress = progress;
-                downloadModel.ETA = SizeUtils.BytesToString(Convert.ToInt32(speed), "/s");
-            };
-
-            FileItem fileItem = await fileUploader.UploadAsync(fileInfo.Name, fileInfo.Content).ConfigureAwait(false);
-            fileItem.Folder = fileInfo.Folder;
-
-            downloadModel.Progress = 100;
-            downloadModel.Status = HistoryModelStatus.UsingAPI;
-
-            return await ApiServer.Upload(fileItem).ConfigureAwait(false);
         }
 
         /// <summary>
