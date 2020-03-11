@@ -24,12 +24,16 @@ namespace FastFileSend
             //string fileName = fileData.FileName;
             //string contents = System.Text.Encoding.UTF8.GetString(fileData.DataArray);
 
+            if (!fileData.GetStream().CanRead)
+            {
+                return null;
+            }
+
             FileInfo fileInfo = new FileInfo
             {
                 Name = System.IO.Path.GetFileName(fileData.FileName),
                 Content = fileData.GetStream(),
             };
-
 
             return fileInfo;
         }
