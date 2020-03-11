@@ -50,7 +50,7 @@ namespace FastFileSend.Main
 
             if (HistoryListViewModel.List.Count > 0)
             {
-                minimumDate = HistoryListViewModel.List.Max(x => x.Date);
+                minimumDate = HistoryListViewModel.List.Where(x => !x.Fake).Max(x => x.Date);
             }
 
             List<HistoryModel> historyList = await ApiServer.GetHistory(minimumDate).ConfigureAwait(false);
