@@ -13,6 +13,7 @@
     <ContentPage.Resources>
         <fastfilesend:SizeConverter x:Key="mySizeConverter" />
         <wpf:StatusConverter x:Key="myStatusConverter" />
+        <fastfilesend:ProgressConverter x:Key="myProgresConverter"/>
     </ContentPage.Resources>
 
     <StackLayout>
@@ -34,7 +35,7 @@
                             </StackLayout>
                             <StackLayout Orientation="Horizontal">
                                 <Label Text="{Binding File.Size, Converter={StaticResource mySizeConverter}}"></Label>
-                                <ProgressBar Progress="{Binding Progress}" HorizontalOptions="FillAndExpand"></ProgressBar>
+                                <ProgressBar Progress="{Binding Progress,Converter={StaticResource Key=myProgresConverter}}" HorizontalOptions="FillAndExpand"></ProgressBar>
                                 <Label Text="{Binding ETA}"></Label>
                             </StackLayout>
                             <StackLayout Orientation="Horizontal">
