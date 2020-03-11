@@ -16,23 +16,17 @@ namespace FastFileSend
     {
         public async Task<FileInfo> SelectFileAsync()
         {
-            FileData fileData = await CrossFilePicker.Current.PickFile();
+            FileData fileData = await CrossFilePicker.Current.PickFile();       
 
             if (fileData == null)
                 return null;
 
-            //string fileName = fileData.FileName;
-            //string contents = System.Text.Encoding.UTF8.GetString(fileData.DataArray);
-
-            if (!fileData.GetStream().CanRead)
-            {
-                return null;
-            }
+            System.IO.MemoryStream stream = new System.IO.MemoryStream(fileData.DataArray);
 
             FileInfo fileInfo = new FileInfo
             {
                 Name = System.IO.Path.GetFileName(fileData.FileName),
-                Content = fileData.GetStream(),
+                Content = stream,
             };
 
             return fileInfo;
