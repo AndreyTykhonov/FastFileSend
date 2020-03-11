@@ -235,7 +235,7 @@ namespace FastFileSend.Main
         public async Task<List<HistoryModel>> GetHistory(DateTime minimumDate)
         {
             var nameValueCollection = HttpUtility.ParseQueryString(string.Empty);
-            nameValueCollection["minimum"] = minimumDate.Ticks.ToString(CultureInfo.InvariantCulture);
+            nameValueCollection["ticks"] = minimumDate.Ticks.ToString(CultureInfo.InvariantCulture);
 
             return await SendQuery<List<HistoryModel>>("history/get", nameValueCollection.ToString()).ConfigureAwait(false);
         }
