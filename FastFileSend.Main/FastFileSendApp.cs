@@ -427,6 +427,7 @@ namespace FastFileSend.Main
 
                 downloadModel.Progress = 100;
                 downloadModel.Status = HistoryModelStatus.UsingAPI;
+                downloadModel.ETA = string.Empty;
 
                 return await ApiServer.Upload(fileItem).ConfigureAwait(false);
             }
