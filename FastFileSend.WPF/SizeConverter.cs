@@ -21,6 +21,11 @@ namespace FastFileSend.WPF
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if ((long)value == 0)
+            {
+                return string.Empty;
+            }
+
             return BytesToString((long)value);
         }
 
