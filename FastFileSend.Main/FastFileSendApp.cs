@@ -174,23 +174,42 @@ namespace FastFileSend.Main
                     model.Status = HistoryModelStatus.Unpacking;
                     using (ZipFile zip = new ZipFile(filePath))
                     {
-                        string unpackPath = Path.Combine(PathResolver.Downloads, file.Name);
+                        string baseFolder = Path.Combine(PathResolver.Downloads, file.Name);
 
-                        if (Directory.Exists(unpackPath))
+                        if (Directory.Exists(baseFolder))
                         {
-                            unpackPath = FindEmptyFolder(unpackPath);
+                            baseFolder = FindEmptyFolder(baseFolder);
                         }
 
-                        zip.ExtractProgress += (object sender, ExtractProgressEventArgs e) =>
+                        int entryUnpacked = 0;
+                        int entryCount = zip.Count;
+                        foreach (ZipEntry entry in zip)
                         {
-                            if (e.EventType == ZipProgressEventType.Extracting_AfterExtractEntry)
-                            {
-                                //Debug.WriteLine(e.CurrentEntry.FileName);
-                                model.Progress = (double)e.EntriesExtracted / e.EntriesTotal;
-                            }
-                        };
+                            string directory = Path.GetDirectoryName(entry.FileName);
+                            string filename = Path.GetFileName(entry.FileName);
 
-                        await zip.ExtractAllAsync(unpackPath).ConfigureAwait(false);
+                            directory = Path.Combine(baseFolder, directory);
+
+                            if (!Directory.Exists(directory))
+                            {
+                                Directory.CreateDirectory(directory);
+                            }
+
+                            if (entry.IsDirectory)
+                            {
+                                entryUnpacked++;
+                                continue;
+                            }
+
+                            string path = Path.Combine(directory, filename);
+                            using (FileStream entryFs = new FileStream(path, FileMode.Create))
+                            {
+                                entry.Extract(entryFs);
+                            }
+
+                            entryUnpacked++;
+                            model.Progress = (double)entryUnpacked / entryCount;
+                        }
                     }
 
                     fs.Close();
