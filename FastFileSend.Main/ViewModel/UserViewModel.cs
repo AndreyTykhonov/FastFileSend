@@ -13,5 +13,6 @@ namespace FastFileSend.Main.ViewModel
 
         public override int Id { get; set; }
         public override bool Online { get; set; }
+        public override string LocalName { get; set; }
     }
 }
