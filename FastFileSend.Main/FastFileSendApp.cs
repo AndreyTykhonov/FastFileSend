@@ -175,7 +175,11 @@ namespace FastFileSend.Main
                     using (ZipFile zip = new ZipFile(filePath))
                     {
                         string unpackPath = Path.Combine(PathResolver.Downloads, file.Name);
-                        unpackPath = FindEmptyFolder(unpackPath);
+
+                        if (Directory.Exists(unpackPath))
+                        {
+                            unpackPath = FindEmptyFolder(unpackPath);
+                        }
 
                         zip.ExtractProgress += (object sender, ExtractProgressEventArgs e) =>
                         {
@@ -202,11 +206,11 @@ namespace FastFileSend.Main
 
         string FindEmptyFolder(string folder)
         {
+            string name = Path.GetFileName(folder);
+            folder = Path.GetDirectoryName(folder);
+
             for (int i = 1; i < 100; i++)
             {
-                string name = Path.GetFileName(folder);
-                folder = Path.GetDirectoryName(folder);
-
                 string path = Path.Combine(folder, $"{name} ({i})");
                 if (!Directory.Exists(path))
                 {
@@ -220,11 +224,11 @@ namespace FastFileSend.Main
 
         string FindEmptyPath(string folder, string filename)
         {
+            string name = Path.GetFileNameWithoutExtension(filename);
+            string ext = Path.GetExtension(filename);
+
             for (int i = 1; i < 100; i++)
             {
-                string name = Path.GetFileNameWithoutExtension(filename);
-                string ext = Path.GetExtension(filename);
-
                 string path = Path.Combine(folder, $"{name} ({i}){ext}");
                 if (!File.Exists(path))
                 {
