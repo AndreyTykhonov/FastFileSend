@@ -168,53 +168,52 @@ namespace FastFileSend.Main
 
                     await downloader.DownloadAsync(fs, file.Url.First(), file.Size).ConfigureAwait(false);
                 }
+            }
 
-                if (file.Folder)
+            if (file.Folder)
+            {
+                model.Status = HistoryModelStatus.Unpacking;
+                using (ZipFile zip = new ZipFile(filePath))
                 {
-                    model.Status = HistoryModelStatus.Unpacking;
-                    using (ZipFile zip = new ZipFile(filePath))
+                    string baseFolder = Path.Combine(PathResolver.Downloads, file.Name);
+
+                    if (Directory.Exists(baseFolder))
                     {
-                        string baseFolder = Path.Combine(PathResolver.Downloads, file.Name);
-
-                        if (Directory.Exists(baseFolder))
-                        {
-                            baseFolder = FindEmptyFolder(baseFolder);
-                        }
-
-                        int entryUnpacked = 0;
-                        int entryCount = zip.Count;
-                        foreach (ZipEntry entry in zip)
-                        {
-                            string directory = Path.GetDirectoryName(entry.FileName);
-                            string filename = Path.GetFileName(entry.FileName);
-
-                            directory = Path.Combine(baseFolder, directory);
-
-                            if (!Directory.Exists(directory))
-                            {
-                                Directory.CreateDirectory(directory);
-                            }
-
-                            if (entry.IsDirectory)
-                            {
-                                entryUnpacked++;
-                                continue;
-                            }
-
-                            string path = Path.Combine(directory, filename);
-                            using (FileStream entryFs = new FileStream(path, FileMode.Create))
-                            {
-                                entry.Extract(entryFs);
-                            }
-
-                            entryUnpacked++;
-                            model.Progress = (double)entryUnpacked / entryCount;
-                        }
+                        baseFolder = FindEmptyFolder(baseFolder);
                     }
 
-                    fs.Close();
-                    File.Delete(filePath);
+                    int entryUnpacked = 0;
+                    int entryCount = zip.Count;
+                    foreach (ZipEntry entry in zip)
+                    {
+                        string directory = Path.GetDirectoryName(entry.FileName);
+                        string filename = Path.GetFileName(entry.FileName);
+
+                        directory = Path.Combine(baseFolder, directory);
+
+                        if (!Directory.Exists(directory))
+                        {
+                            Directory.CreateDirectory(directory);
+                        }
+
+                        if (entry.IsDirectory)
+                        {
+                            entryUnpacked++;
+                            continue;
+                        }
+
+                        string path = Path.Combine(directory, filename);
+                        using (FileStream entryFs = new FileStream(path, FileMode.Create))
+                        {
+                            entry.Extract(entryFs);
+                        }
+
+                        entryUnpacked++;
+                        model.Progress = (double)entryUnpacked / entryCount;
+                    }
                 }
+
+                File.Delete(filePath);
 
                 model.Status = HistoryModelStatus.Ok;
                 model.ETA = "";
