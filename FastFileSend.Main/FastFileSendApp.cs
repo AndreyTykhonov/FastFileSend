@@ -386,6 +386,11 @@ namespace FastFileSend.Main
                 throw new ArgumentNullException(nameof(fileItem));
             }
 
+            if (fileItem.Id == 0)
+            {
+                return;
+            }
+
             UserModel target = await FileSendPlatformDialogs.SelectUserAsync(UserListViewModel).ConfigureAwait(false);
 
             if (target == null)
