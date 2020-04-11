@@ -172,48 +172,53 @@ namespace FastFileSend.Main
 
             if (file.Folder)
             {
-                model.Status = HistoryModelStatus.Unpacking;
-                using (ZipFile zip = new ZipFile(filePath))
+                try
                 {
-                    string baseFolder = Path.Combine(PathResolver.Downloads, file.Name);
-
-                    if (Directory.Exists(baseFolder))
+                    model.Status = HistoryModelStatus.Unpacking;
+                    using (ZipFile zip = new ZipFile(filePath))
                     {
-                        baseFolder = FindEmptyFolder(baseFolder);
-                    }
+                        string baseFolder = Path.Combine(PathResolver.Downloads, file.Name);
 
-                    int entryUnpacked = 0;
-                    int entryCount = zip.Count;
-                    foreach (ZipEntry entry in zip)
-                    {
-                        string directory = Path.GetDirectoryName(entry.FileName);
-                        string filename = Path.GetFileName(entry.FileName);
-
-                        directory = Path.Combine(baseFolder, directory);
-
-                        if (!Directory.Exists(directory))
+                        if (Directory.Exists(baseFolder))
                         {
-                            Directory.CreateDirectory(directory);
+                            baseFolder = FindEmptyFolder(baseFolder);
                         }
 
-                        if (entry.IsDirectory)
+                        int entryUnpacked = 0;
+                        int entryCount = zip.Count;
+                        foreach (ZipEntry entry in zip)
                         {
+                            string directory = Path.GetDirectoryName(entry.FileName);
+                            string filename = Path.GetFileName(entry.FileName);
+
+                            directory = Path.Combine(baseFolder, directory);
+
+                            if (!Directory.Exists(directory))
+                            {
+                                Directory.CreateDirectory(directory);
+                            }
+
+                            if (entry.IsDirectory)
+                            {
+                                entryUnpacked++;
+                                continue;
+                            }
+
+                            string path = Path.Combine(directory, filename);
+                            using (FileStream entryFs = new FileStream(path, FileMode.Create))
+                            {
+                                entry.Extract(entryFs);
+                            }
+
                             entryUnpacked++;
-                            continue;
+                            model.Progress = (double)entryUnpacked / entryCount;
                         }
-
-                        string path = Path.Combine(directory, filename);
-                        using (FileStream entryFs = new FileStream(path, FileMode.Create))
-                        {
-                            entry.Extract(entryFs);
-                        }
-
-                        entryUnpacked++;
-                        model.Progress = (double)entryUnpacked / entryCount;
                     }
                 }
-
-                File.Delete(filePath);
+                finally
+                {
+                    File.Delete(filePath);
+                }
 
                 model.Status = HistoryModelStatus.Ok;
                 model.ETA = "";
@@ -301,15 +306,22 @@ namespace FastFileSend.Main
                 await zip.SaveAsync(zipPath).ConfigureAwait(false);
             }
 
-            using (FileStream fs = new FileStream(zipPath, FileMode.Open))
+            try
             {
-                Models.FileInfo fileInfo = new Models.FileInfo { Name = Path.GetFileName(zipPath), Content = fs, Folder = true };
-                historyModel.Size = fs.Length;
-                historyModel.Status = HistoryModelStatus.Uploading;
+                using (FileStream fs = new FileStream(zipPath, FileMode.Open))
+                {
+                    Models.FileInfo fileInfo = new Models.FileInfo { Name = Path.GetFileName(zipPath), Content = fs, Folder = true };
+                    historyModel.Size = fs.Length;
+                    historyModel.Status = HistoryModelStatus.Uploading;
 
-                FileItem uploadedFile = await UploadFile(fileInfo, historyModel).ConfigureAwait(false);
-                uploadedFile.Folder = true;
-                await SendFile(receiver, uploadedFile, historyModel).ConfigureAwait(false);
+                    FileItem uploadedFile = await UploadFile(fileInfo, historyModel).ConfigureAwait(false);
+                    uploadedFile.Folder = true;
+                    await SendFile(receiver, uploadedFile, historyModel).ConfigureAwait(false);
+                }
+            }
+            finally
+            {
+                File.Delete(zipPath);
             }
         }
 
