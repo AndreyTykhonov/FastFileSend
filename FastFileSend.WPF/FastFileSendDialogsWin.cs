@@ -18,21 +18,26 @@ namespace FastFileSend.WPF
     {
         public async Task<Main.Models.FileInfo> SelectFileAsync()
         {
-            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-            if (!(bool)openFileDialog.ShowDialog())
+            using (var dialog = new CommonOpenFileDialog())
             {
-                return null;
+                CommonFileDialogResult result = dialog.ShowDialog();
+
+                if (result != CommonFileDialogResult.Ok)
+                {
+                    return null;
+                }
+
+                FileStream fs = new FileStream(dialog.FileName, FileMode.Open);
+                Main.Models.FileInfo fileInfo = new Main.Models.FileInfo
+                {
+                    Name = Path.GetFileName(dialog.FileName),
+                    Content = fs,
+                };
+
+                return await Task.FromResult(fileInfo).ConfigureAwait(false);
             }
-
-            FileStream fs = new FileStream(openFileDialog.FileName, FileMode.Open);
-            Main.Models.FileInfo fileInfo = new Main.Models.FileInfo
-            {
-                Name = Path.GetFileName(openFileDialog.FileName),
-                Content = fs,
-            };
-
-            return await Task.FromResult(fileInfo).ConfigureAwait(false);
         }
+
 
         public async Task<string> SelectFolderAsync()
         {
