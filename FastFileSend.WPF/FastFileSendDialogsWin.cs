@@ -3,6 +3,7 @@ using FastFileSend.Main.Models;
 using FastFileSend.Main.ViewModel;
 using FastFileSend.WPF.Pages;
 using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,14 +36,17 @@ namespace FastFileSend.WPF
 
         public async Task<string> SelectFolderAsync()
         {
-            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            using (var dialog = new CommonOpenFileDialog())
             {
-                if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
+                dialog.IsFolderPicker = true;
+                CommonFileDialogResult result = dialog.ShowDialog();
+
+                if (result != CommonFileDialogResult.Ok)
                 {
                     return null;
                 }
 
-                return await Task.FromResult(folderBrowserDialog.SelectedPath).ConfigureAwait(false);
+                return await Task.FromResult(dialog.FileName).ConfigureAwait(false);
             }
         }
 
