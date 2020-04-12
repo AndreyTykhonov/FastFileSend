@@ -126,7 +126,7 @@ namespace FastFileSend.Main
 
             if (model.File.Folder)
             {
-                filePath = Path.Combine(PathResolver.Temp, file.Name);
+                filePath = FindEmptyPath(PathResolver.Temp, file.Name);
             }
 
             model.Status = HistoryModelStatus.Downloading;
