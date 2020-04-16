@@ -170,9 +170,9 @@ namespace FastFileSend.Main
                 }
             }
 
-            if (file.Folder)
+            try
             {
-                try
+                if (file.Folder)
                 {
                     model.Status = HistoryModelStatus.Unpacking;
                     using (ZipFile zip = new ZipFile(filePath))
@@ -215,16 +215,16 @@ namespace FastFileSend.Main
                         }
                     }
                 }
-                finally
-                {
-                    File.Delete(filePath);
-                }
-
-                model.Status = HistoryModelStatus.Ok;
-                model.ETA = "";
-
-                await ApiServer.NotifyDownloadedAsync(model.Id).ConfigureAwait(false);
             }
+            finally
+            {
+                File.Delete(filePath);
+            }
+
+            model.Status = HistoryModelStatus.Ok;
+            model.ETA = "";
+
+            await ApiServer.NotifyDownloadedAsync(model.Id).ConfigureAwait(false);
         }
 
         string FindEmptyFolder(string folder)
