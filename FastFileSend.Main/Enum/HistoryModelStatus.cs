@@ -7,6 +7,7 @@ namespace FastFileSend.Main.Enum
     /// </summary>
     public enum HistoryModelStatus
     {
+        None = 1000,
         Awaiting = 0,
         Ok = 1,
         Uploading = 2,

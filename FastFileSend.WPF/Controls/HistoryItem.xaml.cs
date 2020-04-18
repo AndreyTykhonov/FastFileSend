@@ -24,7 +24,7 @@ namespace FastFileSend.WPF.Controls
     public partial class HistoryItem : UserControl
     {
         DispatcherTimer DispatcherTimer { get; set; }
-        HistoryModelStatus PreviousStatus = HistoryModelStatus.Ok;
+        HistoryModelStatus PreviousStatus = HistoryModelStatus.None;
 
         public HistoryItem()
         {

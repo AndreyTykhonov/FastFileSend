@@ -55,13 +55,13 @@
             </Controls:HamburgerMenu.OptionsItemsSource>
             <Controls:HamburgerMenu.ContentTemplate>
                 <DataTemplate DataType="{x:Type Controls:HamburgerMenuIconItem}">
-                    <Grid Margin="20 0 10 0">
+                    <Grid Margin="5 0 2 0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Row="0"
-                                       Margin="0 15 0 5"
+                                       Margin="10,15,0,5"
                                        Padding="0"
                                        FontFamily="{DynamicResource HeaderFontFamily}"
                                        FontSize="{DynamicResource HeaderFontSize}"
