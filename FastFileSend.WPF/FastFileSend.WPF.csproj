@@ -72,6 +72,7 @@
       <DependentUpon>HistoryItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SubStatusConverter.cs" />
+    <Compile Include="Controls\TextTrimmConverter.cs" />
     <Compile Include="Controls\TimeAgoConverter.cs" />
     <Compile Include="Pages\Downloads.xaml.cs">
       <DependentUpon>Downloads.xaml</DependentUpon>
@@ -192,7 +193,7 @@
     <None Include="Resources\upload_full.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\separator.png" />
+    <Resource Include="Resources\separator.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

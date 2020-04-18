@@ -24,6 +24,7 @@ namespace FastFileSend.WPF.Controls
     public partial class HistoryItem : UserControl
     {
         DispatcherTimer DispatcherTimer { get; set; }
+        HistoryModelStatus PreviousStatus = HistoryModelStatus.Ok;
 
         public HistoryItem()
         {
@@ -40,9 +41,10 @@ namespace FastFileSend.WPF.Controls
             LabelTimeAgo.GetBindingExpression(ContentProperty).UpdateTarget();
 
             HistoryViewModel history = DataContext as HistoryViewModel;
-            if (history.Status != HistoryModelStatus.Ok)
+            if (history.Status != HistoryModelStatus.Ok || history.Status != PreviousStatus)
             {
                 LabelSubStatus.GetBindingExpression(ContentProperty).UpdateTarget();
+                PreviousStatus = history.Status;
             }
         }
     }

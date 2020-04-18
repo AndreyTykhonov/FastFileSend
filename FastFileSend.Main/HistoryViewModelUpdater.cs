@@ -54,6 +54,8 @@ namespace FastFileSend.Main
                 minimumDate = notFakes.Max(x => x.Date);
             }
 
+            minimumDate = minimumDate.ToUniversalTime();
+
             List<HistoryModel> historyList = await ApiServer.GetHistory(minimumDate).ConfigureAwait(false);
             List<HistoryViewModel> historyViewModels = historyList.Select(x => new HistoryViewModel(x)).ToList();
 
@@ -61,6 +63,11 @@ namespace FastFileSend.Main
             {
                 model.Sending = model.Sender == ApiServer.AccountDetails.Id;
                 model.Date = model.Date.ToLocalTime();
+
+                if (model.Status == HistoryModelStatus.Awaiting && !model.Sending)
+                {
+                    model.Status = HistoryModelStatus.Downloading;
+                }
 
                 var duplicate = HistoryListViewModel.List.FirstOrDefault(x => x.Id == model.Id);
 
@@ -88,6 +95,11 @@ namespace FastFileSend.Main
             var statusNoOk = HistoryListViewModel.List.Where(x => x.Status != HistoryModelStatus.Ok).Where(x => !x.Fake).ToList();
             foreach (HistoryViewModel model in statusNoOk)
             {
+                if (model.Status == HistoryModelStatus.Downloading)
+                {
+                    continue;
+                }
+
                 HistoryModelStatus modelStatus = await ApiServer.GetFileStatus(model.Id).ConfigureAwait(false);
                 if (model.Status != modelStatus)
                 {

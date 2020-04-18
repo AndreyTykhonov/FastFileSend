@@ -130,6 +130,7 @@ namespace FastFileSend.Main
             }
 
             model.Status = HistoryModelStatus.Downloading;
+            model.ETA = "calculating speed";
 
             using (FileStream fs = new FileStream(filePath, FileMode.Create))
             {
@@ -447,6 +448,8 @@ namespace FastFileSend.Main
         /// <returns></returns>
         async Task<FileItem> UploadFile(Models.FileInfo fileInfo, HistoryViewModel downloadModel)
         {
+            downloadModel.ETA = "calculating speed";
+
             using (fileInfo.Content)
             {
                 long size = fileInfo.Content.Length;

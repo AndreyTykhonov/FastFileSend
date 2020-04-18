@@ -10,35 +10,36 @@
     <UserControl.Resources>
         <models:FileItem x:Key="FileTemplate" Name="Trine2C.rar" Size="55555555"/>
         <viewmodel:HistoryViewModel x:Key="DataTemplate" Progress="0.75" File="{StaticResource FileTemplate}" Sender="456456" Receiver="123123" Date="01.01.2020 15:15:15" Sending="True" Status="Uploading" ETA="5.50 MB/s"/>
-        <BitmapImage x:Key="Separator" UriSource="../Resources/separator.png"/>
+        <BitmapImage x:Key="Separator" UriSource="pack://application:,,,/Resources/separator.png"/>
         <local:SubStatusConverter x:Key="SubStatusConverter"/>
         <local:TimeAgoConverter x:Key="TimeAgoConverter"/>
+        <local:TextTrimmConverter x:Key="TextTrimConverter"/>
     </UserControl.Resources>
-    
+
     <Grid d:DataContext="{StaticResource DataTemplate}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.15*"/>
+            <ColumnDefinition Width="50"/>
             <ColumnDefinition/>
-            <ColumnDefinition Width="0.4*"/>
-            <ColumnDefinition Width="0.4*"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="150"/>
         </Grid.ColumnDefinitions>
 
         <local:CustomProgress HorizontalAlignment="Center" VerticalAlignment="Center" Width="24" Height="24" Progress="{Binding Progress}" Uploading="{Binding Sending}"/>
 
         <StackPanel Grid.Column="1" VerticalAlignment="Center">
-            <Label Content="{Binding File.Name}" FontSize="15"/>
+            <Label Content="{Binding File.Name, Converter={StaticResource TextTrimConverter}}" FontSize="15"/>
             <Label x:Name="LabelSubStatus" Content="{Binding Converter={StaticResource SubStatusConverter}}" Foreground="Gray"/>
         </StackPanel>
-        
+
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Label Content="{Binding Sender}"/>
             <Image Source="{StaticResource Separator}" Height="8"/>
             <Label Content="{Binding Receiver}"/>
         </StackPanel>
 
-        <StackPanel Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Label Content="{Binding Date, Converter={StaticResource TimeAgoConverter}}" x:Name="LabelTimeAgo"/>
-            <Label Content="{Binding Date}" Foreground="Gray"/>
+        <StackPanel Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <Label Content="{Binding Date, Converter={StaticResource TimeAgoConverter}}" x:Name="LabelTimeAgo" HorizontalContentAlignment="Right"/>
+            <Label Content="{Binding Date}" Foreground="Gray" HorizontalContentAlignment="Right"/>
         </StackPanel>
     </Grid>
 </UserControl>
