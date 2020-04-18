@@ -59,6 +59,9 @@ namespace FastFileSend.Main
 
             foreach (HistoryViewModel model in historyViewModels)
             {
+                model.Sending = model.Sender == ApiServer.AccountDetails.Id;
+                model.Date = model.Date.ToLocalTime();
+
                 var duplicate = HistoryListViewModel.List.FirstOrDefault(x => x.Id == model.Id);
 
                 if (duplicate != null)
@@ -76,7 +79,7 @@ namespace FastFileSend.Main
                     continue;
                 }
 
-                model.Progress = model.Id == ApiServer.AccountDetails.Id ? 0 : 100;
+                model.Progress = model.Id == ApiServer.AccountDetails.Id ? 0 : 1;
 
                 uiContext.Send(x => HistoryListViewModel.List.Insert(0, model), null);
             }

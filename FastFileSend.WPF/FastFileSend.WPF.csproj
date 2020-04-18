@@ -60,12 +60,26 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\ControlsResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ControlsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CustomProgress.xaml.cs">
+      <DependentUpon>CustomProgress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\HistoryItem.xaml.cs">
+      <DependentUpon>HistoryItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SubStatusConverter.cs" />
+    <Compile Include="Controls\TimeAgoConverter.cs" />
     <Compile Include="Pages\Downloads.xaml.cs">
       <DependentUpon>Downloads.xaml</DependentUpon>
     </Compile>
     <Compile Include="FastFileSendDialogsWin.cs" />
     <Compile Include="FastFileSendPathResolverWin.cs" />
     <Compile Include="SizeConverter.cs" />
+    <Compile Include="SizeHelper.cs" />
     <Compile Include="StatusConverter.cs" />
     <Compile Include="Pages\UserAddWindow.xaml.cs">
       <DependentUpon>UserAddWindow.xaml</DependentUpon>
@@ -79,6 +93,14 @@
     <Compile Include="Pages\UsersWindow.xaml.cs">
       <DependentUpon>UsersWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\CustomProgress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\HistoryItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\Downloads.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -113,6 +135,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Controls\ControlsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ControlsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -152,6 +178,21 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Online.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\download_empty.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\download_full.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\upload_empty.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\upload_full.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\separator.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

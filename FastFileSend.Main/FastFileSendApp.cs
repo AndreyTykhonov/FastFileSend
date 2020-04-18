@@ -428,6 +428,7 @@ namespace FastFileSend.Main
                 Date = DateTime.Now
             };
 
+            downloadModel.Sending = true;
             HistoryListViewModel.List.Insert(0, downloadModel);
 
             return downloadModel;
@@ -464,7 +465,7 @@ namespace FastFileSend.Main
                 FileItem fileItem = await fileUploader.UploadAsync(fileInfo.Name, fileInfo.Content).ConfigureAwait(false);
                 fileItem.Folder = fileInfo.Folder;
 
-                downloadModel.Progress = 100;
+                downloadModel.Progress = 1;
                 downloadModel.Status = HistoryModelStatus.UsingAPI;
                 downloadModel.ETA = string.Empty;
 
@@ -528,7 +529,7 @@ namespace FastFileSend.Main
             downloadModel.Id = download_index;
 
             downloadModel.Status = HistoryModelStatus.Awaiting;
-            downloadModel.Progress = 100;
+            downloadModel.Progress = 1;
         }
     }
 }
