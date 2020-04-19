@@ -5,5 +5,10 @@
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<application android:label="FastFileSend.Android" android:icon="@mipmap/icon_main" android:usesCleartextTraffic="true"></application>
+	<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+	<application android:label="FastFileSend.Android" android:icon="@mipmap/icon_main" android:usesCleartextTraffic="true">
+		<provider android:name="android.support.v4.content.FileProvider" android:authorities="com.fastfilesend.fileprovider" android:grantUriPermissions="true" android:exported="false">
+			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/filepaths" />
+		</provider>
+	</application>
 </manifest>
