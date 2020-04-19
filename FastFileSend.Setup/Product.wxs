@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="FastFileSend" Language="1033" Version="1.0.0.0" Manufacturer="TAA" UpgradeCode="50cc62cf-787d-4064-b602-b1fcc194776e">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" InstallPrivileges="limited"/>
+
+    <MajorUpgrade
+                DowngradeErrorMessage="A later version of [ProductName] is already installed"
+                AllowSameVersionUpgrades="yes" />
+    
+		<MediaTemplate EmbedCab="yes" />
+
+    <!--
+    <UIRef Id="WixUI_Minimal" />
+    -->
+
+		<Feature Id="ProductFeature" Title="FastFileSend" Level="1">
+      
+      <!--
+			<ComponentGroupRef Id="FastFileSend.WPF.Binaries" />
+      <ComponentGroupRef Id="FastFileSend.WPF.Satellites" />
+      -->
+
+      <ComponentGroupRef Id="HeatGenerated"/>
+
+      <ComponentRef Id="ApplicationShortcut" />
+
+      <ComponentRef Id="ApplicationShortcutDesktop" />
+		</Feature>
+	</Product>
+
+  <Fragment>
+    <DirectoryRef Id="TARGETDIR">
+      <Directory Id="ProgramMenuFolder" Name="FFS">
+        <Directory Id="ApplicationProgramsFolder" Name="FastFileSend"/>
+      </Directory>
+    </DirectoryRef>
+
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="{E4086D86-288C-49E1-A542-AA230C4F54C7}">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="FastFileSend"
+                  Description="My Application Description"
+                  Target="[INSTALLFOLDER]FastFileSend.WPF.exe"
+                  WorkingDirectory="INSTALLFOLDER"/>
+        <RemoveFolder Id="CleanUpShortCut" Directory="ApplicationProgramsFolder" On="uninstall"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="TARGETDIR">
+      <Directory Id="DesktopFolder" Name="Desktop">
+        <Component Id="ApplicationShortcutDesktop" Guid="{A69B0E75-470A-4501-AA83-023555C4845B}">
+          <Shortcut Id="ApplicationDesktopShortcut"
+              Name="FastFileSend"
+              Target="[INSTALLFOLDER]FastFileSend.WPF.exe"
+              WorkingDirectory="INSTALLFOLDER"/>
+          <RemoveFolder Id="DesktopFolder" On="uninstall"/>
+        </Component>
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
+  
+	<Fragment>
+    <CustomAction Id="LaunchInstalledExe" Directory="INSTALLFOLDER" Execute="commit" Return="asyncNoWait" Impersonate="no" ExeCommand="[INSTALLFOLDER]FastFileSend.WPF.exe"/>
+    
+    <InstallExecuteSequence>
+      <Custom Action='LaunchInstalledExe' After='InstallFiles'/>
+    </InstallExecuteSequence>
+    
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="LocalAppDataFolder">
+				<Directory Id="INSTALLFOLDER" Name="FastFileSend" />
+        
+        <!--
+        <Directory Id="FastFileSend.WPF.Binaries" Name="FastFileSend"/>
+        <Directory Id="FastFileSend.WPF.Satellites" Name="FastFileSend"/>
+        -->
+			</Directory>
+		</Directory>
+	</Fragment>
+</Wix>
