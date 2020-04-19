@@ -13,7 +13,7 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>Debug</DefineConstants>
-    <SuppressValidation>False</SuppressValidation>
+    <SuppressValidation>True</SuppressValidation>
     <SuppressIces>ICE38;ICE64;ICE43</SuppressIces>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
