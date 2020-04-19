@@ -85,6 +85,7 @@
     <Compile Include="Pages\UserAddWindow.xaml.cs">
       <DependentUpon>UserAddWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Updater.cs" />
     <Compile Include="UserOnlineImageConverter.cs" />
     <Compile Include="UserStatusImage.Designer.cs">
       <DependentUpon>UserStatusImage.resx</DependentUpon>

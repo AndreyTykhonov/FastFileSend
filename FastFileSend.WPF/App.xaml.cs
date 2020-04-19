@@ -22,6 +22,14 @@ namespace FastFileSend.WPF
         {
             base.OnStartup(e);
 
+            Updater updater = new Updater();
+            if (await updater.Available().ConfigureAwait(true))
+            {
+                await updater.Update().ConfigureAwait(true);
+                Environment.Exit(0);
+                return;
+            }
+
             FastFileSendApp = await FastFileSendApp.Create(new FastFileSendPathResolverWin(), new FastFileSendDialogsWin()).ConfigureAwait(true);
         }
     }
