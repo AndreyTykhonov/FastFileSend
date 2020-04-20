@@ -42,8 +42,8 @@ namespace FastFileSend
         string CurrentVersion()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fileVersionInfo.ProductVersion;
+            string version = assembly.GetName().Version.ToString();
+            return version;
         }
     }
 }
