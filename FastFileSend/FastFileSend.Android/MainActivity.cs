@@ -12,7 +12,8 @@ using Android.Support.V4.App;
 using Android;
 using Xamarin.Forms;
 using Android.Content;
-using Android.Support.V4.Content;
+using AndroidX.Core.Content;
+using AndroidX.Core.App;
 
 namespace FastFileSend.Droid
 {
