@@ -41,7 +41,7 @@ namespace FastFileSend
 
         string CurrentVersion()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
+            Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().First(x => x.GetName().Name == "FastFileSend.Android");
             string version = assembly.GetName().Version.ToString();
             return version;
         }
