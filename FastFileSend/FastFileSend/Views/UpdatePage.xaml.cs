@@ -25,6 +25,11 @@ namespace FastFileSend.Views
             LabelUpdate.Text = $"Downloading update {UpdateVersionInfo.Tag}";
         }
 
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
+        }
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
