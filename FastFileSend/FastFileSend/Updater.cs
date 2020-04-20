@@ -23,6 +23,11 @@ namespace FastFileSend
             return GithubVersionInfo.Tag != CurrentVersion();
         }
 
+        public async Task<GithubVersionInfo> VersionInfo()
+        {
+            return GithubVersionInfo;
+        }
+
         private async Task FetchInfo()
         {
             if (GithubVersionInfo != null)
@@ -32,26 +37,6 @@ namespace FastFileSend
 
             GithubVersion githubVersion = new GithubVersion();
             GithubVersionInfo = await githubVersion.GetLastVersion("com.fastfilesend-Signed.apk").ConfigureAwait(false);
-        }
-
-        public async Task Update()
-        {
-            await FetchInfo().ConfigureAwait(false);
-            string tempPath = Path.GetTempFileName() + ".apk";
-
-            using (HttpClient http = new HttpClient())
-            {
-                using (FileStream fs = new FileStream(tempPath, FileMode.Create))
-                {
-                    Stream stream = await http.GetStreamAsync(GithubVersionInfo.Link);
-
-                    
-                    await stream.CopyToAsync(fs);
-                }
-            }
-
-            IApkInstaller apkInstaller = DependencyService.Get<IApkInstaller>();
-            apkInstaller.Launch(tempPath);
         }
 
         string CurrentVersion()

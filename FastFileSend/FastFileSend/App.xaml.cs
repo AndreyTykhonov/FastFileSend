@@ -29,8 +29,10 @@ namespace FastFileSend
             Updater updater = new Updater();
             if (await updater.Available().ConfigureAwait(true))
             {
-                await updater.Update().ConfigureAwait(true);
-                Environment.Exit(0);
+                UpdatePage updatePage = new UpdatePage(await updater.VersionInfo());
+                await MainPage.Navigation.PushModalAsync(updatePage);
+                //await updater.Update().ConfigureAwait(true);
+                //Environment.Exit(0);
                 return;
             }
 

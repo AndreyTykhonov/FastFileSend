@@ -7,9 +7,9 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.V4.Content;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Core.Content;
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(FastFileSend.Droid.ApkInstaller))]
@@ -21,6 +21,7 @@ namespace FastFileSend.Droid
         {
             Intent intent = new Intent(Intent.ActionView);
             Android.Net.Uri fileUri = FileProvider.GetUriForFile(Android.App.Application.Context, "com.fastfilesend.fileprovider", new Java.IO.File(path));
+
             intent.PutExtra(Intent.ExtraNotUnknownSource, true);
             intent.SetDataAndType(fileUri, "application/vnd.android.package-archive");
             intent.SetFlags(ActivityFlags.NewTask);
