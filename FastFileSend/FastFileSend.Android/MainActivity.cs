@@ -37,6 +37,7 @@ namespace FastFileSend.Droid
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             Forms.Init(this, savedInstanceState);
+            FormsMaterial.Init(this, savedInstanceState);
 
             LoadApplication(new App());
         }

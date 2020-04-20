@@ -5,7 +5,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:fastfilesend="clr-namespace:FastFileSend"
              mc:Ignorable="d"
-             x:Class="FastFileSend.Views.UserSelectPage">
+             x:Class="FastFileSend.Views.UserSelectPage"
+             Visual="Material">
 
     <ContentPage.Resources>
         <fastfilesend:UserOnlineImageConverter x:Key="myStatusConverter" />

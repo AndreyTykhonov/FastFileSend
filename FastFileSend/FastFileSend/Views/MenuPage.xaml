@@ -5,7 +5,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="FastFileSend.Views.MenuPage"
-             Title="Menu">
+             Title="Menu"
+             Visual="Material">
              
     <StackLayout VerticalOptions="FillAndExpand" Margin="10">
         <Label Text="My Id" HorizontalTextAlignment="Center"></Label>
