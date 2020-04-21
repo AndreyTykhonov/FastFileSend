@@ -26,6 +26,7 @@ namespace FastFileSend
         {
             IPathResolver pathResolver = DependencyService.Get<IPathResolver>();
 
+            #if RELEASE
             Updater updater = new Updater();
             if (await updater.Available().ConfigureAwait(true))
             {
@@ -35,6 +36,7 @@ namespace FastFileSend
                 //Environment.Exit(0);
                 return;
             }
+            #endif
 
             FastFileSendApp = await FastFileSendApp.Create(pathResolver, new FastFileSendPlatformDialogsXamarin());
 

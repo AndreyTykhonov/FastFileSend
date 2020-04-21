@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -22,6 +23,7 @@ namespace FastFileSend.WPF
         {
             base.OnStartup(e);
 
+            #if RELEASE
             Updater updater = new Updater();
             if (await updater.Available().ConfigureAwait(true))
             {
@@ -29,6 +31,7 @@ namespace FastFileSend.WPF
                 Environment.Exit(0);
                 return;
             }
+            #endif
 
             FastFileSendApp = await FastFileSendApp.Create(new FastFileSendPathResolverWin(), new FastFileSendDialogsWin()).ConfigureAwait(true);
         }
