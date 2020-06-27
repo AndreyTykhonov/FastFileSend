@@ -6,7 +6,7 @@
              xmlns:fastfilesend="clr-namespace:FastFileSend"
              xmlns:wpf="clr-namespace:FastFileSend.WPF"
              mc:Ignorable="d"
-             x:Class="FastFileSend.Views.ItemsPage"
+             x:Class="FastFileSend.Views.DownloadsPage"
              Title="{Binding Title}"
              x:Name="BrowseItemsPage"
              Visual="Material">
@@ -19,10 +19,10 @@
 
     <StackLayout>
         <ListView x:Name="ItemsListView"
-                ItemsSource="{Binding List}"
-                VerticalOptions="FillAndExpand"
-                CachingStrategy="RecycleElement"
-                HasUnevenRows="True">
+            ItemsSource="{Binding List}"
+            VerticalOptions="FillAndExpand"
+            CachingStrategy="RecycleElement"
+            HasUnevenRows="True">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
@@ -52,5 +52,5 @@
             </ListView.ItemTemplate>
         </ListView>
     </StackLayout>
-    
-</ContentPage>
+
+    </ContentPage>

@@ -7,37 +7,21 @@ using Xamarin.Forms.Xaml;
 
 using FastFileSend.Models;
 using Xamarin.Essentials;
+using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
+using System.IO;
 
 namespace FastFileSend.Views
 {
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
-    public partial class MainPage : MasterDetailPage
+    public partial class MainPage : Xamarin.Forms.TabbedPage
     {
-        Dictionary<int, NavigationPage> MenuPages = new Dictionary<int, NavigationPage>();
         public MainPage()
         {
             InitializeComponent();
 
-            MasterBehavior = MasterBehavior.Popover;
-
-            MenuPages.Add((int)MenuItemType.Downloads, (NavigationPage)Detail);
-        }
-
-        public async Task NavigateFromMenu(int id)
-        {
-            IsPresented = false;
-
-            switch (id)
-            {
-                case (int)MenuItemType.Downloads:
-                    IsPresented = false;
-                    break;
-                case (int)MenuItemType.Send:
-                    await App.FastFileSendApp.Send();
-                    break;
-            }
+            On<Xamarin.Forms.PlatformConfiguration.Android>().SetToolbarPlacement(ToolbarPlacement.Bottom);
         }
     }
 }

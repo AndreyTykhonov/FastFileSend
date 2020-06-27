@@ -43,10 +43,7 @@ namespace FastFileSend
             Preferences.Set("id", FastFileSendApp.AccountDetails.Id);
             Preferences.Set("password", FastFileSendApp.AccountDetails.Password);
 
-            MasterDetailPage masterDetailPage = MainPage as MasterDetailPage;
-            MenuPage menu = masterDetailPage.Master as MenuPage;
-
-            menu.EntryId.Text = FastFileSendApp.AccountDetails.Id.ToString();
+            //menu.EntryId.Text = FastFileSendApp.AccountDetails.Id.ToString();
         }
 
         protected override void OnSleep()
