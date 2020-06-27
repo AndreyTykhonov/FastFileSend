@@ -171,9 +171,9 @@ namespace FastFileSend.Main
                 }
             }
 
-            try
+            if (file.Folder)
             {
-                if (file.Folder)
+                try
                 {
                     model.Status = HistoryModelStatus.Unpacking;
                     using (ZipFile zip = new ZipFile(filePath))
@@ -216,10 +216,10 @@ namespace FastFileSend.Main
                         }
                     }
                 }
-            }
-            finally
-            {
-                File.Delete(filePath);
+                finally
+                {
+                    File.Delete(filePath);
+                }
             }
 
             model.Status = HistoryModelStatus.Ok;
