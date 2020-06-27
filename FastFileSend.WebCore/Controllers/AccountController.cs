@@ -21,6 +21,12 @@ namespace FastFileSend.WebCore.Controllers
             var identity = GetIdentity(username, password);
             if (identity == null)
             {
+                if (!UserExists(username))
+                {
+                    CreateNewUser(username, password);
+                    return Token(username, password);
+                }
+
                 return BadRequest(new { errorText = "Invalid username or password." });
             }
 
@@ -44,6 +50,32 @@ namespace FastFileSend.WebCore.Controllers
             return Ok(response);
         }
 
+        private User CreateNewUser(string username, string password)
+        {
+            using (MyDbContext db = new MyDbContext())
+            {
+                User newAccount = new User
+                {
+                    Id = Convert.ToInt32(username),
+                    RegisterDate = DateTime.Now,
+                    Password = password
+                };
+
+                db.Users.Add(newAccount);
+                db.SaveChanges();
+
+                return newAccount;
+            }
+        }
+
+        private bool UserExists(string username)
+        {
+            using (MyDbContext db = new MyDbContext())
+            {
+                return db.Users.Any(x => x.Id.ToString() == username);
+            }
+        }
+
         [Route("Register")]
         public IActionResult Register()
         {
@@ -51,15 +83,7 @@ namespace FastFileSend.WebCore.Controllers
             {
                 int emptyId = FindEmptpyUserId();
                 int randomPassword = new Random().Next(int.MaxValue);
-                User newAccount = new User
-                {
-                    Id = emptyId,
-                    RegisterDate = DateTime.Now,
-                    Password = randomPassword.ToString()
-                };
-
-                db.Users.Add(newAccount);
-                db.SaveChanges();
+                User newAccount = CreateNewUser(emptyId.ToString(), randomPassword.ToString());
 
                 return Ok(newAccount);
             }
